@@ -20,6 +20,10 @@ jobs:
           architecture: x64
           registry-url: "https://registry.npmjs.org"
 
+      - name: Install build dependencies
+        run: |
+          npm install
+
       - name: Publish
         run: |
           npm publish --access=public --non-interactive
