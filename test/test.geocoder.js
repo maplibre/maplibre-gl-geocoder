@@ -2,7 +2,7 @@
 
 var test = require("tape");
 var MapboxGeocoder = require("../");
-var mapboxgl = require("mapbox-gl");
+var maplibregl = require("maplibre-gl");
 var once = require("lodash.once");
 var sinon = require("sinon");
 var localization = require("./../lib/localization");
@@ -33,7 +33,7 @@ test("geocoder", function (tt) {
     opts = opts || {};
     opts.enableEventLogging = false;
     container = document.createElement("div");
-    map = new mapboxgl.Map({ container: container });
+    map = new maplibregl.Map({ container: container });
     geocoderApi = mockGeocoderApi(opts.features, opts.errorMessage);
     geocoder = new MapboxGeocoder(geocoderApi, opts);
     map.addControl(geocoder);
@@ -920,9 +920,9 @@ test("geocoder", function (tt) {
     setup({
       features: [Features.GOLDEN_GATE_BRIDGE],
       marker: true,
-      mapboxgl: mapboxgl,
+      maplibregl: maplibregl,
     });
-    var markerConstructorSpy = sinon.spy(mapboxgl, "Marker");
+    var markerConstructorSpy = sinon.spy(maplibregl, "Marker");
 
     geocoder.query("Golden Gate Bridge");
     geocoder.on(
@@ -949,9 +949,9 @@ test("geocoder", function (tt) {
         draggable: true,
         anchor: "top",
       },
-      mapboxgl: mapboxgl,
+      maplibregl: maplibregl,
     });
-    var markerConstructorSpy = sinon.spy(mapboxgl, "Marker");
+    var markerConstructorSpy = sinon.spy(maplibregl, "Marker");
 
     geocoder.query("Golden Gate Bridge");
     geocoder.on(
@@ -989,7 +989,7 @@ test("geocoder", function (tt) {
       features: [Features.GOLDEN_GATE_BRIDGE],
       marker: false,
     });
-    var markerConstructorSpy = sinon.spy(mapboxgl, "Marker");
+    var markerConstructorSpy = sinon.spy(maplibregl, "Marker");
 
     geocoder.query("Golden Gate Bridge");
     geocoder.on(
@@ -1010,10 +1010,10 @@ test("geocoder", function (tt) {
     setup({
       marker: true,
       popup: true,
-      mapboxgl: mapboxgl,
+      maplibregl: maplibregl,
       features: [Features.GOLDEN_GATE_BRIDGE],
     });
-    var popupConstructorSpy = sinon.spy(mapboxgl, "Popup");
+    var popupConstructorSpy = sinon.spy(maplibregl, "Popup");
 
     geocoder.query("Golden Gate Bridge");
     geocoder.on(
@@ -1033,10 +1033,10 @@ test("geocoder", function (tt) {
       popup: {
         closeOnMove: true,
       },
-      mapboxgl: mapboxgl,
+      maplibregl: maplibregl,
       features: [Features.GOLDEN_GATE_BRIDGE],
     });
-    var popupConstructorSpy = sinon.spy(mapboxgl, "Popup");
+    var popupConstructorSpy = sinon.spy(maplibregl, "Popup");
 
     geocoder.query("Golden Gate Bridge");
     geocoder.on(
@@ -1061,7 +1061,7 @@ test("geocoder", function (tt) {
       popup: false,
       features: [Features.GOLDEN_GATE_BRIDGE],
     });
-    var popupConstructorSpy = sinon.spy(mapboxgl, "Popup");
+    var popupConstructorSpy = sinon.spy(maplibregl, "Popup");
 
     geocoder.query("Golden Gate Bridge");
     geocoder.on(
@@ -1568,7 +1568,7 @@ test("geocoder", function (tt) {
       };
       // no access token here
       container = document.createElement("div");
-      map = new mapboxgl.Map({ container: container });
+      map = new maplibregl.Map({ container: container });
       geocoder = new MapboxGeocoder(opts);
       t.doesNotThrow(function () {
         map.addControl(geocoder);
@@ -1585,7 +1585,7 @@ test("geocoder", function (tt) {
       };
       // no access token here
       container = document.createElement("div");
-      map = new mapboxgl.Map({ container: container });
+      map = new maplibregl.Map({ container: container });
       geocoder = new MapboxGeocoder({}, opts);
       t.throws(function () {
         map.addControl(geocoder);
