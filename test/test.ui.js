@@ -2,12 +2,10 @@
 
 var once = require("lodash.once");
 var MapboxGeocoder = require("../lib/index");
-var mapboxgl = require("mapbox-gl");
+var maplibregl = require("maplibre-gl");
 var test = require("tape");
 var sinon = require("sinon");
 var Features = require("./mockFeatures");
-
-mapboxgl.accessToken = process.env.MapboxAccessToken;
 
 var mockGeocoderApi = (features, errorMessage) => {
   return {
@@ -37,10 +35,9 @@ test("Geocoder#inputControl", function (tt) {
 
   function setup(opts) {
     opts = opts || {};
-    opts.accessToken = mapboxgl.accessToken;
     opts.enableEventLogging = false;
     container = document.createElement("div");
-    map = new mapboxgl.Map({ container: container });
+    map = new maplibregl.Map({ container: container });
     geocoderApi = mockGeocoderApi(opts.features, opts.errorMessage);
     geocoder = new MapboxGeocoder(geocoderApi, opts);
     map.addControl(geocoder);
@@ -49,7 +46,7 @@ test("Geocoder#inputControl", function (tt) {
   tt.test("input", function (t) {
     setup({
       types: "place",
-      mapboxgl: mapboxgl,
+      maplibregl: maplibregl,
       features: [Features.GOLDEN_GATE_BRIDGE],
     });
     var inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
@@ -408,7 +405,7 @@ test("Geocoder#inputControl", function (tt) {
     setup({
       features: [Features.GOLDEN_GATE_BRIDGE],
       types: "place",
-      mapboxgl: mapboxgl,
+      maplibregl: maplibregl,
     });
     var clearEl = container.querySelector(".maplibregl-ctrl-geocoder button");
 
@@ -440,7 +437,7 @@ test("Geocoder#inputControl", function (tt) {
   tt.test("event deduplication even when IDs are shared", function (t) {
     setup({
       types: "place",
-      mapboxgl: mapboxgl,
+      maplibregl: maplibregl,
       features: [Features.GOLDEN_GATE_BRIDGE],
     });
     var clearEl = container.querySelector(".maplibregl-ctrl-geocoder button");
@@ -492,7 +489,6 @@ test("Geocoder#addTo(String) -- no map", function (tt) {
 
   function setup(opts) {
     opts = opts || {};
-    opts.accessToken = mapboxgl.accessToken;
     opts.enableEventLogging = false;
     container = document.createElement("div");
     container.className = "notAMap";
@@ -587,7 +583,6 @@ test("Geocoder#addTo(HTMLElement) -- no map", function (tt) {
 
   function setup(opts) {
     opts = opts || {};
-    opts.accessToken = mapboxgl.accessToken;
     opts.enableEventLogging = false;
     container = document.createElement("div");
     container.className = "notAMap";
@@ -619,10 +614,9 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
 
   tt.test("add to an existing map", (t) => {
     const opts = {};
-    opts.accessToken = mapboxgl.accessToken;
     opts.enableEventLogging = false;
     container = document.createElement("div");
-    var map = new mapboxgl.Map({ container: container });
+    var map = new maplibregl.Map({ container: container });
     geocoder = new MapboxGeocoder(opts);
     geocoder.addTo(map);
     t.ok(
@@ -636,7 +630,6 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
 
   tt.test("add to an existing html class", (t) => {
     const opts = {};
-    opts.accessToken = mapboxgl.accessToken;
     opts.enableEventLogging = false;
     container = document.createElement("div");
     container.className = "notAMap";
@@ -654,7 +647,6 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
 
   tt.test("add to an existing HTMLElement", (t) => {
     const opts = {};
-    opts.accessToken = mapboxgl.accessToken;
     opts.enableEventLogging = false;
     container = document.createElement("div");
     document.body.appendChild(container);
@@ -671,7 +663,6 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
 
   tt.test("throws if the element cannot be found", (t) => {
     const opts = {};
-    opts.accessToken = mapboxgl.accessToken;
     opts.enableEventLogging = false;
     container = document.createElement("div");
     container.className = "notAMap";
@@ -685,7 +676,6 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
 
   tt.test("throws if there are multiple matching elements", (t) => {
     const opts = {};
-    opts.accessToken = mapboxgl.accessToken;
     opts.enableEventLogging = false;
     const container1 = document.createElement("div");
     container1.className = "notAMap";
