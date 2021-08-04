@@ -375,6 +375,54 @@ test("Geocoder#inputControl", function (tt) {
     t.end();
   });
 
+  tt.test(
+    "options.showResultsWhileTyping=false, enter key press",
+    function (t) {
+      t.plan(2);
+      setup({
+        collapsed: true,
+        showResultsWhileTyping: false,
+        maplibregl: maplibregl,
+      });
+
+      var wrapper = container.querySelector(".maplibregl-ctrl-geocoder input");
+      var searchMock = sinon.spy(geocoder, "_geocode");
+
+      geocoder.setInput("Paris");
+      t.ok(
+        searchMock.notCalled,
+        "_geocode was not triggered when input was set"
+      );
+
+      wrapper.dispatchEvent(new KeyboardEvent("keydown", { keyCode: 13 }));
+      geocoder.on(
+        "results",
+        once(function () {
+          t.pass("results are returned");
+          t.end();
+        })
+      );
+    }
+  );
+
+  tt.test(
+    "options.showResultsWhileTyping=true, geocodes when setting input",
+    function (t) {
+      t.plan(1);
+      setup({
+        collapsed: true,
+        showResultsWhileTyping: true,
+        maplibregl: maplibregl,
+      });
+
+      var searchMock = sinon.spy(geocoder, "_geocode");
+
+      geocoder.setInput("Paris");
+      t.ok(searchMock.calledOnce, "_geocode was triggered when input was set");
+      t.end();
+    }
+  );
+
   tt.test("createIcon", function (t) {
     t.plan(1);
     setup({});
@@ -458,7 +506,9 @@ test("Geocoder#inputControl", function (tt) {
 
   tt.test("paste event", function (t) {
     t.plan(1);
-    setup({});
+    setup({
+      showResultsWhileTyping: true,
+    });
     var pasteEvent = new ClipboardEvent("paste", {
       dataType: "text/plain",
       data: "Golden Gate Bridge",

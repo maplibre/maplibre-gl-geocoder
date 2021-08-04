@@ -1603,7 +1603,9 @@ test("geocoder", function (tt) {
   });
 
   tt.test("geocoder#onPaste", function (t) {
-    setup();
+    setup({
+      showResultsWhileTyping: true,
+    });
     var searchMock = sinon.spy(geocoder, "_geocode");
     var event = new ClipboardEvent("paste", {
       dataType: "text/plain",
