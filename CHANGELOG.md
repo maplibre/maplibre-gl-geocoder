@@ -1,6 +1,14 @@
 ## master
 
-- Updated Geocoder to by default only perform search on enter key press, added option to search when typing
+## 1.1.0
+
+### Features / Improvements 🚀
+
+- Updated Geocoder to by default only perform search on enter key press, added option to search when typing [#5](https://github.com/maplibre/maplibre-gl-geocoder/pull/5)
+
+### Bug fixes 🐛
+
+- create cloned html element for multiple marker results [#6](https://github.com/maplibre/maplibre-gl-geocoder/pull/6)
 
 ## 1.0.0
 
