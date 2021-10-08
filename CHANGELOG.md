@@ -1,5 +1,15 @@
 ## master
 
+## 1.1.1
+
+### Features / Improvements 🚀
+
+- Add optional debounceSearch parameter to decide how long to wait before sending Geocoder input box query to server
+
+### Bug fixes 🐛
+
+- N/A
+
 ## 1.1.0
 
 ### Features / Improvements 🚀
