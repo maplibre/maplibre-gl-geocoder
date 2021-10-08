@@ -103,6 +103,7 @@ A geocoder component that works with maplibre
     -   `options.getItemValue` **[Function][65]?** A function that specifies how the selected result should be rendered in the search bar. This function should accept a single [Carmen GeoJSON][66] object as input and return a string. HTML tags in the output string will not be rendered. Defaults to `(item) => item.place_name`.
     -   `options.localGeocoderOnly` **[Boolean][59]** If `true`, indicates that the `localGeocoder` results should be the only ones returned to the user. If `false`, indicates that the `localGeocoder` results should be combined with those from the Maplibre API with the `localGeocoder` results ranked higher. (optional, default `false`)
     -   `options.showResultsWhileTyping` **[Boolean][59]** If `false`, indicates that search will only occur on enter key press. If `true`, indicates that the Geocoder will search on the input box being updated above the minLength option. (optional, default `false`)
+    -   `options.debounceSearch` **[Number][58]** Sets the amount of time, in milliseconds, to wait before querying the server when a user types into the Geocoder input box. This parameter may be useful for reducing the total number of API calls made for a single query. (optional, default `200`)
 
 ### Examples
 
