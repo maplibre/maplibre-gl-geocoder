@@ -1,5 +1,7 @@
 ## master
 
+- Switch from `suggestions` library to `suggestions-list`, change enter key logic to support selecting list items with enter key
+
 ## 1.1.1
 
 ### Features / Improvements 🚀
