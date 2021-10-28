@@ -1,6 +1,15 @@
 ## master
 
-- Switch from `suggestions` library to `suggestions-list`, change enter key logic to support selecting list items with enter key
+## 1.1.1
+
+### Features / Improvements 🚀
+
+- Switch from `suggestions` library to `suggestions-list`, change enter key logic to support selecting list items with enter key [#14](https://github.com/maplibre/maplibre-gl-geocoder/pull/14)
+- Added debounce option [#15](https://github.com/maplibre/maplibre-gl-geocoder/pull/10)
+
+### Bug fixes 🐛
+
+- Use the correct debounce parameter [#13](https://github.com/maplibre/maplibre-gl-geocoder/pull/13)
 
 ## 1.1.1
 
