@@ -111,6 +111,7 @@ A geocoder component that works with maplibre
 var GeoApi = {
   forwardGeocode: (config) => { return { features: [] } },
   reverseGeocode: (config) => { return { features: [] } }
+  getSuggestions: (config) => { return { suggestions: String[] }}
 }
 var geocoder = new MaplibreGeocoder(GeoApi, {});
 map.addControl(geocoder);
