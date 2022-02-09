@@ -637,7 +637,7 @@ test("Geocoder#addTo(HTMLElement) -- no map", function (tt) {
     container = document.createElement("div");
     container.className = "notAMap";
     document.body.appendChild(container);
-    geocoder = new MapboxGeocoder(opts);
+    geocoder = new MapboxGeocoder({}, opts);
     geocoder.addTo(".notAMap");
   }
 
@@ -667,7 +667,7 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
     opts.enableEventLogging = false;
     container = document.createElement("div");
     var map = new maplibregl.Map({ container: container });
-    geocoder = new MapboxGeocoder(opts);
+    geocoder = new MapboxGeocoder({}, opts);
     geocoder.addTo(map);
     t.ok(
       Object.keys(
@@ -684,7 +684,7 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
     container = document.createElement("div");
     container.className = "notAMap";
     document.body.appendChild(container);
-    geocoder = new MapboxGeocoder(opts);
+    geocoder = new MapboxGeocoder({}, opts);
     geocoder.addTo(".notAMap");
     t.ok(
       Object.keys(
@@ -700,7 +700,7 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
     opts.enableEventLogging = false;
     container = document.createElement("div");
     document.body.appendChild(container);
-    geocoder = new MapboxGeocoder(opts);
+    geocoder = new MapboxGeocoder({}, opts);
     geocoder.addTo(container);
     t.ok(
       Object.keys(
@@ -717,7 +717,7 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
     container = document.createElement("div");
     container.className = "notAMap";
     // we haven't added this container to the dom, we've only created it
-    geocoder = new MapboxGeocoder(opts);
+    geocoder = new MapboxGeocoder({}, opts);
     t.throws(() => {
       geocoder.addTo(container);
     }, "addTo throws if the element is not found on the DOM");
@@ -733,7 +733,7 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
     container2.className = "notAMap";
     document.body.appendChild(container1);
     document.body.appendChild(container2);
-    geocoder = new MapboxGeocoder(opts);
+    geocoder = new MapboxGeocoder({}, opts);
     t.throws(() => {
       geocoder.addTo(".notAMap");
     }, "addTo throws if there are too many matching elements");
