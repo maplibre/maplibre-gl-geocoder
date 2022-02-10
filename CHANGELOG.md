@@ -1,6 +1,16 @@
 ## master
 
-## 1.1.1
+## 1.3.0
+
+### Features / Improvements 🚀
+
+- Added suggestions API and UI around display suggestions [#27](https://github.com/maplibre/maplibre-gl-geocoder/pull/27)
+
+### Bug fixes 🐛
+
+- N/A
+
+## 1.2.0
 
 ### Features / Improvements 🚀
 

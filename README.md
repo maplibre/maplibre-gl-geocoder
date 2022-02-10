@@ -18,7 +18,8 @@ import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 // View config definitions in our [documentation](https://github.com/maplibre/maplibre-gl-geocoder/blob/master/API.md#setgeocoderapi)
 var Geo = {
   forwardGeocode: async (config) => { /* definition here */ },
-  reverseGeocode: async (config) => { /* definition here */ },
+  reverseGeocode: async (config) => { /* definition here */ }, // optional reverse geocoding API
+  getSuggestions: async (config) => { /* definition here */ }} // optional suggestion API
 };
 
 // Pass in or define a geocoding API that matches the above
@@ -41,4 +42,5 @@ See [API.md](https://github.com/maplibre/maplibre-gl-geocoder/blob/master/API.md
 See [CONTRIBUTING.md](https://github.com/maplibre/maplibre-gl-geocoder/blob/master/CONTRIBUTING.md).
 
 ### Licence
+
 ISC © [MapLibre](https://github.com/maplibre) © [Mapbox](https://github.com/mapbox)
