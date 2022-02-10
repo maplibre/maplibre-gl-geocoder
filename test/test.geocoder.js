@@ -1725,6 +1725,7 @@ test("geocoder", function (tt) {
       ),
       proximity: { longitude: -79.45, latitude: 43.65 },
       features: [Features.QUEEN_STREET],
+      showResultsWhileTyping: true,
     });
     geocoder.setInput("anything");
     geocoder.on(
@@ -1736,38 +1737,35 @@ test("geocoder", function (tt) {
     );
   });
 
-  tt.test(
-    "set input with suggestions, showResultsWhileTyping cannot be turned off if a suggestion API is included",
-    function (t) {
-      t.plan(3);
-      setup({
-        geocoderApi: mockGeocoderApiWithSuggestions(
-          [Features.QUEEN_STREET],
-          ["starbucks"]
-        ),
-        proximity: { longitude: -79.45, latitude: 43.65 },
-        features: [Features.QUEEN_STREET],
-        showResultsWhileTyping: false,
-      });
-      geocoder.setInput("anything");
-      geocoder.on(
-        "results",
-        once(function (e) {
-          t.ok(e.features, "features are in the event object");
-          t.ok(e.suggestions, "suggestions is in the response object");
-        })
-      );
-      geocoder.on(
-        "processedResults",
-        once(function (e) {
-          t.ok(
-            e.length === 2,
-            "processed results includes both search results and suggestions"
-          );
-        })
-      );
-    }
-  );
+  tt.test("query with suggestions", function (t) {
+    t.plan(3);
+    setup({
+      geocoderApi: mockGeocoderApiWithSuggestions(
+        [Features.QUEEN_STREET],
+        ["starbucks"]
+      ),
+      proximity: { longitude: -79.45, latitude: 43.65 },
+      features: [Features.QUEEN_STREET],
+      showResultsWhileTyping: false,
+    });
+    geocoder.query("anything");
+    geocoder.on(
+      "results",
+      once(function (e) {
+        t.ok(e.features, "features are in the event object");
+        t.ok(e.suggestions, "suggestions is in the response object");
+      })
+    );
+    geocoder.on(
+      "processedResults",
+      once(function (e) {
+        t.ok(
+          e.length === 2,
+          "processed results includes both search results and suggestions"
+        );
+      })
+    );
+  });
 
   tt.test(
     "set input with suggestions, manually set processResults",
@@ -1786,7 +1784,7 @@ test("geocoder", function (tt) {
         ),
         proximity: { longitude: -79.45, latitude: 43.65 },
         features: [Features.QUEEN_STREET],
-        showResultsWhileTyping: false,
+        showResultsWhileTyping: true,
         processResults,
       });
       geocoder.setInput("anything");
