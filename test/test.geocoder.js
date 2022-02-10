@@ -29,12 +29,41 @@ test("geocoder", function (tt) {
     };
   };
 
+  var mockGeocoderApiWithSuggestions = (
+    features,
+    suggestions,
+    errorMessage
+  ) => {
+    return {
+      forwardGeocode: async () => {
+        return new Promise(async (resolve, reject) => {
+          if (errorMessage) reject(errorMessage);
+          resolve({ features: features || [] });
+        });
+      },
+      reverseGeocode: async () => {
+        return new Promise(async (resolve, reject) => {
+          if (errorMessage) reject(errorMessage);
+          resolve({ features: features || [] });
+        });
+      },
+      getSuggestions: async () => {
+        return new Promise(async (resolve, reject) => {
+          if (errorMessage) reject(errorMessage);
+          resolve({ suggestions: suggestions || [] });
+        });
+      },
+    };
+  };
+
   function setup(opts) {
     opts = opts || {};
     opts.enableEventLogging = false;
     container = document.createElement("div");
     map = new maplibregl.Map({ container: container });
-    geocoderApi = mockGeocoderApi(opts.features, opts.errorMessage);
+    geocoderApi =
+      opts.geocoderApi ||
+      mockGeocoderApi(opts.features, opts.errorMessage, opts.suggestions);
     geocoder = new MapboxGeocoder(geocoderApi, opts);
     map.addControl(geocoder);
   }
@@ -1569,7 +1598,7 @@ test("geocoder", function (tt) {
       // no access token here
       container = document.createElement("div");
       map = new maplibregl.Map({ container: container });
-      geocoder = new MapboxGeocoder(opts);
+      geocoder = new MapboxGeocoder({}, opts);
       t.doesNotThrow(function () {
         map.addControl(geocoder);
       }, "does not throw an error when no access token is set");
@@ -1653,6 +1682,123 @@ test("geocoder", function (tt) {
     searchMock.restore();
     t.end();
   });
+
+  tt.test("query with suggestions", function (t) {
+    t.plan(5);
+    setup({
+      geocoderApi: mockGeocoderApiWithSuggestions(
+        [Features.QUEEN_STREET],
+        ["starbucks"]
+      ),
+      proximity: { longitude: -79.45, latitude: 43.65 },
+      features: [Features.QUEEN_STREET],
+    });
+    geocoder.query("Queen Street");
+    var mapMoveSpy = sinon.spy(map, "flyTo");
+    geocoder.on(
+      "result",
+      once(function (e) {
+        t.ok(e.result, "feature is in the event object");
+        var mapMoveArgs = mapMoveSpy.args[0][0];
+        t.ok(
+          mapMoveSpy.calledOnce,
+          "the map#flyTo method was called when a result was selected"
+        );
+        t.notEquals(mapMoveArgs.center[0], 0, "center.lng changed");
+        t.notEquals(mapMoveArgs.center[1], 0, "center.lat changed");
+      })
+    );
+    geocoder.on(
+      "resultsSuggestions",
+      once(function (e) {
+        t.ok(e.suggestions, "suggestions is in the response object");
+      })
+    );
+  });
+
+  tt.test("set input with suggestions", function (t) {
+    t.plan(2);
+    setup({
+      geocoderApi: mockGeocoderApiWithSuggestions(
+        [Features.QUEEN_STREET],
+        ["starbucks"]
+      ),
+      proximity: { longitude: -79.45, latitude: 43.65 },
+      features: [Features.QUEEN_STREET],
+      showResultsWhileTyping: true,
+    });
+    geocoder.setInput("anything");
+    geocoder.on(
+      "results",
+      once(function (e) {
+        t.ok(e.features, "features are in the event object");
+        t.ok(e.suggestions, "suggestions is in the response object");
+      })
+    );
+  });
+
+  tt.test("query with suggestions", function (t) {
+    t.plan(3);
+    setup({
+      geocoderApi: mockGeocoderApiWithSuggestions(
+        [Features.QUEEN_STREET],
+        ["starbucks"]
+      ),
+      proximity: { longitude: -79.45, latitude: 43.65 },
+      features: [Features.QUEEN_STREET],
+      showResultsWhileTyping: false,
+    });
+    geocoder.query("anything");
+    geocoder.on(
+      "results",
+      once(function (e) {
+        t.ok(e.features, "features are in the event object");
+        t.ok(e.suggestions, "suggestions is in the response object");
+      })
+    );
+    geocoder.on(
+      "processedResults",
+      once(function (e) {
+        t.ok(
+          e.length === 2,
+          "processed results includes both search results and suggestions"
+        );
+      })
+    );
+  });
+
+  tt.test(
+    "set input with suggestions, manually set processResults",
+    function (t) {
+      t.plan(1);
+
+      var staticResults = ["staticResult"];
+      var processResults = function () {
+        return staticResults;
+      };
+
+      setup({
+        geocoderApi: mockGeocoderApiWithSuggestions(
+          [Features.QUEEN_STREET],
+          ["starbucks"]
+        ),
+        proximity: { longitude: -79.45, latitude: 43.65 },
+        features: [Features.QUEEN_STREET],
+        showResultsWhileTyping: true,
+        processResults,
+      });
+      geocoder.setInput("anything");
+      geocoder.on(
+        "processedResults",
+        once(function (e) {
+          t.ok(
+            e[0] === staticResults[0],
+            "processResults is overridden to return a static result"
+          );
+        })
+      );
+    }
+  );
 
   tt.end();
 });

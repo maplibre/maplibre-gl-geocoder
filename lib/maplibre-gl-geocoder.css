@@ -104,12 +104,56 @@
   cursor: pointer;
 }
 
-.maplibregl-ctrl-geocoder--suggestion-title {
+.maplibregl-ctrl-geocoder--suggestion {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.maplibre-ctrl-geocoder--suggestion-icon {
+  min-width: 30px;
+  min-height: 24px;
+  max-width: 30px;
+  max-height: 24px;
+  padding-right: 12px;
+}
+
+.maplibregl-ctrl-geocoder--suggestion-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.maplibregl-ctrl-geocoder--suggestion-match {
   font-weight: bold;
 }
 
 .maplibregl-ctrl-geocoder--suggestion-title,
 .maplibregl-ctrl-geocoder--suggestion-address {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.maplibregl-ctrl-geocoder--result {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.maplibre-ctrl-geocoder--result-icon {
+  min-width: 30px;
+  min-height: 24px;
+  max-width: 30px;
+  max-height: 24px;
+  padding-right: 12px;
+}
+
+.maplibregl-ctrl-geocoder--result-title {
+  font-weight: bold;
+}
+
+.maplibregl-ctrl-geocoder--result-title,
+.maplibregl-ctrl-geocoder--result-address {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
