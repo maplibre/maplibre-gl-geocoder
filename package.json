@@ -61,7 +61,6 @@
   },
   "dependencies": {
     "lodash.debounce": "^4.0.6",
-    "nanoid": "^2.0.1",
     "subtag": "^0.5.0",
     "suggestions-list": "^0.0.2",
     "xtend": "^4.0.1"
