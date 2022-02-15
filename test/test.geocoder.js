@@ -1800,5 +1800,41 @@ test("geocoder", function (tt) {
     }
   );
 
+  tt.test(
+    "set input with suggestions, whileTypingShowSuggestionsOnly true",
+    function (t) {
+      t.plan(3);
+      setup({
+        geocoderApi: mockGeocoderApiWithSuggestions(
+          [Features.QUEEN_STREET],
+          ["starbucks"]
+        ),
+        proximity: { longitude: -79.45, latitude: 43.65 },
+        features: [Features.QUEEN_STREET],
+        showResultsWhileTyping: true,
+        whileTypingShowSuggestionsOnly: true,
+      });
+
+      var searchMock = sinon.spy(geocoder, "_geocode");
+      var suggestionMock = sinon.spy(geocoder, "_getSuggestions");
+
+      geocoder.setInput("anything");
+      geocoder.on(
+        "resultsSuggestions",
+        once(function (e) {
+          t.ok(e.suggestions, "suggestions is in the response object");
+        })
+      );
+      t.ok(
+        searchMock.notCalled,
+        "_geocode was NOT triggered when input was set"
+      );
+      t.ok(
+        suggestionMock.calledOnce,
+        "_getSuggestions was triggered when input was set"
+      );
+    }
+  );
+
   tt.end();
 });
