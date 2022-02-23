@@ -4,6 +4,17 @@
 
 ### Features / Improvements 🚀
 
+- N/A
+
+### Bug fixes 🐛
+
+- update vulnerable version of nanoid to 3.2.0 [#35](https://github.com/maplibre/maplibre-gl-geocoder/pull/35)
+- remove yarn.lock and prefer using package-lock.json [#40](https://github.com/maplibre/maplibre-gl-geocoder/pull/40)
+
+## 1.3.0
+
+### Features / Improvements 🚀
+
 - Added suggestions API and UI around display suggestions [#27](https://github.com/maplibre/maplibre-gl-geocoder/pull/27)
 
 ### Bug fixes 🐛
