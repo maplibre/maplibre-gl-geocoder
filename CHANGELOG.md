@@ -1,6 +1,14 @@
-## master
+## main
 
-## 1.3.0
+### Features / Improvements 🚀
+
+- N/A
+
+### Bug fixes 🐛
+
+- N/A
+
+## 1.3.1
 
 ### Features / Improvements 🚀
 
