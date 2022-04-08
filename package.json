@@ -57,7 +57,7 @@
     "uglify-js": "^2.6.4"
   },
   "peerDependencies": {
-    "maplibre-gl": "^1.14.0"
+    "maplibre-gl": ">=1.14.0"
   },
   "dependencies": {
     "lodash.debounce": "^4.0.6",
