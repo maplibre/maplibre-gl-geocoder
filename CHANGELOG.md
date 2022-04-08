@@ -2,7 +2,7 @@
 
 ### Features / Improvements 🚀
 
-- N/A
+- accept any version of MapLibre GL JS greater or equal to 1.14.0 [#49](https://github.com/maplibre/maplibre-gl-geocoder/pull/49)
 
 ### Bug fixes 🐛
 
