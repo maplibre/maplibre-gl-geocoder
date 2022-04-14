@@ -47,7 +47,7 @@
     "insert-css": "2.0.0",
     "lint-staged": "^8.1.5",
     "lodash.once": "^4.0.0",
-    "mapbox-gl": "^0.47.0",
+    "mapbox-gl": "^2.8.1",
     "maplibre-gl": "^1.15.2",
     "sinon": "^7.2.7",
     "smokestack": "^3.3.1",
