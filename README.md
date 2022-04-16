@@ -19,7 +19,7 @@ import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 var Geo = {
   forwardGeocode: async (config) => { /* definition here */ },
   reverseGeocode: async (config) => { /* definition here */ }, // optional reverse geocoding API
-  getSuggestions: async (config) => { /* definition here */ }} // optional suggestion API
+  getSuggestions: async (config) => { /* definition here */ } // optional suggestion API
 };
 
 // Pass in or define a geocoding API that matches the above
