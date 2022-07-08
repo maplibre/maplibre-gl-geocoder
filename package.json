@@ -1,6 +1,6 @@
 {
   "name": "@maplibre/maplibre-gl-geocoder",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "A geocoder control for Maplibre GL JS",
   "main": "lib/index.js",
   "unpkg": "dist/maplibre-gl-geocoder.min.js",
@@ -48,7 +48,7 @@
     "lint-staged": "^8.1.5",
     "lodash.once": "^4.0.0",
     "mapbox-gl": "^0.47.0",
-    "maplibre-gl": "^1.15.2",
+    "maplibre-gl": "^2.1.9",
     "sinon": "^7.2.7",
     "smokestack": "^3.3.1",
     "tap-color": "^1.1.0",
