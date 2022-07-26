@@ -6,7 +6,7 @@
 
 ### Bug fixes 🐛
 
-- N/A
+- fix: fix bug where search cannot be done without fully clearing input [#72](https://github.com/maplibre/maplibre-gl-geocoder/pull/72)
 
 ## 1.3.1
 
