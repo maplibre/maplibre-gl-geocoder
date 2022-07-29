@@ -110,6 +110,31 @@ test("geocoder", function (tt) {
     );
   });
 
+  tt.test("Selected value is reset after a result is selected", function (t) {
+    t.plan(3);
+    setup({
+      proximity: { longitude: -79.45, latitude: 43.65 },
+      features: [Features.QUEEN_STREET],
+    });
+    geocoder.query("Queen Street");
+    geocoder.on(
+      "result",
+      once(function (e) {
+        t.ok(e.result, "feature is in the event object");
+        t.notEquals(
+          geocoder.lastSelected,
+          undefined,
+          "last selected is not undefined"
+        );
+        t.equals(
+          geocoder._typeahead.selected,
+          null,
+          "selected is reset to null after setting input"
+        );
+      })
+    );
+  });
+
   tt.test("options", function (t) {
     t.plan(6);
     setup({
