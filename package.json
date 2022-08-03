@@ -41,7 +41,7 @@
     "browserify": "^16.2.3",
     "budo": "^11.6.1",
     "documentation": "^9.3.0",
-    "envify": "^3.4.1",
+    "envify": "^4.1.0",
     "eslint": "^4.18.2",
     "insert-css": "2.0.0",
     "lint-staged": "^8.1.5",
