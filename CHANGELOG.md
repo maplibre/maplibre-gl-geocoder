@@ -4,7 +4,15 @@
 
 ### Bug fixes 🐛
 
+## 1.4.1
+
+### Features / Improvements 🚀
+
+### Bug fixes 🐛
+
 - fix: fix bug where search cannot be done without fully clearing input [#72](https://github.com/maplibre/maplibre-gl-geocoder/pull/72)
+- Bump sinon from 7.2.7 to 14.0.0 (#66)(https://github.com/maplibre/maplibre-gl-geocoder/pull/66)
+- Bump tape from 4.10.1 to 5.5.3 (#56)(https://github.com/maplibre/maplibre-gl-geocoder/pull/56)
 
 ## 1.4.0
 
