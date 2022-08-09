@@ -343,6 +343,26 @@ test("Geocoder#inputControl", function (tt) {
     t.end();
   });
 
+  tt.test("clear button shows up", function (t) {
+    t.plan(1);
+    setup({
+      clearOnBlur: true,
+    });
+
+    geocoder.setInput("testval");
+
+    var wrapper = container.querySelector(".maplibregl-ctrl-geocoder");
+    var hoverEvent = document.createEvent("Event");
+    hoverEvent.initEvent("mouseenter", true, true);
+    wrapper.dispatchEvent(hoverEvent);
+    var clearbutton = container.querySelector(
+      ".maplibregl-ctrl-geocoder--button"
+    );
+    t.equal(clearbutton.style.display, "block");
+
+    t.end();
+  });
+
   tt.test("options.collapsed=true, hover", function (t) {
     t.plan(1);
     setup({
@@ -378,8 +398,9 @@ test("Geocoder#inputControl", function (tt) {
   tt.test(
     "options.showResultsWhileTyping=false, enter key press",
     function (t) {
-      t.plan(2);
+      t.plan(4);
       setup({
+        features: [Features.QUEEN_STREET],
         collapsed: true,
         showResultsWhileTyping: false,
         maplibregl: maplibregl,
@@ -387,6 +408,7 @@ test("Geocoder#inputControl", function (tt) {
 
       var wrapper = container.querySelector(".maplibregl-ctrl-geocoder input");
       var searchMock = sinon.spy(geocoder, "_geocode");
+      var mapFitBoundsMock = sinon.spy(map, "fitBounds");
 
       geocoder.setInput("Paris");
       t.ok(
@@ -398,7 +420,13 @@ test("Geocoder#inputControl", function (tt) {
       geocoder.on(
         "results",
         once(function () {
-          t.pass("results are returned");
+          var boundsArray = mapFitBoundsMock.args[0][0];
+          t.ok(
+            mapFitBoundsMock.calledOnce,
+            "the map#fitBounds method was called when enter was pressed"
+          );
+          t.equals(boundsArray[0].length, 2, "center.lng changed");
+          t.equals(boundsArray[1].length, 2, "center.lat changed");
           t.end();
         })
       );
