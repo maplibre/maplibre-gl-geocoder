@@ -4,6 +4,14 @@
 
 ### Bug fixes 🐛
 
+## 1.4.2
+
+### Features / Improvements 🚀
+
+### Bug fixes 🐛
+
+- fix: fix bug with fitbounds array, fix bug where clearbutton doesnt show up after pressing enter [#79](https://github.com/maplibre/maplibre-gl-geocoder/pull/79)
+
 ## 1.4.1
 
 ### Features / Improvements 🚀
