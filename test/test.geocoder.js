@@ -53,6 +53,12 @@ test("geocoder", function (tt) {
           resolve({ suggestions: suggestions || [] });
         });
       },
+      searchByPlaceId: async () => {
+        return new Promise(async (resolve, reject) => {
+          if (errorMessage) reject(errorMessage);
+          resolve({ features: features[0] || [] });
+        });
+      },
     };
   };
 
@@ -1709,34 +1715,21 @@ test("geocoder", function (tt) {
   });
 
   tt.test("query with suggestions", function (t) {
-    t.plan(5);
+    t.plan(2);
     setup({
       geocoderApi: mockGeocoderApiWithSuggestions(
         [Features.QUEEN_STREET],
-        ["starbucks"]
+        [{ text: "starbucks" }]
       ),
       proximity: { longitude: -79.45, latitude: 43.65 },
       features: [Features.QUEEN_STREET],
     });
     geocoder.query("Queen Street");
-    var mapMoveSpy = sinon.spy(map, "flyTo");
     geocoder.on(
-      "result",
+      "results",
       once(function (e) {
-        t.ok(e.result, "feature is in the event object");
-        var mapMoveArgs = mapMoveSpy.args[0][0];
-        t.ok(
-          mapMoveSpy.calledOnce,
-          "the map#flyTo method was called when a result was selected"
-        );
-        t.notEquals(mapMoveArgs.center[0], 0, "center.lng changed");
-        t.notEquals(mapMoveArgs.center[1], 0, "center.lat changed");
-      })
-    );
-    geocoder.on(
-      "resultsSuggestions",
-      once(function (e) {
-        t.ok(e.suggestions, "suggestions is in the response object");
+        t.ok(e.features, "features is in the event object");
+        t.ok(e.suggestions, "suggestions is in the event object");
       })
     );
   });
@@ -1746,7 +1739,7 @@ test("geocoder", function (tt) {
     setup({
       geocoderApi: mockGeocoderApiWithSuggestions(
         [Features.QUEEN_STREET],
-        ["starbucks"]
+        [{ text: "starbucks" }]
       ),
       proximity: { longitude: -79.45, latitude: 43.65 },
       features: [Features.QUEEN_STREET],
@@ -1763,11 +1756,11 @@ test("geocoder", function (tt) {
   });
 
   tt.test("query with suggestions", function (t) {
-    t.plan(3);
+    t.plan(2);
     setup({
       geocoderApi: mockGeocoderApiWithSuggestions(
         [Features.QUEEN_STREET],
-        ["starbucks"]
+        [{ text: "starbucks" }]
       ),
       proximity: { longitude: -79.45, latitude: 43.65 },
       features: [Features.QUEEN_STREET],
@@ -1781,49 +1774,7 @@ test("geocoder", function (tt) {
         t.ok(e.suggestions, "suggestions is in the response object");
       })
     );
-    geocoder.on(
-      "processedResults",
-      once(function (e) {
-        t.ok(
-          e.length === 2,
-          "processed results includes both search results and suggestions"
-        );
-      })
-    );
   });
-
-  tt.test(
-    "set input with suggestions, manually set processResults",
-    function (t) {
-      t.plan(1);
-
-      var staticResults = ["staticResult"];
-      var processResults = function () {
-        return staticResults;
-      };
-
-      setup({
-        geocoderApi: mockGeocoderApiWithSuggestions(
-          [Features.QUEEN_STREET],
-          ["starbucks"]
-        ),
-        proximity: { longitude: -79.45, latitude: 43.65 },
-        features: [Features.QUEEN_STREET],
-        showResultsWhileTyping: true,
-        processResults,
-      });
-      geocoder.setInput("anything");
-      geocoder.on(
-        "processedResults",
-        once(function (e) {
-          t.ok(
-            e[0] === staticResults[0],
-            "processResults is overridden to return a static result"
-          );
-        })
-      );
-    }
-  );
 
   tt.end();
 });
