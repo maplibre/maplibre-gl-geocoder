@@ -112,6 +112,7 @@ var GeoApi = {
   forwardGeocode: (config) => { return { features: [] } },
   reverseGeocode: (config) => { return { features: [] } }
   getSuggestions: (config) => { return { suggestions: string[] }}
+  getByPlaceId: (config) => { return { suggestions: {text: string, placeId?: string}[] }}
 }
 var geocoder = new MaplibreGeocoder(GeoApi, {});
 map.addControl(geocoder);
