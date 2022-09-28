@@ -10,8 +10,6 @@
 
 - Update suggestions API to support placeId [#84](https://github.com/maplibre/maplibre-gl-geocoder/pull/84)
 
-### Bug fixes 🐛
-
 ## 1.4.2
 
 ### Features / Improvements 🚀
