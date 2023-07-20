@@ -17,9 +17,13 @@ import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 // Functions should return Carmen GeoJSON https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
 // View config definitions in our [documentation](https://github.com/maplibre/maplibre-gl-geocoder/blob/master/API.md#setgeocoderapi)
 var Geo = {
+  // required
   forwardGeocode: async (config) => { /* definition here */ },
-  reverseGeocode: async (config) => { /* definition here */ }, // optional reverse geocoding API
-  getSuggestions: async (config) => { /* definition here */ } // optional suggestion API
+  
+  // optional
+  reverseGeocode: async (config) => { /* definition here */ }, // reverse geocoding API
+  getSuggestions: async (config) => { /* definition here */ }, // suggestion API
+  searchByPlaceId: async (config) => { /* definition here */ } // search by Place ID API
 };
 
 // Pass in or define a geocoding API that matches the above
