@@ -27,7 +27,7 @@ var Geo = {
 };
 
 // Pass in or define a geocoding API that matches the above
-const geocoder = new MaplibreGeocoder(Geo, { mapboxgl: maplibregl });
+const geocoder = new MaplibreGeocoder(Geo, { maplibregl: maplibregl });
 
 ```
 
