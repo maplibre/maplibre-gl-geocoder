@@ -110,7 +110,7 @@
   align-items: center;
 }
 
-.maplibre-ctrl-geocoder--suggestion-icon {
+.maplibregl-ctrl-geocoder--suggestion-icon {
   min-width: 30px;
   min-height: 24px;
   max-width: 30px;
@@ -140,7 +140,7 @@
   align-items: center;
 }
 
-.maplibre-ctrl-geocoder--result-icon {
+.maplibregl-ctrl-geocoder--result-icon {
   min-width: 30px;
   min-height: 24px;
   max-width: 30px;

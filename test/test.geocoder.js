@@ -5,8 +5,6 @@ var MaplibreGeocoder = require("../dist/maplibre-gl-geocoder.js");
 var maplibregl = require("maplibre-gl");
 var once = require("lodash.once");
 var sinon = require("sinon");
-//var localization = require("./../lib/localization");
-//var exceptions = require("./../lib/exceptions");
 var Features = require("./mockFeatures");
 
 test("geocoder", function (tt) {
@@ -487,27 +485,6 @@ test("geocoder", function (tt) {
     );
   });
 
-  /*
-  tt.test("lint exceptions file", function (t) {
-    var exceptions = require("../lib/exceptions.js");
-    t.plan(Object.keys(exceptions).length * 5);
-
-    for (var id in exceptions) {
-      var ex = exceptions[id];
-
-      t.ok(ex.name, "exception includes place name");
-      t.ok(ex.bbox, "exception includes bbox");
-      t.ok(Array.isArray(ex.bbox), "exception bbox is array");
-      t.equals(ex.bbox.length, 2, "exception bbox has two corners");
-      t.ok(
-        ex.bbox.every(function (corner) {
-          return Array.isArray(corner) && corner.length === 2;
-        }),
-        "exception bbox corners each have two components"
-      );
-    }
-  });
-  */
   tt.test("options.filter", function (t) {
     t.plan(2);
     var features = [
@@ -935,49 +912,6 @@ test("geocoder", function (tt) {
       );
     }
   );
-
-
-  /*
-  tt.test("placeholder localization", function (t) {
-    var ensureLanguages = [
-      "de",
-      "en",
-      "fr",
-      "it",
-      "nl",
-      "ca",
-      "cs",
-      "fr",
-      "he",
-      "hu",
-      "is",
-      "ja",
-      "ka",
-      "ko",
-      "lv",
-      "ka",
-      "ko",
-      "lv",
-      "nb",
-      "pl",
-      "pt",
-      "sk",
-      "sl",
-      "sr",
-      "th",
-      "zh",
-    ];
-    ensureLanguages.forEach(function (languageTag) {
-      t.equals(
-        typeof localization.placeholder[languageTag],
-        "string",
-        "localized placeholder value is present for language=" + languageTag
-      );
-    });
-    t.end();
-  });
-  */
-
 
   tt.test("options.marker [true]", function (t) {
     t.plan(2);

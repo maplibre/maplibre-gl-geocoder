@@ -267,12 +267,12 @@ export default class MaplibreGeocoder {
         );
 
         return (
-          '<div class="maplibregl-ctrl-geocoder--suggestion maplibregl-ctrl-geocoder--suggestion">' +
-          '<svg class="maplibregl-ctrl-geocoder--suggestion-icon maplibre-ctrl-geocoder--suggestion-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M22.8702 20.1258H21.4248L20.9125 19.6318C22.7055 17.546 23.785 14.8382 23.785 11.8925C23.785 5.32419 18.4608 0 11.8925 0C5.32419 0 0 5.32419 0 11.8925C0 18.4608 5.32419 23.785 11.8925 23.785C14.8382 23.785 17.546 22.7055 19.6318 20.9125L20.1258 21.4248V22.8702L29.2739 32L32 29.2739L22.8702 20.1258ZM11.8925 20.1258C7.33676 20.1258 3.65923 16.4483 3.65923 11.8925C3.65923 7.33676 7.33676 3.65923 11.8925 3.65923C16.4483 3.65923 20.1258 7.33676 20.1258 11.8925C20.1258 16.4483 16.4483 20.1258 11.8925 20.1258Z" fill="#687078"/></svg>' +
-          '<div class="maplibregl-ctrl-geocoder--suggestion-info maplibregl-ctrl-geocoder--suggestion-info">' +
-          '<div class="maplibregl-ctrl-geocoder--suggestion-title maplibregl-ctrl-geocoder--suggestion-title">' +
+          '<div class="maplibregl-ctrl-geocoder--suggestion">' +
+          '<svg class="maplibregl-ctrl-geocoder--suggestion-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M22.8702 20.1258H21.4248L20.9125 19.6318C22.7055 17.546 23.785 14.8382 23.785 11.8925C23.785 5.32419 18.4608 0 11.8925 0C5.32419 0 0 5.32419 0 11.8925C0 18.4608 5.32419 23.785 11.8925 23.785C14.8382 23.785 17.546 22.7055 19.6318 20.9125L20.1258 21.4248V22.8702L29.2739 32L32 29.2739L22.8702 20.1258ZM11.8925 20.1258C7.33676 20.1258 3.65923 16.4483 3.65923 11.8925C3.65923 7.33676 7.33676 3.65923 11.8925 3.65923C16.4483 3.65923 20.1258 7.33676 20.1258 11.8925C20.1258 16.4483 16.4483 20.1258 11.8925 20.1258Z" fill="#687078"/></svg>' +
+          '<div class="maplibregl-ctrl-geocoder--suggestion-info">' +
+          '<div class="maplibregl-ctrl-geocoder--suggestion-title">' +
           beforeMatch +
-          '<span class="maplibregl-ctrl-geocoder--suggestion-match maplibregl-ctrl-geocoder--suggestion-match">' +
+          '<span class="maplibregl-ctrl-geocoder--suggestion-match">' +
           match +
           "</span>" +
           afterMatch +
@@ -285,13 +285,13 @@ export default class MaplibreGeocoder {
       const placeName = item.place_name.split(",");
 
       return (
-        '<div class="maplibregl-ctrl-geocoder--result maplibregl-ctrl-geocoder--result">' +
-        '<svg class="maplibregl-ctrl-geocoder--result-icon maplibre-ctrl-geocoder--result-icon" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.36571 0 0 5.38676 0 12.0471C0 21.0824 12 32 12 32C12 32 24 21.0824 24 12.0471C24 5.38676 18.6343 0 12 0ZM12 16.3496C9.63428 16.3496 7.71429 14.4221 7.71429 12.0471C7.71429 9.67207 9.63428 7.74454 12 7.74454C14.3657 7.74454 16.2857 9.67207 16.2857 12.0471C16.2857 14.4221 14.3657 16.3496 12 16.3496Z" fill="#687078"/></svg>' +
+        '<div class="maplibregl-ctrl-geocoder--result">' +
+        '<svg class="maplibregl-ctrl-geocoder--result-icon" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.36571 0 0 5.38676 0 12.0471C0 21.0824 12 32 12 32C12 32 24 21.0824 24 12.0471C24 5.38676 18.6343 0 12 0ZM12 16.3496C9.63428 16.3496 7.71429 14.4221 7.71429 12.0471C7.71429 9.67207 9.63428 7.74454 12 7.74454C14.3657 7.74454 16.2857 9.67207 16.2857 12.0471C16.2857 14.4221 14.3657 16.3496 12 16.3496Z" fill="#687078"/></svg>' +
         "<div>" +
-        '<div class="maplibregl-ctrl-geocoder--result-title maplibregl-ctrl-geocoder--result-title">' +
+        '<div class="maplibregl-ctrl-geocoder--result-title">' +
         placeName[0] +
         "</div>" +
-        '<div class="maplibregl-ctrl-geocoder--result-address maplibregl-ctrl-geocoder--result-address">' +
+        '<div class="maplibregl-ctrl-geocoder--result-address">' +
         placeName.splice(1, placeName.length).join(",") +
         "</div>" +
         "</div>" +
@@ -301,9 +301,9 @@ export default class MaplibreGeocoder {
     popupRender: (item) => {
       const placeName = item.place_name.split(",");
       return (
-        '<div class="maplibregl-ctrl-geocoder--suggestion maplibre-ctrl-geocoder--suggestion popup-suggestion"><div class="maplibregl-ctrl-geocoder--suggestion-title maplibre-ctrl-geocoder--suggestion-title popup-suggestion-title">' +
+        '<div class="maplibregl-ctrl-geocoder--suggestion popup-suggestion"><div class="maplibregl-ctrl-geocoder--suggestion-title popup-suggestion-title">' +
         placeName[0] +
-        '</div><div class="maplibregl-ctrl-geocoder--suggestion-address maplibre-ctrl-geocoder--suggestion-address popup-suggestion-address">' +
+        '</div><div class="maplibregl-ctrl-geocoder--suggestion-address popup-suggestion-address">' +
         placeName.splice(1, placeName.length).join(",") +
         "</div></div>"
       );
@@ -437,7 +437,7 @@ export default class MaplibreGeocoder {
     this._inputEl = document.createElement("input");
     this._inputEl.type = "text";
     this._inputEl.className =
-      "maplibregl-ctrl-geocoder--input maplibregl-ctrl-geocoder--input";
+      "maplibregl-ctrl-geocoder--input";
 
     this.setPlaceholder();
 
@@ -463,7 +463,6 @@ export default class MaplibreGeocoder {
 
     const actions = document.createElement("div");
     actions.classList.add(
-      "maplibregl-ctrl-geocoder--pin-right",
       "maplibregl-ctrl-geocoder--pin-right"
     );
 
@@ -471,8 +470,7 @@ export default class MaplibreGeocoder {
     this._clearEl.setAttribute("type", "button");
     this._clearEl.setAttribute("aria-label", "Clear");
     this._clearEl.addEventListener("click", this.clear);
-    this._clearEl.className =
-      "maplibregl-ctrl-geocoder--button maplibregl-ctrl-geocoder--button";
+    this._clearEl.className = "maplibregl-ctrl-geocoder--button";
 
     const buttonIcon = this.createIcon(
       "close",
@@ -527,10 +525,7 @@ export default class MaplibreGeocoder {
     const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     icon.setAttribute(
       "class",
-      "maplibregl-ctrl-geocoder--icon maplibregl-ctrl-geocoder--icon-" +
-        name +
-        " maplibregl-ctrl-geocoder--icon maplibregl-ctrl-geocoder--icon-" +
-        name
+      "maplibregl-ctrl-geocoder--icon maplibregl-ctrl-geocoder--icon-" + name
     );
     icon.setAttribute("viewBox", "0 0 18 18");
     icon.setAttribute("xml:space", "preserve");
@@ -1021,14 +1016,12 @@ export default class MaplibreGeocoder {
     // do not collapse if input is in focus
     if (!this._inputEl.value && this._inputEl !== document.activeElement)
       this.container.classList.add(
-        "maplibregl-ctrl-geocoder--collapsed",
         "maplibregl-ctrl-geocoder--collapsed"
       );
   }
 
   _unCollapse() {
     this.container.classList.remove(
-      "maplibregl-ctrl-geocoder--collapsed",
       "maplibregl-ctrl-geocoder--collapsed"
     );
   }
