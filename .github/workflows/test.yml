@@ -22,6 +22,7 @@ jobs:
       - name: Install build dependencies
         run: |
           npm ci
+          npm run build-dist
 
       - name: Test
         run: |

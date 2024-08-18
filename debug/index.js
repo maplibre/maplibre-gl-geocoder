@@ -110,7 +110,7 @@ removeBtn.textContent = 'Remove geocoder control';
 
 map
   .getContainer()
-  .querySelector('.mapboxgl-ctrl-bottom-left')
+  .querySelector('.maplibregl-ctrl-bottom-left')
   .appendChild(button);
 
 map.on('load', function() {

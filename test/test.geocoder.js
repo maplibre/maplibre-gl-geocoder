@@ -1,7 +1,7 @@
 "use strict";
 
 var test = require("tape");
-var MapboxGeocoder = require("../dist/maplibre-gl-geocoder.js").MaplibreGeocoder;
+var MaplibreGeocoder = require("../dist/maplibre-gl-geocoder.js").MaplibreGeocoder;
 var maplibregl = require("maplibre-gl");
 var once = require("lodash.once");
 var sinon = require("sinon");
@@ -70,7 +70,7 @@ test("geocoder", function (tt) {
     geocoderApi =
       opts.geocoderApi ||
       mockGeocoderApi(opts.features, opts.errorMessage, opts.suggestions);
-    geocoder = new MapboxGeocoder(geocoderApi, opts);
+    geocoder = new MaplibreGeocoder(geocoderApi, opts);
     map.addControl(geocoder);
   }
 
@@ -676,8 +676,8 @@ test("geocoder", function (tt) {
       "render function is set even when no input is passed"
     );
     t.ok(
-      result instanceof MapboxGeocoder,
-      "setRenderFunction always returns a MapboxGeocoder instance"
+      result instanceof MaplibreGeocoder,
+      "setRenderFunction always returns a MaplibreGeocoder instance"
     );
   });
 
@@ -693,8 +693,8 @@ test("geocoder", function (tt) {
       "render function is set"
     );
     t.ok(
-      result instanceof MapboxGeocoder,
-      "setRenderFunction always returns a MapboxGeocoder instance"
+      result instanceof MaplibreGeocoder,
+      "setRenderFunction always returns a MaplibreGeocoder instance"
     );
   });
 
@@ -1634,7 +1634,7 @@ test("geocoder", function (tt) {
       // no access token here
       container = document.createElement("div");
       map = new maplibregl.Map({ container: container });
-      geocoder = new MapboxGeocoder({}, opts);
+      geocoder = new MaplibreGeocoder({}, opts);
       t.doesNotThrow(function () {
         map.addControl(geocoder);
       }, "does not throw an error when no access token is set");
@@ -1651,7 +1651,7 @@ test("geocoder", function (tt) {
       // no access token here
       container = document.createElement("div");
       map = new maplibregl.Map({ container: container });
-      geocoder = new MapboxGeocoder({}, opts);
+      geocoder = new MaplibreGeocoder({}, opts);
       t.throws(function () {
         map.addControl(geocoder);
       }, "throws an error if no local geocoder is set");

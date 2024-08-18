@@ -10,7 +10,7 @@
   "scripts": {
     "watch": "rollup --configPlugin @rollup/plugin-typescript -c --watch",
     "build": "rollup --configPlugin @rollup/plugin-typescript -c",
-    "build-css": "mkdir -p dist && cp index.css dist/maplibre-gl-inspect.css",
+    "build-css": "mkdir -p dist && cp lib/index.css dist/maplibre-gl-geocoder.css",
     "build-dist": "npm run build && npm run build-css",
     "test": "browserify -t envify test/index.js | smokestack -b chrome | tap-status | tap-color",
     "docs": "typedoc --entryPoints lib/index.ts --out docs/API --treatWarningsAsErrors",

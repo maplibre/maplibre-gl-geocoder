@@ -22,7 +22,7 @@ const config: RollupOptions[] = [
         file: `dist/${name}.js`,
         format: 'umd',
         sourcemap: true,
-        name: 'MaplibreInspect',
+        name: 'MaplibreGeocoder',
       },
       {
         file: `dist/${name}.mjs`,

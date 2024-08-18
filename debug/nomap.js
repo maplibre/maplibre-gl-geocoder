@@ -1,9 +1,7 @@
 'use strict';
-var mapboxgl = require('mapbox-gl');
+var maplibregl = require('maplibre-gl');
 var insertCss = require('insert-css');
 var fs = require('fs');
-
-mapboxgl.accessToken = window.localStorage.getItem('MapboxAccessToken');
 
 
 var meta = document.createElement('meta');
@@ -16,7 +14,7 @@ insertCss(
   fs.readFileSync('./node_modules/mapbox-gl/dist/mapbox-gl.css', 'utf8')
 );
 
-var MapboxGeocoder = require('../');
+var MaplibreGeocoder = require('../');
 
 var notMapDiv = document.body.appendChild(document.createElement('div'));
 notMapDiv.style.position = 'absolute';
@@ -28,8 +26,8 @@ notMapDiv.style.backgroundColor = 'darkcyan';
 
 notMapDiv.classList.add("notAMap");
 
-var geocoder = new MapboxGeocoder({
-  accessToken: mapboxgl.accessToken,
+var geocoder = new MaplibreGeocoder({
+  accessToken: maplibregl.accessToken,
   trackProximity: true
 });
 

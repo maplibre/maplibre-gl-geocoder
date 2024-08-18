@@ -1,7 +1,7 @@
 "use strict";
 
 var once = require("lodash.once");
-var MapboxGeocoder = require("../dist/maplibre-gl-geocoder.js").MaplibreGeocoder;
+var MaplibreGeocoder = require("../dist/maplibre-gl-geocoder.js").MaplibreGeocoder;
 var maplibregl = require("maplibre-gl");
 var test = require("tape");
 var sinon = require("sinon");
@@ -39,7 +39,7 @@ test("Geocoder#inputControl", function (tt) {
     container = document.createElement("div");
     map = new maplibregl.Map({ container: container });
     geocoderApi = mockGeocoderApi(opts.features, opts.errorMessage);
-    geocoder = new MapboxGeocoder(geocoderApi, opts);
+    geocoder = new MaplibreGeocoder(geocoderApi, opts);
     map.addControl(geocoder);
   }
 
@@ -457,7 +457,7 @@ test("Geocoder#inputControl", function (tt) {
     var icon = geocoder.createIcon("search", "<path/>");
     t.equal(
       icon.outerHTML,
-      '<svg class="mapboxgl-ctrl-geocoder--icon mapboxgl-ctrl-geocoder--icon-search maplibregl-ctrl-geocoder--icon maplibregl-ctrl-geocoder--icon-search" viewBox="0 0 18 18" xml:space="preserve" width="18" height="18"><path></path></svg>',
+      '<svg class="maplibregl-ctrl-geocoder--icon maplibregl-ctrl-geocoder--icon-search maplibregl-ctrl-geocoder--icon maplibregl-ctrl-geocoder--icon-search" viewBox="0 0 18 18" xml:space="preserve" width="18" height="18"><path></path></svg>',
       "creates an svg given the class name and path"
     );
     t.end();
@@ -572,7 +572,7 @@ test("Geocoder#addTo(String) -- no map", function (tt) {
     container.className = "notAMap";
     document.body.appendChild(container);
     geocoderApi = mockGeocoderApi(opts.features, opts.errorMessage);
-    geocoder = new MapboxGeocoder(geocoderApi, opts);
+    geocoder = new MaplibreGeocoder(geocoderApi, opts);
     geocoder.addTo(".notAMap");
   }
 
@@ -665,7 +665,7 @@ test("Geocoder#addTo(HTMLElement) -- no map", function (tt) {
     container = document.createElement("div");
     container.className = "notAMap";
     document.body.appendChild(container);
-    geocoder = new MapboxGeocoder({}, opts);
+    geocoder = new MaplibreGeocoder({}, opts);
     geocoder.addTo(".notAMap");
   }
 
@@ -695,7 +695,7 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
     opts.enableEventLogging = false;
     container = document.createElement("div");
     var map = new maplibregl.Map({ container: container });
-    geocoder = new MapboxGeocoder({}, opts);
+    geocoder = new MaplibreGeocoder({}, opts);
     geocoder.addTo(map);
     t.ok(
       Object.keys(
@@ -712,7 +712,7 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
     container = document.createElement("div");
     container.className = "notAMap";
     document.body.appendChild(container);
-    geocoder = new MapboxGeocoder({}, opts);
+    geocoder = new MaplibreGeocoder({}, opts);
     geocoder.addTo(".notAMap");
     t.ok(
       Object.keys(
@@ -728,7 +728,7 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
     opts.enableEventLogging = false;
     container = document.createElement("div");
     document.body.appendChild(container);
-    geocoder = new MapboxGeocoder({}, opts);
+    geocoder = new MaplibreGeocoder({}, opts);
     geocoder.addTo(container);
     t.ok(
       Object.keys(
@@ -745,7 +745,7 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
     container = document.createElement("div");
     container.className = "notAMap";
     // we haven't added this container to the dom, we've only created it
-    geocoder = new MapboxGeocoder({}, opts);
+    geocoder = new MaplibreGeocoder({}, opts);
     t.throws(() => {
       geocoder.addTo(container);
     }, "addTo throws if the element is not found on the DOM");
@@ -761,7 +761,7 @@ test("Geocoder#addTo(maplibregl.Map)", function (tt) {
     container2.className = "notAMap";
     document.body.appendChild(container1);
     document.body.appendChild(container2);
-    geocoder = new MapboxGeocoder({}, opts);
+    geocoder = new MaplibreGeocoder({}, opts);
     t.throws(() => {
       geocoder.addTo(".notAMap");
     }, "addTo throws if there are too many matching elements");
