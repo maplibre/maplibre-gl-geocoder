@@ -50,12 +50,11 @@
     "browserify": "^17.0.0",
     "envify": "^4.1.0",
     "eslint": "^9.9.0",
-    "lint-staged": "^8.1.5",
     "lodash.once": "^4.0.0",
     "maplibre-gl": "^4.5.1",
     "rollup": "^4.21.0",
     "rollup-plugin-dts": "^6.1.1",
-    "sinon": "^14.0.0",
+    "sinon": "^18.0.0",
     "smokestack": "^3.6.0",
     "tap-color": "^1.2.0",
     "tap-status": "^1.0.1",
@@ -73,11 +72,5 @@
     "subtag": "^0.5.0",
     "suggestions-list": "^0.0.2",
     "xtend": "^4.0.1"
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint",
-      "git add"
-    ]
   }
 }
