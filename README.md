@@ -39,7 +39,7 @@ It is possible to use the plugin without it being placed as a control on a mapli
 
 #### API Documentation
 
-See [API.md](https://github.com/maplibre/maplibre-gl-geocoder/blob/main/API.md) for complete reference.
+See [here](https://www.maplibre.org/maplibre-gl-geocoder/) for complete reference.
 
 ### Contributing
 
