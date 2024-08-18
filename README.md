@@ -15,7 +15,7 @@ import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder';
 import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 ...
 // Functions should return Carmen GeoJSON, see the relevant type in this project
-// View config definitions in our [documentation](https://github.com/maplibre/maplibre-gl-geocoder/blob/master/API.md#setgeocoderapi)
+// View config definitions in our [documentation](https://www.maplibre.org/maplibre-gl-geocoder/)
 var Geo = {
   // required
   forwardGeocode: async (config) => { /* definition here */ },
@@ -39,11 +39,11 @@ It is possible to use the plugin without it being placed as a control on a mapli
 
 #### API Documentation
 
-See [API.md](https://github.com/maplibre/maplibre-gl-geocoder/blob/master/API.md) for complete reference.
+See [API.md](https://github.com/maplibre/maplibre-gl-geocoder/blob/main/API.md) for complete reference.
 
 ### Contributing
 
-See [CONTRIBUTING.md](https://github.com/maplibre/maplibre-gl-geocoder/blob/master/CONTRIBUTING.md).
+See [CONTRIBUTING.md](https://github.com/maplibre/maplibre-gl-geocoder/blob/main/CONTRIBUTING.md).
 
 ### Licence
 
