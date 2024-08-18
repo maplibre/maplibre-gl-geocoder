@@ -1,82 +1,240 @@
-"use strict";
+// @ts-ignore
+import Typeahead from "suggestions-list";
+// @ts-ignore
+import subtag from "subtag";
+import debounce from "lodash.debounce";
+import extend from "xtend";
+import {EventEmitter} from "events";
+import type {Marker, Popup, Map, FlyToOptions, MarkerOptions, default as MaplibreGl} from "maplibre-gl";
 
-var Typeahead = require("suggestions-list");
-var debounce = require("lodash.debounce");
-var extend = require("xtend");
-var EventEmitter = require("events").EventEmitter;
-var exceptions = require("./exceptions");
-var localization = require("./localization");
-var subtag = require("subtag");
+import {exceptions} from "./exceptions";
+import {placeholder as localization} from "./localization";
+
+/**
+ * A Carmen GeoJSON Feature.
+ * @see https://web.archive.org/web/20210224184722/https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
+ */
+export type CarmenGeojsonFeature = GeoJSON.Feature & {
+  id: string;
+  place_name: string;
+  text: string;
+};
+
+export type MaplibreGeocoderOptions = {
+  /**
+   * On geocoded result what zoom level should the map animate to when a `bbox` isn't found in the response. If a `bbox` is found the map will fit to the `bbox`.
+   * @default 16
+   */
+  zoom?: number;
+  /**
+   * If `false`, animating the map to a selected result is disabled. If `true`, animating the map will use the default animation parameters. If an object, it will be passed as `options` to the map [`flyTo`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map#flyto) or [`fitBounds`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map#map#fitbounds) method providing control over the animation of the transition.
+   * @default true
+   */
+  flyTo?: boolean | FlyToOptions;
+  /**
+   * If `true`, the geocoder proximity will automatically update based on the map view.
+   * @default true
+   */
+  trackProximity?: boolean;
+  /**
+   * If `false`, indicates that search will only occur on enter key press. If `true`, indicates that the Geocoder will search on the input box being updated above the minLength option.
+   * @default false
+   */
+  showResultsWhileTyping?: boolean;
+  /**
+   * Minimum number of characters to enter before results are shown.
+   * @default 2
+   */
+  minLength?: number;
+  /**
+   * If `true`, enable reverse geocoding mode. In reverse geocoding, search input is expected to be coordinates in the form `lat, lon`, with suggestions being the reverse geocodes.
+   * @default false
+   */
+  reverseGeocode?: boolean;
+  /**
+   * Maximum number of results to show.
+   * @default 5
+   */
+  limit?: number;
+  /**
+   * Allow Maplibre to collect anonymous usage statistics from the plugin.
+   * @default true
+   */
+  enableEventLogging?: boolean;
+  /**
+   * If `true`, a [Marker](https://maplibre.org/maplibre-gl-js/docs/API/classes/Marker/) will be added to the map at the location of the user-selected result using a default set of Marker options.  If the value is an object, the marker will be constructed using these options. If `false`, no marker will be added to the map. Requires that `options.maplibregl` also be set.
+   * @default true
+   */
+  marker?: boolean | Marker;
+  /**
+   * If `true`, a [Popup](https://maplibre.org/maplibre-gl-js/docs/API/classes/Popup) will be added to the map when clicking on a marker using a default set of popup options.  If the value is an object, the popup will be constructed using these options. If `false`, no popup will be added to the map. Requires that `options.maplibregl` also be set.
+   * @default false
+   */
+  popup?: boolean | Popup;
+  /**
+   * A [maplibre-gl](https://github.com/maplibre/maplibre-gl-js) instance to use when creating [Markers](https://maplibre.org/maplibre-gl-js/docs/API/classes/Marker/). Required if `options.marker` is `true`.
+   * @default undefined
+   */
+  maplibregl?: typeof MaplibreGl;
+  /**
+   * If `true`, the geocoder control will collapse until hovered or in focus.
+   * @default false
+   */
+  collapsed?: boolean;
+  /** 
+   * If `true`, the geocoder control will clear it's contents and blur when user presses the escape key. 
+   * @default false
+   */
+  clearAndBlurOnEsc?: boolean;
+  /**
+   * If `true`, the geocoder control will clear its value when the input blurs.
+   * @default false
+   */
+  clearOnBlur?: boolean;
+  /**
+   * If `true`, indicates that the `localGeocoder` results should be the only ones returned to the user. If `false`, indicates that the `localGeocoder` results should be combined with those from the Maplibre API with the `localGeocoder` results ranked higher.
+   * @default false
+   */
+  localGeocoderOnly?: boolean;
+  /**
+   * Sets the amount of time, in milliseconds, to wait before querying the server when a user types into the Geocoder input box. This parameter may be useful for reducing the total number of API calls made for a single query.
+   * @default 200
+   */
+  debounceSearch?: number;
+  /** 
+   * If `true`, [Markers](https://maplibre.org/maplibre-gl-js/docs/API/classes/Marker/) will be added to the map at the location the top results for the query. If the value is an object, the marker will be constructed using these options. If `false`, no marker will be added to the map. Requires that `options.maplibregl` also be set.
+   * @default true
+   */
+  showResultMarkers?: boolean | MarkerOptions;
+  /**
+   * Specify the language to use for response text and query result weighting. Options are IETF language tags comprised of a mandatory ISO 639-1 language code and optionally one or more IETF subtags for country or script. More than one value can also be specified, separated by commas. Defaults to the browser's language settings.
+   */
+  language?: string;
+  /**
+   * Override the default placeholder attribute value.
+   * @default "Search"
+   */
+  placeholder?: string;
+  /**
+   * a proximity argument: this is a geographical point given as an object with `latitude` and `longitude` properties. 
+   * Search results closer to this point will be given higher priority.
+   */
+  proximity?: { longitude: number; latitude: number };
+  /**
+   * A comma seperated list of types that filter results to match those specified. See https://docs.mapbox.com/api/search/#data-types for available types.
+   * If reverseGeocode is enabled, you should specify one type. If you configure more than one type, the first type will be used.
+   */
+  types?: string;
+  /**
+   * A comma separated list of country codes to limit results to specified country or countries.
+   */
+  countries?: string;
+  /**
+   * A bounding box argument: this is a bounding box given as an array in the format `[minX, minY, maxX, maxY]`.
+   * Search results will be limited to the bounding box.
+   */
+  bbox?: number[];
+  /**
+   * Set the factors that are used to sort nearby results.
+   */
+  reverseMode?: "distance" | "score"
+  /**
+   * A function that specifies how the selected result should be rendered in the search bar. HTML tags in the output string will not be rendered. Defaults to `(item) => item.place_name`.
+   * @example
+   *
+   * const GeoApi = {
+   *   forwardGeocode: (config) => { return { features: [] } },
+   *   reverseGeocode: (config) => { return { features: [] } }
+   *   getSuggestions: (config) => { return { suggestions: {text: string, placeId?: string}[] }}
+   *   searchByPlaceId: (config) => { return { place: {type: string, geometry: {type: string, coordinates: [number]} place_name: string, text: string, center: [number] }[] }}
+   * }
+   * const geocoder = new MaplibreGeocoder(GeoApi, {});
+   * map.addControl(geocoder);
+   * @returns 
+   */
+  getItemValue?: (item: CarmenGeojsonFeature) => string;
+  /**
+   * A function that specifies how the results should be rendered in the dropdown menu. Any HTML in the returned string will be rendered.
+   */
+  render?: (item: CarmenGeojsonFeature) => string;
+  /**
+   * A function that specifies how the results should be rendered in the popup menu. Any HTML in the returned string will be rendered.
+   */
+  popupRender?: (item: CarmenGeojsonFeature) => string;
+  /**
+   * A function accepting the query string which performs local geocoding to supplement results from the Maplibre Geocoding API. Expected to return an Array of {@link CarmenGeojsonFeature}.
+   */
+  localGeocoder?: (query: string) => CarmenGeojsonFeature[];
+  /**
+   * A function accepting the query string, current features list, and geocoder options which performs geocoding to supplement results from the Maplibre Geocoding API. Expected to return a Promise which resolves to an Array of {@link CarmenGeojsonFeature}.
+   */
+  externalGeocoder?: (query: string, list: any, confic: MaplibreGeocoderApiConfig) => Promise<CarmenGeojsonFeature[]>;
+  /**
+   * A function which accepts a {@link CarmenGeojsonFeature} to filter out results from the Geocoding API response before they are included in the suggestions list. Return `true` to keep the item, `false` otherwise.
+   * @returns 
+   */
+  filter?: (item: CarmenGeojsonFeature) => boolean;
+};
+
+export type MaplibreGeocoderApiConfig = {
+  /**
+   * A comma separated list of country codes to limit results to specified country or countries.
+   */
+  countries?: string;
+  /**
+   * A comma seperated list of types that filter results to match those specified. See https://docs.mapbox.com/api/search/#data-types for available types. If reverseGeocode is enabled, you should specify one type. If you configure more than one type, the first type will be used.
+   */
+  types?: string;
+  /**
+   * Specify the language to use for response text and query result weighting. Options are IETF language tags comprised of a mandatory ISO 639-1 language code and optionally one or more IETF subtags for country or script. More than one value can also be specified, separated by commas. Defaults to the browser's language settings.
+   */
+  language?: string;
+  /**
+   * A bounding box given as an array in the format `[minX, minY, maxX, maxY]`. Search results will be limited to the bounding box.
+   */
+  bbox?: number[]; 
+  /**
+   * Number of results to limit by
+   */
+  limit?: number;
+  /**
+   * A geographical point given as an object with `latitude` and `longitude` properties. Search results closer to this point will be given higher priority.
+   */
+  proximity?: number[];
+  /**
+   * Set the factors that are used to sort nearby results.
+   */
+  reverseMode?: "distance" | "score"
+  /**
+   * Search query string
+   */
+  query?: string;
+}
+
+/**
+ * An API which contains reverseGeocode and forwardGeocode functions to be used by this plugin
+ */
+export type MaplibreGeocoderApi = {
+  /**
+   * Forward geocode function should return an object including a collection of {@link CarmenGeojsonFeature}.
+   * @param config - Query parameters
+   * @returns 
+   */
+  forwardGeocode: (config: MaplibreGeocoderApiConfig) => Promise<{ features: CarmenGeojsonFeature[] }>;
+  /**
+   * Reverse geocode function should return an object including a collection of {@link CarmenGeojsonFeature}.
+   */
+  reverseGeocode: (config: MaplibreGeocoderApiConfig) => Promise<{ features: CarmenGeojsonFeature[] }>;
+  getSuggestions?: (config: MaplibreGeocoderApiConfig) => Promise<{ suggestions: { text: string, placeId?: string }[] }>;
+  searchByPlaceId?: (config: MaplibreGeocoderApiConfig) => Promise<{ place: CarmenGeojsonFeature[] }>;
+};
 
 /**
  * A geocoder component that works with maplibre
- * @class MaplibreGeocoder
- * @param {Object} geocoderApi Any geocoder api that supports the functions reverseGeocode and forwardGeocode and returns a response which includes a FeatureCollection of results
- * @param {Object} options
- * @param {Object} [options.maplibregl] A [maplibre-gl](https://github.com/maplibre/maplibre-gl-js) instance to use when creating [Markers](https://maplibre.org/maplibre-gl-js-docs/api/markers/#marker). Required if `options.marker` is `true`.
- * @param {Number} [options.zoom=16] On geocoded result what zoom level should the map animate to when a `bbox` isn't found in the response. If a `bbox` is found the map will fit to the `bbox`.
- * @param {Boolean|Object} [options.flyTo=true] If `false`, animating the map to a selected result is disabled. If `true`, animating the map will use the default animation parameters. If an object, it will be passed as `options` to the map [`flyTo`](https://maplibre.org/maplibre-gl-js-docs/api/map/#map#flyto) or [`fitBounds`](https://maplibre.org/maplibre-gl-js-docs/api/map/#map#fitbounds) method providing control over the animation of the transition.
- * @param {String} [options.placeholder=Search] Override the default placeholder attribute value.
- * @param {Object} [options.proximity] a proximity argument: this is
- * a geographical point given as an object with `latitude` and `longitude`
- * properties. Search results closer to this point will be given
- * higher priority.
- * @param {Boolean} [options.trackProximity=true] If `true`, the geocoder proximity will automatically update based on the map view.
- * @param {Boolean} [options.collapsed=false] If `true`, the geocoder control will collapse until hovered or in focus.
- * @param {Boolean} [options.clearAndBlurOnEsc=false] If `true`, the geocoder control will clear it's contents and blur when user presses the escape key.
- * @param {Boolean} [options.clearOnBlur=false] If `true`, the geocoder control will clear its value when the input blurs.
- * @param {Array} [options.bbox] a bounding box argument: this is
- * a bounding box given as an array in the format `[minX, minY, maxX, maxY]`.
- * Search results will be limited to the bounding box.
- * @param {string} [options.countries] a comma separated list of country codes to
- * limit results to specified country or countries.
- * @param {string} [options.types] a comma seperated list of types that filter
- * results to match those specified. See https://docs.mapbox.com/api/search/#data-types
- * for available types.
- * If reverseGeocode is enabled, you should specify one type. If you configure more than one type, the first type will be used.
- * @param {Number} [options.minLength=2] Minimum number of characters to enter before results are shown.
- * @param {Number} [options.limit=5] Maximum number of results to show.
- * @param {string} [options.language] Specify the language to use for response text and query result weighting. Options are IETF language tags comprised of a mandatory ISO 639-1 language code and optionally one or more IETF subtags for country or script. More than one value can also be specified, separated by commas. Defaults to the browser's language settings.
- * @param {Function} [options.filter] A function which accepts a Feature in the [Carmen GeoJSON](https://github.com/mapbox/carmen/blob/master/carmen-geojson.md) format to filter out results from the Geocoding API response before they are included in the suggestions list. Return `true` to keep the item, `false` otherwise.
- * @param {Function} [options.localGeocoder] A function accepting the query string which performs local geocoding to supplement results from the Maplibre Geocoding API. Expected to return an Array of GeoJSON Features in the [Carmen GeoJSON](https://github.com/mapbox/carmen/blob/master/carmen-geojson.md) format.
- * @param {Function} [options.externalGeocoder] A function accepting the query string, current features list, and geocoder options which performs geocoding to supplement results from the Maplibre Geocoding API. Expected to return a Promise which resolves to an Array of GeoJSON Features in the [Carmen GeoJSON](https://github.com/mapbox/carmen/blob/master/carmen-geojson.md) format.
- * @param {distance|score} [options.reverseMode=distance] - Set the factors that are used to sort nearby results.
- * @param {boolean} [options.reverseGeocode=false] If `true`, enable reverse geocoding mode. In reverse geocoding, search input is expected to be coordinates in the form `lat, lon`, with suggestions being the reverse geocodes.
- * @param {Boolean} [options.enableEventLogging=true] Allow Maplibre to collect anonymous usage statistics from the plugin.
- * @param {Boolean|Object} [options.marker=true]  If `true`, a [Marker](https://maplibre.org/maplibre-gl-js-docs/api/markers/#marker) will be added to the map at the location of the user-selected result using a default set of Marker options.  If the value is an object, the marker will be constructed using these options. If `false`, no marker will be added to the map. Requires that `options.maplibregl` also be set.
- * @param {Boolean|Object} [options.popup=true]  If `true`, a [Popup](https://maplibre.org/maplibre-gl-js-docs/api/markers/#popup) will be added to the map when clicking on a marker using a default set of popup options.  If the value is an object, the popup will be constructed using these options. If `false`, no popup will be added to the map. Requires that `options.maplibregl` also be set.
- * @param {Boolean|Object} [options.showResultMarkers=true]  If `true`, [Markers](https://maplibre.org/maplibre-gl-js-docs/api/markers/#marker) will be added to the map at the location the top results for the query.   If the value is an object, the marker will be constructed using these options. If `false`, no marker will be added to the map. Requires that `options.maplibregl` also be set.
- * @param {Function} [options.render] A function that specifies how the results should be rendered in the dropdown menu. This function should accepts a single [Carmen GeoJSON](https://github.com/mapbox/carmen/blob/master/carmen-geojson.md) object as input and return a string. Any HTML in the returned string will be rendered.
- * @param {Function} [options.popupRender] A function that specifies how the results should be rendered in the popup menu. This function should accept a single [Carmen GeoJSON](https://github.com/mapbox/carmen/blob/master/carmen-geojson.md) object as input and return a string. Any HTML in the returned string will be rendered.
- * @param {Function} [options.getItemValue] A function that specifies how the selected result should be rendered in the search bar. This function should accept a single [Carmen GeoJSON](https://github.com/mapbox/carmen/blob/master/carmen-geojson.md) object as input and return a string. HTML tags in the output string will not be rendered. Defaults to `(item) => item.place_name`.
- * @param {Boolean} [options.localGeocoderOnly=false] If `true`, indicates that the `localGeocoder` results should be the only ones returned to the user. If `false`, indicates that the `localGeocoder` results should be combined with those from the Maplibre API with the `localGeocoder` results ranked higher.
- * @param {Boolean} [options.showResultsWhileTyping=false] If `false`, indicates that search will only occur on enter key press. If `true`, indicates that the Geocoder will search on the input box being updated above the minLength option.
- * @param {Number} [options.debounceSearch=200] Sets the amount of time, in milliseconds, to wait before querying the server when a user types into the Geocoder input box. This parameter may be useful for reducing the total number of API calls made for a single query.
- * @example
- *
- * var GeoApi = {
- *   forwardGeocode: (config) => { return { features: [] } },
- *   reverseGeocode: (config) => { return { features: [] } }
- *   getSuggestions: (config) => { return { suggestions: {text: string, placeId?: string}[] }}
- *   searchByPlaceId: (config) => { return { place: {type: string, geometry: {type: string, coordinates: [number]} place_name: string, text: string, center: [number] }[] }}
- * }
- * var geocoder = new MaplibreGeocoder(GeoApi, {});
- * map.addControl(geocoder);
- * @return {MaplibreGeocoder} `this`
- *
  */
-
-function MaplibreGeocoder(geocoderApi, options) {
-  this._eventEmitter = new EventEmitter();
-  this.options = extend({}, this.options, options);
-  this.inputString = "";
-  this.fresh = true;
-  this.lastSelected = null;
-  this.geocoderApi = geocoderApi;
-}
-
-MaplibreGeocoder.prototype = {
-  options: {
+export class MaplibreGeocoder {
+  
+  private options: MaplibreGeocoderOptions = {
     zoom: 16,
     flyTo: true,
     trackProximity: true,
@@ -87,14 +245,16 @@ MaplibreGeocoder.prototype = {
     enableEventLogging: true,
     marker: true,
     popup: false,
-    maplibregl: null,
+    maplibregl: undefined,
     collapsed: false,
     clearAndBlurOnEsc: false,
     clearOnBlur: false,
-    getItemValue: function (item) {
+    placeholder: "Search",
+
+    getItemValue: (item) => {
       return item.text !== undefined ? item.text : item.place_name;
     },
-    render: function (item) {
+    render: function (item: CarmenGeojsonFeature) {
       // Render as a suggestion
       if (!item.geometry) {
         var suggestionString = item.text;
@@ -125,26 +285,25 @@ MaplibreGeocoder.prototype = {
           "</div>" +
           "</div>"
         );
-      } else {
-        // render as a search result
-        var placeName = item.place_name.split(",");
-
-        return (
-          '<div class="mapboxgl-ctrl-geocoder--result maplibregl-ctrl-geocoder--result">' +
-          '<svg class="mapboxgl-ctrl-geocoder--result-icon maplibre-ctrl-geocoder--result-icon" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.36571 0 0 5.38676 0 12.0471C0 21.0824 12 32 12 32C12 32 24 21.0824 24 12.0471C24 5.38676 18.6343 0 12 0ZM12 16.3496C9.63428 16.3496 7.71429 14.4221 7.71429 12.0471C7.71429 9.67207 9.63428 7.74454 12 7.74454C14.3657 7.74454 16.2857 9.67207 16.2857 12.0471C16.2857 14.4221 14.3657 16.3496 12 16.3496Z" fill="#687078"/></svg>' +
-          "<div>" +
-          '<div class="mapboxgl-ctrl-geocoder--result-title maplibregl-ctrl-geocoder--result-title">' +
-          placeName[0] +
-          "</div>" +
-          '<div class="mapboxgl-ctrl-geocoder--result-address maplibregl-ctrl-geocoder--result-address">' +
-          placeName.splice(1, placeName.length).join(",") +
-          "</div>" +
-          "</div>" +
-          "</div>"
-        );
       }
+      // render as a search result
+      var placeName = item.place_name.split(",");
+
+      return (
+        '<div class="mapboxgl-ctrl-geocoder--result maplibregl-ctrl-geocoder--result">' +
+        '<svg class="mapboxgl-ctrl-geocoder--result-icon maplibre-ctrl-geocoder--result-icon" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.36571 0 0 5.38676 0 12.0471C0 21.0824 12 32 12 32C12 32 24 21.0824 24 12.0471C24 5.38676 18.6343 0 12 0ZM12 16.3496C9.63428 16.3496 7.71429 14.4221 7.71429 12.0471C7.71429 9.67207 9.63428 7.74454 12 7.74454C14.3657 7.74454 16.2857 9.67207 16.2857 12.0471C16.2857 14.4221 14.3657 16.3496 12 16.3496Z" fill="#687078"/></svg>' +
+        "<div>" +
+        '<div class="mapboxgl-ctrl-geocoder--result-title maplibregl-ctrl-geocoder--result-title">' +
+        placeName[0] +
+        "</div>" +
+        '<div class="mapboxgl-ctrl-geocoder--result-address maplibregl-ctrl-geocoder--result-address">' +
+        placeName.splice(1, placeName.length).join(",") +
+        "</div>" +
+        "</div>" +
+        "</div>"
+      );
     },
-    popupRender: function (item) {
+    popupRender: (item) => {
       var placeName = item.place_name.split(",");
       return (
         '<div class="mapboxgl-ctrl-geocoder--suggestion maplibre-ctrl-geocoder--suggestion popup-suggestion"><div class="mapboxgl-ctrl-geocoder--suggestion-title maplibre-ctrl-geocoder--suggestion-title popup-suggestion-title">' +
@@ -156,12 +315,37 @@ MaplibreGeocoder.prototype = {
     },
     showResultMarkers: true,
     debounceSearch: 200,
-  },
+  };
+  
+  private _eventEmitter: EventEmitter;
+  private _map: Map | null;
+  private _maplibregl: typeof MaplibreGl | undefined;
+  private _inputEl: HTMLInputElement;
+  private _clearEl: HTMLButtonElement;
+  private _loadingEl: SVGElement;
+  private _typeahead: Typeahead;
+  private container: HTMLElement;
+  private mapMarker: Marker | null;
+  private resultMarkers: Marker[];
+  private placeholder: string;
+  private inputString: string;
+  private fresh: boolean;
+  private lastSelected: string | null;
+  private geocoderApi: MaplibreGeocoderApi;
+
+  constructor(geocoderApi: MaplibreGeocoderApi, options: MaplibreGeocoderOptions) {
+    this._eventEmitter = new EventEmitter();
+    this.options = extend({}, this.options, options);
+    this.inputString = "";
+    this.fresh = true;
+    this.lastSelected = null;
+    this.geocoderApi = geocoderApi;
+  }    
 
   /**
-   * Add the geocoder to a container. The container can be either a `maplibregl.Map`, an `HTMLElement` or a CSS selector string.
+   * Add the geocoder to a container. The container can be either a `Map`, an `HTMLElement` or a CSS selector string.
    *
-   * If the container is a [`maplibregl.Map`](https://maplibre.org/maplibre-gl-js-docs/api/map/#map), this function will behave identically to [`Map.addControl(geocoder)`](https://maplibre.org/maplibre-gl-js-docs/api/map/#map#addcontrol).
+   * If the container is a [`Map`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map), this function will behave identically to [`Map.addControl(geocoder)`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map#addcontrol).
    * If the container is an instance of [`HTMLElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement), then the geocoder will be appended as a child of that [`HTMLElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement).
    * If the container is a [CSS selector string](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors), the geocoder will be appended to the element returned from the query.
    *
@@ -169,19 +353,19 @@ MaplibreGeocoder.prototype = {
    * It will also throw an error if the referenced HTML element cannot be found in the `document.body`.
    *
    * For example, if the HTML body contains the element `<div id='geocoder-container'></div>`, the following script will append the geocoder to `#geocoder-container`:
-   *
-   * ```javascript
-   * var GeoApi = {
+   * @example
+   * ```js
+   * const GeoApi = {
    *   forwardGeocode: (config) => { return { features: [] } },
    *   reverseGeocode: (config) => { return { features: [] } }
    * }
-   * var geocoder = new MaplibreGeocoder(GeoAPI, {});
+   * const geocoder = new MaplibreGeocoder(GeoAPI, {});
    * geocoder.addTo('#geocoder-container');
    * ```
-   * @param {String|HTMLElement|maplibregl.Map} container A reference to the container to which to add the geocoder
+   * @param container - A reference to the container to which to add the geocoder
    */
-  addTo: function (container) {
-    function addToExistingContainer(geocoder, container) {
+  public addTo(container: string | HTMLElement | Map): void {
+    function addToExistingContainer(geocoder: MaplibreGeocoder, container: Element) {
       if (!document.body.contains(container)) {
         throw new Error(
           "Element provided to #addTo() exists, but is not in the DOM"
@@ -191,20 +375,15 @@ MaplibreGeocoder.prototype = {
       container.appendChild(el);
     }
 
-    // if the container is a map, add the control like normal
-    if (container._controlContainer) {
-      //  it's a maplibre-gl map, add like normal
-      container.addControl(this);
-    }
     // if the container is an HTMLElement, then set the parent to be that element
-    else if (container instanceof HTMLElement) {
+    if (container instanceof HTMLElement) {
       addToExistingContainer(this, container);
     }
     // if the container is a string, treat it as a CSS query
     else if (typeof container == "string") {
       var parent = document.querySelectorAll(container);
       if (parent.length === 0) {
-        throw new Error("Element ", container, "not found.");
+        throw new Error("Element " + container + "not found.");
       }
 
       if (parent.length > 1) {
@@ -212,14 +391,19 @@ MaplibreGeocoder.prototype = {
       }
 
       addToExistingContainer(this, parent[0]);
+    } 
+    // if the container is a map, add the control like normal
+    else if ('addControl' in container) {
+      //  it's a maplibre-gl map, add like normal
+      container.addControl(this);
     } else {
       throw new Error(
         "Error: addTo must be a maplibre-gl-js map, an html element, or a CSS selector query for a single html element"
       );
     }
-  },
+  }
 
-  onAdd: function (map) {
+  onAdd(map?: Map): HTMLElement {
     if (map && typeof map != "string") {
       this._map = map;
     }
@@ -342,9 +526,9 @@ MaplibreGeocoder.prototype = {
       }
     }
     return el;
-  },
+  }
 
-  createIcon: function (name, path) {
+  createIcon(name: string, path: string) {
     var icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     icon.setAttribute(
       "class",
@@ -355,8 +539,8 @@ MaplibreGeocoder.prototype = {
     );
     icon.setAttribute("viewBox", "0 0 18 18");
     icon.setAttribute("xml:space", "preserve");
-    icon.setAttribute("width", 18);
-    icon.setAttribute("height", 18);
+    icon.setAttribute("width", "18");
+    icon.setAttribute("height", "18");
     // IE does not have innerHTML for SVG nodes
     if (!("innerHTML" in icon)) {
       var SVGNodeContainer = document.createElement("div");
@@ -364,14 +548,14 @@ MaplibreGeocoder.prototype = {
         "<svg>" + path.valueOf().toString() + "</svg>";
       var SVGNode = SVGNodeContainer.firstChild,
         SVGPath = SVGNode.firstChild;
-      icon.appendChild(SVGPath);
+      (icon as any).appendChild(SVGPath);
     } else {
       icon.innerHTML = path;
     }
     return icon;
-  },
+  }
 
-  onRemove: function () {
+  onRemove() {
     this.container.parentNode.removeChild(this.container);
 
     if (this.options.trackProximity && this._map) {
@@ -383,19 +567,19 @@ MaplibreGeocoder.prototype = {
     this._map = null;
 
     return this;
-  },
+  }
 
-  _onPaste: function (e) {
-    var value = (e.clipboardData || window.clipboardData).getData("text");
+  _onPaste(e) {
+    var value = (e.clipboardData || (window as any).clipboardData).getData("text");
     if (
       value.length >= this.options.minLength &&
       this.options.showResultsWhileTyping
     ) {
       this._geocode(value);
     }
-  },
+  }
 
-  _onKeyDown: function (e) {
+  _onKeyDown(e) {
     var ESC_KEY_CODE = 27,
       TAB_KEY_CODE = 9;
 
@@ -456,29 +640,29 @@ MaplibreGeocoder.prototype = {
     ) {
       this._geocode(target.value);
     }
-  },
+  }
 
-  _showButton: function () {
+  _showButton() {
     if (this._inputEl.value.length > 0) this._clearEl.style.display = "block";
-  },
+  }
 
-  _hideButton: function () {
+  _hideButton() {
     if (this._typeahead.selected) this._clearEl.style.display = "none";
-  },
+  }
 
-  _onBlur: function (e) {
+  _onBlur(e) {
     if (this.options.clearOnBlur) {
       this._clearOnBlur(e);
     }
     if (this.options.collapsed) {
       this._collapse();
     }
-  },
+  }
   // Change events are fire by suggestions library whenever the enter key is pressed or input is blurred
   // This can sometimes cause strange behavior as this function is called before our own onKeyDown handler and thus
   //  we cannot depend on some internal values of the suggestion state like `selected` as those will change or before
   //  our onKeyDown handler.
-  _onChange: function () {
+  _onChange() {
     var selected = this._typeahead.selected;
 
     // If a suggestion was selected
@@ -497,7 +681,7 @@ MaplibreGeocoder.prototype = {
           // Reunion in the Indian Ocean. An incomplete list of these exceptions
           // at ./exceptions.json provides "reasonable" bounding boxes as a
           // short-term solution; this may be amended as necessary.
-          flyOptions = extend({}, this.options.flyTo);
+          flyOptions = extend({}, this.options.flyTo as any);
           if (this._map) {
             this._map.fitBounds(
               exceptions[selected.properties.short_code].bbox,
@@ -506,7 +690,7 @@ MaplibreGeocoder.prototype = {
           }
         } else if (selected.bbox) {
           var bbox = selected.bbox;
-          flyOptions = extend({}, this.options.flyTo);
+          flyOptions = extend({}, this.options.flyTo as any);
           if (this._map) {
             this._map.fitBounds(
               [
@@ -520,7 +704,7 @@ MaplibreGeocoder.prototype = {
           var defaultFlyOptions = {
             zoom: this.options.zoom,
           };
-          flyOptions = extend({}, defaultFlyOptions, this.options.flyTo);
+          flyOptions = extend({}, defaultFlyOptions, this.options.flyTo as any);
           //  ensure that center is not overriden by custom options
           if (selected.center) {
             flyOptions.center = selected.center;
@@ -551,11 +735,11 @@ MaplibreGeocoder.prototype = {
       this._typeahead.selected = null; // reset selection current selection value and set it to last selected
       this._eventEmitter.emit("result", { result: selected });
     }
-  },
+  }
 
-  _getConfigForRequest: function () {
+  _getConfigForRequest(): MaplibreGeocoderApiConfig {
     // Possible config proprerties to pass to client
-    var keys = [
+    const keys = [
       "bbox",
       "limit",
       "proximity",
@@ -564,25 +748,22 @@ MaplibreGeocoder.prototype = {
       "language",
       "reverseMode",
     ];
-    var self = this;
     // Create config object
-    var config = keys.reduce(function (config, key) {
-      if (self.options[key]) {
-        // countries, types, and language need to be passed in as arrays to client
-        // https://github.com/mapbox/mapbox-sdk-js/blob/master/services/geocoding.js#L38-L47
+    const config: MaplibreGeocoderApiConfig = keys.reduce((config, key) => {
+      if (this.options[key]) {
         ["countries", "types", "language"].indexOf(key) > -1
-          ? (config[key] = self.options[key].split(/[\s,]+/))
-          : (config[key] = self.options[key]);
+          ? (config[key] = this.options[key].split(/[\s,]+/))
+          : (config[key] = this.options[key]);
 
         if (
           key === "proximity" &&
-          self.options[key] &&
-          typeof self.options[key].longitude === "number" &&
-          typeof self.options[key].latitude === "number"
+          this.options[key] &&
+          typeof this.options[key].longitude === "number" &&
+          typeof this.options[key].latitude === "number"
         ) {
           config[key] = [
-            self.options[key].longitude,
-            self.options[key].latitude,
+            this.options[key].longitude,
+            this.options[key].latitude,
           ];
         }
       }
@@ -590,9 +771,9 @@ MaplibreGeocoder.prototype = {
     }, {});
 
     return config;
-  },
+  }
 
-  _geocode: function (searchInput, isSuggestion, isPlaceId) {
+  _geocode(searchInput: string, isSuggestion = false, isPlaceId = false) {
     this._loadingEl.style.display = "block";
     this._eventEmitter.emit("loading", { query: searchInput });
     this.inputString = searchInput;
@@ -614,9 +795,7 @@ MaplibreGeocoder.prototype = {
       // parse coordinates
       var coords = searchInput
         .split(/[\s(,)?]+/)
-        .map(function (c) {
-          return parseFloat(c, 10);
-        })
+        .map((c) => parseFloat(c))
         .reverse();
 
       // client only accepts one type for reverseGeocode, so
@@ -657,18 +836,13 @@ MaplibreGeocoder.prototype = {
         localGeocoderRes = [];
       }
     }
-    var externalGeocoderRes = [];
-    request
-      .catch(
-        function (error) {
-          geocoderError = error;
-        }.bind(this)
-      )
-      .then(
-        function (response) {
+    var externalGeocoderRes = Promise.resolve([]);
+    request.catch((error) => {
+      geocoderError = error;
+    }).then((response: any) => {
           this._loadingEl.style.display = "none";
 
-          var res = {};
+          let res = {} as GeoJSON.FeatureCollection & { config?: MaplibreGeocoderApiConfig };
 
           if (!response) {
             res = {
@@ -696,7 +870,7 @@ MaplibreGeocoder.prototype = {
                 searchInput,
                 res.features,
                 config
-              ) || [];
+              ) || Promise.resolve([]);
             // supplement Geocoding API results with features returned by a promise
             return externalGeocoderRes.then(
               function (features) {
@@ -712,10 +886,9 @@ MaplibreGeocoder.prototype = {
             );
           }
           return res;
-        }.bind(this)
+        }
       )
-      .then(
-        function (res) {
+      .then((res) => {
           if (geocoderError) {
             throw geocoderError;
           }
@@ -753,16 +926,14 @@ MaplibreGeocoder.prototype = {
             this._renderNoResults();
             this._eventEmitter.emit("results", res);
           }
-        }.bind(this)
-      )
-      .catch(
-        function (err) {
+        })
+      .catch((err) => {
           this._loadingEl.style.display = "none";
 
           // in the event of an error in the Geocoding API still display results from the localGeocoder
           if (
             (localGeocoderRes.length && this.options.localGeocoder) ||
-            (externalGeocoderRes.length && this.options.externalGeocoder)
+            ((externalGeocoderRes as any).length && this.options.externalGeocoder)
           ) {
             this._clearEl.style.display = "block";
             this._typeahead.update(localGeocoderRes);
@@ -774,11 +945,10 @@ MaplibreGeocoder.prototype = {
 
           this._eventEmitter.emit("results", { features: localGeocoderRes });
           this._eventEmitter.emit("error", { error: err });
-        }.bind(this)
-      );
+        });
 
     return request;
-  },
+  }
 
   /**
    * Shared logic for clearing input
@@ -786,7 +956,7 @@ MaplibreGeocoder.prototype = {
    * @private
    *
    */
-  _clear: function (ev) {
+  _clear(ev) {
     if (ev) ev.preventDefault();
     this._inputEl.value = "";
     this._typeahead.selected = null;
@@ -798,17 +968,17 @@ MaplibreGeocoder.prototype = {
     this.lastSelected = null;
     this._eventEmitter.emit("clear");
     this.fresh = true;
-  },
+  }
 
   /**
    * Clear and then focus the input.
    * @param {Event} [ev] the event that triggered the clear, if available
    *
    */
-  clear: function (ev) {
+  clear(ev) {
     this._clear(ev);
     this._inputEl.focus();
-  },
+  }
 
   /**
    * Clear the input, without refocusing it. Used to implement clearOnBlur
@@ -816,7 +986,7 @@ MaplibreGeocoder.prototype = {
    * @param {Event} [ev] the blur event
    * @private
    */
-  _clearOnBlur: function (ev) {
+  _clearOnBlur(ev) {
     var ctx = this;
 
     /*
@@ -831,18 +1001,18 @@ MaplibreGeocoder.prototype = {
     if (ev.relatedTarget) {
       ctx._clear(ev);
     }
-  },
+  }
 
-  _onQueryResult: function (response) {
+  _onQueryResult(response) {
     var results = response;
     if (!results.features.length) return;
     var result = results.features[0];
     this._typeahead.selected = result;
     this._inputEl.value = result.place_name;
     this._onChange();
-  },
+  }
 
-  _updateProximity: function () {
+  _updateProximity() {
     // proximity is designed for local scale, if the user is looking at the whole world,
     // it doesn't make sense to factor in the arbitrary centre of the map
     if (!this._map) {
@@ -854,52 +1024,52 @@ MaplibreGeocoder.prototype = {
     } else {
       this.setProximity(null);
     }
-  },
+  }
 
-  _collapse: function () {
+  _collapse() {
     // do not collapse if input is in focus
     if (!this._inputEl.value && this._inputEl !== document.activeElement)
       this.container.classList.add(
         "mapboxgl-ctrl-geocoder--collapsed",
         "maplibregl-ctrl-geocoder--collapsed"
       );
-  },
+  }
 
-  _unCollapse: function () {
+  _unCollapse() {
     this.container.classList.remove(
       "mapboxgl-ctrl-geocoder--collapsed",
       "maplibregl-ctrl-geocoder--collapsed"
     );
-  },
+  }
 
   /**
    * Set & query the input
    * @param {string} searchInput location name or other search input
    * @returns {MaplibreGeocoder} this
    */
-  query: function (searchInput) {
+  query(searchInput) {
     this._geocode(searchInput).then(this._onQueryResult);
     return this;
-  },
+  }
 
-  _renderError: function () {
+  _renderError() {
     var errorMessage =
       "<div class='mapbox-gl-geocoder--error maplibre-gl-geocoder--error'>There was an error reaching the server</div>";
     this._renderMessage(errorMessage);
-  },
+  }
 
-  _renderNoResults: function () {
+  _renderNoResults() {
     var errorMessage =
       "<div class='mapbox-gl-geocoder--error mapbox-gl-geocoder--no-results maplibre-gl-geocoder--error maplibre-gl-geocoder--no-results'>No results found</div>";
     this._renderMessage(errorMessage);
-  },
+  }
 
-  _renderMessage: function (msg) {
+  _renderMessage(msg) {
     this._typeahead.update([]);
     this._typeahead.selected = null;
     this._typeahead.clear();
     this._typeahead.renderError(msg);
-  },
+  }
 
   /**
    * Get the text to use as the search bar placeholder
@@ -911,16 +1081,16 @@ MaplibreGeocoder.prototype = {
    * @returns {String} the value to use as the search bar placeholder
    * @private
    */
-  _getPlaceholderText: function () {
+  _getPlaceholderText() {
     if (this.options.placeholder) return this.options.placeholder;
     if (this.options.language) {
       var firstLanguage = this.options.language.split(",")[0];
       var language = subtag.language(firstLanguage);
-      var localizedValue = localization.placeholder[language];
+      var localizedValue = localization[language];
       if (localizedValue) return localizedValue;
     }
     return "Search";
-  },
+  }
 
   /**
    * Fits the map to the current bounds for the searched results
@@ -928,7 +1098,7 @@ MaplibreGeocoder.prototype = {
    * @returns {MaplibreGeocoder} this
    * @private
    */
-  _fitBoundsForMarkers: function () {
+  _fitBoundsForMarkers() {
     if (this._typeahead.data.length < 1) return;
 
     // Filter out suggestions and restrict to limit
@@ -943,13 +1113,13 @@ MaplibreGeocoder.prototype = {
     if (this.options.flyTo && this._maplibregl) {
       if (this._map) {
         var defaultFlyOptions = { padding: 100 };
-        var flyOptions = extend({}, defaultFlyOptions, this.options.flyTo);
+        var flyOptions = extend({}, defaultFlyOptions, this.options.flyTo as any);
         var bounds = new this._maplibregl.LngLatBounds();
         results.forEach(function (feature) {
           bounds.extend(feature.geometry.coordinates);
         });
 
-        this._map.fitBounds(bounds.toArray(), flyOptions);
+        this._map.fitBounds(bounds, flyOptions);
       }
     }
 
@@ -958,14 +1128,14 @@ MaplibreGeocoder.prototype = {
     }
 
     return this;
-  },
+  }
 
   /**
    * Set input
    * @param {string} searchInput location name or other search input
    * @returns {MaplibreGeocoder} this
    */
-  setInput: function (searchInput) {
+  setInput(searchInput) {
     // Set input value to passed value and clear everything else.
     this._inputEl.value = searchInput;
     this._typeahead.selected = null;
@@ -977,272 +1147,242 @@ MaplibreGeocoder.prototype = {
       this._geocode(searchInput);
     }
     return this;
-  },
+  }
 
   /**
    * Set proximity
-   * @param {Object} proximity The new `options.proximity` value. This is a geographical point given as an object with `latitude` and `longitude` properties.
+   * @param proximity - The new `options.proximity` value. This is a geographical point given as an object with `latitude` and `longitude` properties.
    * @returns {MaplibreGeocoder} this
    */
-  setProximity: function (proximity) {
+  setProximity(proximity: { longitude: number; latitude: number }): this {
     this.options.proximity = proximity;
     return this;
-  },
+  }
 
   /**
    * Get proximity
    * @returns {Object} The geocoder proximity
    */
-  getProximity: function () {
+  getProximity() {
     return this.options.proximity;
-  },
+  }
 
   /**
    * Set the render function used in the results dropdown
    * @param {Function} fn The function to use as a render function. This function accepts a single [Carmen GeoJSON](https://github.com/mapbox/carmen/blob/master/carmen-geojson.md) object as input and returns a string.
    * @returns {MaplibreGeocoder} this
    */
-  setRenderFunction: function (fn) {
+  setRenderFunction(fn) {
     if (fn && typeof fn == "function") {
       this._typeahead.render = fn;
     }
     return this;
-  },
+  }
 
   /**
    * Get the function used to render the results dropdown
    *
    * @returns {Function} the render function
    */
-  getRenderFunction: function () {
+  getRenderFunction() {
     return this._typeahead.render;
-  },
+  }
 
   /**
    * Get the language to use in UI elements and when making search requests
    *
    * Look first at the explicitly set options otherwise use the browser's language settings
-   * @param {String} language Specify the language to use for response text and query result weighting. Options are IETF language tags comprised of a mandatory ISO 639-1 language code and optionally one or more IETF subtags for country or script. More than one value can also be specified, separated by commas.
-   * @returns {MaplibreGeocoder} this
+   * @param language - Specify the language to use for response text and query result weighting. Options are IETF language tags comprised of a mandatory ISO 639-1 language code and optionally one or more IETF subtags for country or script. More than one value can also be specified, separated by commas.
    */
-  setLanguage: function (language) {
-    var browserLocale =
-      navigator.language || navigator.userLanguage || navigator.browserLanguage;
-    this.options.language = language || this.options.language || browserLocale;
+  setLanguage(language?: string): this {
+    this.options.language = language || this.options.language || navigator.language;;
     return this;
-  },
+  }
 
   /**
    * Get the language to use in UI elements and when making search requests
    * @returns {String} The language(s) used by the plugin, if any
    */
-  getLanguage: function () {
+  getLanguage() {
     return this.options.language;
-  },
+  }
 
   /**
    * Get the zoom level the map will move to when there is no bounding box on the selected result
    * @returns {Number} the map zoom
    */
-  getZoom: function () {
+  getZoom() {
     return this.options.zoom;
-  },
+  }
 
   /**
    * Set the zoom level
    * @param {Number} zoom The zoom level that the map should animate to when a `bbox` isn't found in the response. If a `bbox` is found the map will fit to the `bbox`.
    * @returns {MaplibreGeocoder} this
    */
-  setZoom: function (zoom) {
+  setZoom(zoom) {
     this.options.zoom = zoom;
     return this;
-  },
+  }
 
   /**
    * Get the parameters used to fly to the selected response, if any
    * @returns {Boolean|Object} The `flyTo` option
    */
-  getFlyTo: function () {
+  getFlyTo() {
     return this.options.flyTo;
-  },
+  }
 
   /**
    * Set the flyTo options
-   * @param {Boolean|Object} flyTo If false, animating the map to a selected result is disabled. If true, animating the map will use the default animation parameters. If an object, it will be passed as `options` to the map [`flyTo`](https://maplibre.org/maplibre-gl-js-docs/api/map/#map#flyto) or [`fitBounds`](https://maplibre.org/maplibre-gl-js-docs/api/map/#map#fitbounds) method providing control over the animation of the transition.
+   * @param {Boolean|Object} flyTo If false, animating the map to a selected result is disabled. If true, animating the map will use the default animation parameters. If an object, it will be passed as `options` to the map [`flyTo`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map#flyto) or [`fitBounds`](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map#fitbounds) method providing control over the animation of the transition.
    */
-  setFlyTo: function (flyTo) {
+  setFlyTo(flyTo) {
     this.options.flyTo = flyTo;
     return this;
-  },
+  }
 
   /**
    * Get the value of the placeholder string
    * @returns {String} The input element's placeholder value
    */
-  getPlaceholder: function () {
+  getPlaceholder() {
     return this.options.placeholder;
-  },
+  }
 
   /**
    * Set the value of the input element's placeholder
-   * @param {String} placeholder the text to use as the input element's placeholder
-   * @returns {MaplibreGeocoder} this
+   * @param placeholder - the text to use as the input element's placeholder
    */
-  setPlaceholder: function (placeholder) {
+  setPlaceholder(placeholder?: string): this {
     this.placeholder = placeholder ? placeholder : this._getPlaceholderText();
     this._inputEl.placeholder = this.placeholder;
     this._inputEl.setAttribute("aria-label", this.placeholder);
     return this;
-  },
+  }
 
   /**
    * Get the bounding box used by the plugin
    * @returns {Array<Number>} the bounding box, if any
    */
-  getBbox: function () {
+  getBbox() {
     return this.options.bbox;
-  },
+  }
 
   /**
    * Set the bounding box to limit search results to
    * @param {Array<Number>} bbox a bounding box given as an array in the format [minX, minY, maxX, maxY].
    * @returns {MaplibreGeocoder} this
    */
-  setBbox: function (bbox) {
+  setBbox(bbox) {
     this.options.bbox = bbox;
     return this;
-  },
+  }
 
   /**
    * Get a list of the countries to limit search results to
    * @returns {String} a comma separated list of countries to limit to, if any
    */
-  getCountries: function () {
+  getCountries() {
     return this.options.countries;
-  },
+  }
 
   /**
    * Set the countries to limit search results to
-   * @param {String} countries a comma separated list of countries to limit to
-   * @returns {MaplibreGeocoder} this
+   * @param countries - a comma separated list of countries to limit to
    */
-  setCountries: function (countries) {
+  setCountries(countries: string):this {
     this.options.countries = countries;
     return this;
-  },
+  }
 
   /**
    * Get a list of the types to limit search results to
    * @returns {String} a comma separated list of types to limit to
    */
-  getTypes: function () {
+  getTypes() {
     return this.options.types;
-  },
+  }
 
   /**
    * Set the types to limit search results to
-   * @param {String} countries a comma separated list of types to limit to
-   * @returns {MaplibreGeocoder} this
+   * @param types - a comma separated list of types to limit to
    */
-  setTypes: function (types) {
+  setTypes(types: string): this {
     this.options.types = types;
     return this;
-  },
+  }
 
   /**
    * Get the minimum number of characters typed to trigger results used in the plugin
    * @returns {Number} The minimum length in characters before a search is triggered
    */
-  getMinLength: function () {
+  getMinLength() {
     return this.options.minLength;
-  },
+  }
 
   /**
    * Set the minimum number of characters typed to trigger results used by the plugin
    * @param {Number} minLength the minimum length in characters
    * @returns {MaplibreGeocoder} this
    */
-  setMinLength: function (minLength) {
+  setMinLength(minLength) {
     this.options.minLength = minLength;
     if (this._typeahead) this._typeahead.options.minLength = minLength;
     return this;
-  },
+  }
 
   /**
    * Get the limit value for the number of results to display used by the plugin
    * @returns {Number} The limit value for the number of results to display used by the plugin
    */
-  getLimit: function () {
+  getLimit() {
     return this.options.limit;
-  },
+  }
 
   /**
    * Set the limit value for the number of results to display used by the plugin
    * @param {Number} limit the number of search results to return
    * @returns {MaplibreGeocoder}
    */
-  setLimit: function (limit) {
+  setLimit(limit) {
     this.options.limit = limit;
     if (this._typeahead) this._typeahead.options.limit = limit;
     return this;
-  },
+  }
 
   /**
    * Get the filter function used by the plugin
    * @returns {Function} the filter function
    */
-  getFilter: function () {
+  getFilter() {
     return this.options.filter;
-  },
+  }
 
   /**
    * Set the filter function used by the plugin.
-   * @param {Function} filter A function which accepts a Feature in the [Carmen GeoJSON](https://github.com/mapbox/carmen/blob/master/carmen-geojson.md) format to filter out results from the Geocoding API response before they are included in the suggestions list. Return `true` to keep the item, `false` otherwise.
-   * @returns {MaplibreGeocoder} this
-   */
-  setFilter: function (filter) {
+   * @param filter - A function which accepts a {@link CarmenGeojsonFeature} to filter out results from the Geocoding API response before they are included in the suggestions list. Return `true` to keep the item, `false` otherwise.
+   */ 
+  setFilter(filter: (feature: CarmenGeojsonFeature) => boolean): this {
     this.options.filter = filter;
     return this;
-  },
+  }
 
   /**
    * Set the geocoding api used by the plugin.
-   * @param {Object} geocoderApi An API which contains reverseGeocode and forwardGeocode functions to be used by this plugin
-   * @param {Function} geocoderApi.forwardGeocode Forward geocode function should return an object including a collection of Features in [Carmen GeoJSON](https://github.com/mapbox/carmen/blob/master/carmen-geojson.md) format
-   * @param {Object} geocoderApi.forwardGeocode.config Query parameters
-   * @param {String} geocoderApi.forwardGeocode.config.query Search query string
-   * @param {Number} geocoderApi.forwardGeocode.config.limit Number of results to limit by
-   * @param {Array} geocoderApi.forwardGeocode.config.bbox a bounding box given as an array in the format `[minX, minY, maxX, maxY]`. Search results will be limited to the bounding box.
-   * @param {Object} geocoderApi.forwardGeocode.config.proximity a geographical point given as an object with `latitude` and `longitude` properties. Search results closer to this point will be given higher priority.
-   * @param {Array} geocoderApi.forwardGeocode.config.countries a comma separated list of country codes to limit results to specified country or countries.
-   * @param {Array} geocoderApi.forwardGeocode.config.types a comma seperated list of types that filter results to match those specified. See https://docs.mapbox.com/api/search/#data-types for available types. If reverseGeocode is enabled, you should specify one type. If you configure more than one type, the first type will be used.
-   * @param {String} geocoderApi.forwardGeocode.config.language Specify the language to use for response text and query result weighting. Options are IETF language tags comprised of a mandatory ISO 639-1 language code and optionally one or more IETF subtags for country or script. More than one value can also be specified, separated by commas. Defaults to the browser's language settings.
-   * @param {distance|score} geocoderApi.forwardGeocode.config.reverseMode Set the factors that are used to sort nearby results.
-   *
-   * @param {Function} geocoderApi.reverseGeocode Reverse geocode function should return an object including a collection of Features in [Carmen GeoJSON](https://github.com/mapbox/carmen/blob/master/carmen-geojson.md) format
-   * @param {Object} geocoderApi.reverseGeocode.config Query parameters
-   * @param {Object} geocoderApi.reverseGeocode.config.query Search query coordinates
-   * @param {Number} geocoderApi.reverseGeocode.config.limit Number of results to limit by
-   * @param {Array} geocoderApi.reverseGeocode.config.bbox a bounding box given as an array in the format `[minX, minY, maxX, maxY]`. Search results will be limited to the bounding box.
-   * @param {Object} geocoderApi.reverseGeocode.config.proximity a geographical point given as an object with `latitude` and `longitude` properties. Search results closer to this point will be given higher priority.
-   * @param {Array} geocoderApi.reverseGeocode.config.countries a comma separated list of country codes to limit results to specified country or countries.
-   * @param {Array} geocoderApi.reverseGeocode.config.types a comma seperated list of types that filter results to match those specified. See https://docs.mapbox.com/api/search/#data-types for available types. If reverseGeocode is enabled, you should specify one type. If you configure more than one type, the first type will be used.
-   * @param {String} geocoderApi.reverseGeocode.config.language Specify the language to use for response text and query result weighting. Options are IETF language tags comprised of a mandatory ISO 639-1 language code and optionally one or more IETF subtags for country or script. More than one value can also be specified, separated by commas. Defaults to the browser's language settings.
-   * @param {distance|score} geocoderApi.reverseGeocode.config.reverseMode Set the factors that are used to sort nearby results.
-   * @returns {MaplibreGeocoder} this
    */
-  setGeocoderApi: function (geocoderApi) {
+  setGeocoderApi(geocoderApi: MaplibreGeocoderApi): this {
     this.geocoderApi = geocoderApi;
     return this;
-  },
+  }
 
   /**
    * Get the geocoding endpoint the plugin is currently set to
    * @returns {Object} the geocoding API
    */
-  getGeocoderApi: function () {
+  getGeocoderApi() {
     return this.geocoderApi;
-  },
+  }
 
   /**
    * Handle the placement of a result marking the selected result
@@ -1250,7 +1390,7 @@ MaplibreGeocoder.prototype = {
    * @param {Object} selected the selected geojson feature
    * @returns {MaplibreGeocoder} this
    */
-  _handleMarker: function (selected) {
+  _handleMarker(selected) {
     // clean up any old marker that might be present
     if (!this._map) {
       return;
@@ -1259,13 +1399,13 @@ MaplibreGeocoder.prototype = {
     var defaultMarkerOptions = {
       color: "#4668F2",
     };
-    var markerOptions = extend({}, defaultMarkerOptions, this.options.marker);
+    var markerOptions = extend({}, defaultMarkerOptions, this.options.marker as any);
     this.mapMarker = new this._maplibregl.Marker(markerOptions);
 
     var popup;
     if (this.options.popup) {
       var defaultPopupOptions = {};
-      var popupOptions = extend({}, defaultPopupOptions, this.options.popup);
+      var popupOptions = extend({}, defaultPopupOptions, this.options.popup as any);
       popup = new this._maplibregl.Popup(popupOptions).setHTML(
         this.options.popupRender(selected)
       );
@@ -1286,18 +1426,18 @@ MaplibreGeocoder.prototype = {
       if (this.options.popup) this.mapMarker.setPopup(popup);
     }
     return this;
-  },
+  }
 
   /**
    * Handle the removal of a result marker
    * @private
    */
-  _removeMarker: function () {
+  _removeMarker() {
     if (this.mapMarker) {
       this.mapMarker.remove();
       this.mapMarker = null;
     }
-  },
+  }
 
   /**
    * Handle the placement of a result marking the selected result
@@ -1305,7 +1445,7 @@ MaplibreGeocoder.prototype = {
    * @param {Object[]} results the top results to display on the map
    * @returns {MaplibreGeocoder} this
    */
-  _handleResultMarkers: function (results) {
+  _handleResultMarkers(results) {
     // clean up any old marker that might be present
     if (!this._map) {
       return;
@@ -1317,7 +1457,7 @@ MaplibreGeocoder.prototype = {
     var markerOptions = extend(
       {},
       defaultMarkerOptions,
-      this.options.showResultMarkers
+      this.options.showResultMarkers as any
     );
 
     results.forEach(
@@ -1362,20 +1502,20 @@ MaplibreGeocoder.prototype = {
       }.bind(this)
     );
     return this;
-  },
+  }
 
   /**
    * Handle the removal of a result marker
    * @private
    */
-  _removeResultMarkers: function () {
+  _removeResultMarkers() {
     if (this.resultMarkers && this.resultMarkers.length > 0) {
       this.resultMarkers.forEach(function (marker) {
         marker.remove();
       });
       this.resultMarkers = [];
     }
-  },
+  }
 
   /**
    * Subscribe to events that happen within the plugin.
@@ -1389,10 +1529,10 @@ MaplibreGeocoder.prototype = {
    * @param {Function} fn function that's called when the event is emitted.
    * @returns {MaplibreGeocoder} this;
    */
-  on: function (type, fn) {
+  on(type, fn) {
     this._eventEmitter.on(type, fn);
     return this;
-  },
+  }
 
   /**
    * Remove an event
@@ -1400,10 +1540,8 @@ MaplibreGeocoder.prototype = {
    * @param {String} type Event name.
    * @param {Function} fn Function that should unsubscribe to the event emitted.
    */
-  off: function (type, fn) {
+  off(type, fn) {
     this._eventEmitter.removeListener(type, fn);
     return this;
-  },
-};
-
-module.exports = MaplibreGeocoder;
+  }
+}

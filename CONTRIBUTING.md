@@ -1,12 +1,8 @@
 ## Developing
 
-Install nvm
+Install Node.js ^20
 
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-
-Install Node.js ^16
-
-    nvm install 16
+    nvm install 20
 
     npm install & npm start & open http://localhost:9966/
 
@@ -23,12 +19,12 @@ Follow this deploy process after all changes for the release are merged into mas
 ```
 ## Release checklist
 
-1. Create a branch off `master` and a pull request with the following changes. Copy this checklist in the comment of the pull request.
-    - [ ] Update the [CHANGELOG.md](https://github.com/thaddmt/maplibre-gl-geocoder/blob/master/CHANGELOG.md) by comparing the last release and what is on `master`. In the changelog, replace the `master` heading with the to-be-released stable version.
+1. Create a branch off `main` and a pull request with the following changes. Copy this checklist in the comment of the pull request.
+    - [ ] Update the [CHANGELOG.md](https://github.com/thaddmt/maplibre-gl-geocoder/blob/master/CHANGELOG.md) by comparing the last release and what is on `main`. In the changelog, replace the `master` heading with the to-be-released stable version.
     - [ ] Update the version number in `package.json` and `package-lock.json`.
 3. Request a PR review and then merge it into `master`.
 4. Tag the release and start the build.
-    - [ ] Make sure you've pulled in all changes to `master` locally.
+    - [ ] Make sure you've pulled in all changes to `main` locally.
     - [ ] Build the release with `npm run prepublish && npm run docs`
     - [ ] Commit and push with commit message `vX.X.X`
     - [ ] Create the git tag for the release with `git tag -a vX.X.X -m 'vX.X.X'`

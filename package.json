@@ -2,17 +2,19 @@
   "name": "@maplibre/maplibre-gl-geocoder",
   "version": "1.5.0",
   "description": "A geocoder control for Maplibre GL JS",
-  "main": "lib/index.js",
-  "unpkg": "dist/maplibre-gl-geocoder.min.js",
-  "style": "lib/maplibre-gl-geocoder.css",
+  "main": "dist/maplibre-gl-geocoder.js",
+  "module": "dist/maplibre-gl-geocoder.mjs",
+  "typings": "dist/maplibre-gl-geocoder.d.ts",
+  "style": "dist/maplibre-gl-geocoder.css",
+  "type": "module",
   "scripts": {
-    "start": "budo debug/index.js --dir debug --live -- -t brfs ",
-    "prepublish": "NODE_ENV=production && mkdir -p dist && browserify --standalone MaplibreGeocoder lib/index.js | uglifyjs -c -m > dist/maplibre-gl-geocoder.min.js && cp lib/maplibre-gl-geocoder.css dist/",
-    "test": "browserify -t envify test/index.js | smokestack -b firefox | tap-status | tap-color",
-    "docs": "documentation build lib/index.js --format=md > API.md",
-    "pretest": "npm run lint",
-    "lint": "eslint lib test",
-    "precommit": "lint-staged"
+    "watch": "rollup --configPlugin @rollup/plugin-typescript -c --watch",
+    "build": "rollup --configPlugin @rollup/plugin-typescript -c",
+    "build-css": "mkdir -p dist && cp index.css dist/maplibre-gl-inspect.css",
+    "build-dist": "npm run build && npm run build-css",
+    "test": "echo still needs work",
+    "docs": "typedoc --entryPoints lib/index.ts --out docs/API --treatWarningsAsErrors",
+    "lint": "eslint lib test"
   },
   "files": [
     "lib",
@@ -23,7 +25,7 @@
     "url": "git+ssh://git@github.com/maplibre/maplibre-gl-geocoder.git"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=18"
   },
   "keywords": [
     "geocoder",
@@ -37,28 +39,28 @@
   },
   "homepage": "https://github.com/maplibre/maplibre-gl-geocoder#readme",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/lodash.debounce": "^4.0.9",
+    "@types/xtend": "^4.0.6",
     "brfs": "^2.0.2",
     "browserify": "^16.2.3",
-    "budo": "^11.6.1",
-    "documentation": "^9.3.0",
-    "envify": "^3.4.1",
     "eslint": "^4.18.2",
-    "insert-css": "2.0.0",
     "lint-staged": "^8.1.5",
     "lodash.once": "^4.0.0",
-    "mapbox-gl": "^0.47.0",
-    "maplibre-gl": "^2.1.9",
+    "maplibre-gl": "^4.5.1",
+    "rollup": "^4.21.0",
+    "rollup-plugin-dts": "^6.1.1",
     "sinon": "^14.0.0",
-    "smokestack": "^3.3.1",
-    "tap-color": "^1.1.0",
-    "tap-status": "^1.0.1",
-    "tape": "^5.5.3",
-    "uglify-js": "^2.6.4"
+    "typedoc": "^0.26.5",
+    "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "maplibre-gl": ">=1.14.0"
+    "maplibre-gl": ">=4.0.0"
   },
   "dependencies": {
+    "events": "^3.3.0",
     "lodash.debounce": "^4.0.6",
     "subtag": "^0.5.0",
     "suggestions-list": "^0.0.2",
