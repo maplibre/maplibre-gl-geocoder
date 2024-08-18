@@ -232,7 +232,7 @@ export type MaplibreGeocoderApi = {
 /**
  * A geocoder component that works with maplibre
  */
-export class MaplibreGeocoder {
+export default class MaplibreGeocoder {
   
   private options: MaplibreGeocoderOptions = {
     zoom: 16,

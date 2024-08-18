@@ -1,7 +1,7 @@
 "use strict";
 
 var once = require("lodash.once");
-var MaplibreGeocoder = require("../dist/maplibre-gl-geocoder.js").MaplibreGeocoder;
+var MaplibreGeocoder = require("../dist/maplibre-gl-geocoder.js");
 var maplibregl = require("maplibre-gl");
 var test = require("tape");
 var sinon = require("sinon");
