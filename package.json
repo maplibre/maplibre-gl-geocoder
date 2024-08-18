@@ -45,7 +45,7 @@
     "@types/lodash.debounce": "^4.0.9",
     "@types/xtend": "^4.0.6",
     "brfs": "^2.0.2",
-    "browserify": "^16.5.2",
+    "browserify": "^17.0.0",
     "envify": "^4.1.0",
     "eslint": "^4.18.2",
     "lint-staged": "^8.1.5",
