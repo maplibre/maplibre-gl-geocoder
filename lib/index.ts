@@ -71,7 +71,7 @@ export type MaplibreGeocoderOptions = {
   popup?: boolean | Popup;
   /**
    * A [maplibre-gl](https://github.com/maplibre/maplibre-gl-js) instance to use when creating [Markers](https://maplibre.org/maplibre-gl-js/docs/API/classes/Marker/). Required if `options.marker` is `true`.
-   * @default undefined
+   * @default false
    */
   maplibregl?: typeof MaplibreGl;
   /**
