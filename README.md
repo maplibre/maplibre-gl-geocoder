@@ -14,7 +14,7 @@ npm install --save @maplibre/maplibre-gl-geocoder
 import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder';
 import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 ...
-// Functions should return Carmen GeoJSON https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
+// Functions should return Carmen GeoJSON, see the relevant type in this project
 // View config definitions in our [documentation](https://github.com/maplibre/maplibre-gl-geocoder/blob/master/API.md#setgeocoderapi)
 var Geo = {
   // required

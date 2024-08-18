@@ -3,9 +3,9 @@ var maplibregl = require('maplibre-gl');
 var insertCss = require('insert-css');
 var fs = require('fs');
 
-insertCss(fs.readFileSync('./lib/mapbox-gl-geocoder.css', 'utf8'));
+insertCss(fs.readFileSync('./lib/maplibre-gl-geocoder.css', 'utf8'));
 insertCss(
-  fs.readFileSync('./node_modules/mapbox-gl/dist/mapbox-gl.css', 'utf8')
+  fs.readFileSync('./node_modules/maplibre-gl/dist/maplibre-gl.css', 'utf8')
 );
 
 var MaplibreGeocoder = require('../');
