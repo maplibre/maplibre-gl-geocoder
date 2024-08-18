@@ -1054,13 +1054,13 @@ export class MaplibreGeocoder {
 
   _renderError() {
     var errorMessage =
-      "<div class='mapbox-gl-geocoder--error maplibre-gl-geocoder--error'>There was an error reaching the server</div>";
+      "<div class='maplibre-gl-geocoder--error'>There was an error reaching the server</div>";
     this._renderMessage(errorMessage);
   }
 
   _renderNoResults() {
     var errorMessage =
-      "<div class='mapbox-gl-geocoder--error mapbox-gl-geocoder--no-results maplibre-gl-geocoder--error maplibre-gl-geocoder--no-results'>No results found</div>";
+      "<div class='maplibre-gl-geocoder--error maplibre-gl-geocoder--no-results'>No results found</div>";
     this._renderMessage(errorMessage);
   }
 
