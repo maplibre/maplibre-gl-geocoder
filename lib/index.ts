@@ -1,6 +1,4 @@
-// @ts-ignore
 import Typeahead from "suggestions-list";
-// @ts-ignore
 import subtag from "subtag";
 import debounce from "lodash.debounce";
 import extend from "xtend";
@@ -254,17 +252,17 @@ export default class MaplibreGeocoder {
     render: function (item: CarmenGeojsonFeature) {
       // Render as a suggestion
       if (!item.geometry) {
-        var suggestionString = item.text;
-        var indexOfMatch = suggestionString
+        const suggestionString = item.text;
+        const indexOfMatch = suggestionString
           .toLowerCase()
           .indexOf(this.query.toLowerCase());
-        var lengthOfMatch = this.query.length;
-        var beforeMatch = suggestionString.substring(0, indexOfMatch);
-        var match = suggestionString.substring(
+        const lengthOfMatch = this.query.length;
+        const beforeMatch = suggestionString.substring(0, indexOfMatch);
+        const match = suggestionString.substring(
           indexOfMatch,
           indexOfMatch + lengthOfMatch
         );
-        var afterMatch = suggestionString.substring(
+        const afterMatch = suggestionString.substring(
           indexOfMatch + lengthOfMatch
         );
 
@@ -284,7 +282,7 @@ export default class MaplibreGeocoder {
         );
       }
       // render as a search result
-      var placeName = item.place_name.split(",");
+      const placeName = item.place_name.split(",");
 
       return (
         '<div class="maplibregl-ctrl-geocoder--result maplibregl-ctrl-geocoder--result">' +
@@ -301,7 +299,7 @@ export default class MaplibreGeocoder {
       );
     },
     popupRender: (item) => {
-      var placeName = item.place_name.split(",");
+      const placeName = item.place_name.split(",");
       return (
         '<div class="maplibregl-ctrl-geocoder--suggestion maplibre-ctrl-geocoder--suggestion popup-suggestion"><div class="maplibregl-ctrl-geocoder--suggestion-title maplibre-ctrl-geocoder--suggestion-title popup-suggestion-title">' +
         placeName[0] +
@@ -368,7 +366,7 @@ export default class MaplibreGeocoder {
           "Element provided to #addTo() exists, but is not in the DOM"
         );
       }
-      var el = geocoder.onAdd(); //returns the input elements, which are then added to the requested html container
+      const el = geocoder.onAdd(); //returns the input elements, which are then added to the requested html container
       container.appendChild(el);
     }
 
@@ -378,7 +376,7 @@ export default class MaplibreGeocoder {
     }
     // if the container is a string, treat it as a CSS query
     else if (typeof container == "string") {
-      var parent = document.querySelectorAll(container);
+      const parent = document.querySelectorAll(container);
       if (parent.length === 0) {
         throw new Error("Element " + container + "not found.");
       }
@@ -427,11 +425,11 @@ export default class MaplibreGeocoder {
     this._clear = this._clear.bind(this);
     this._clearOnBlur = this._clearOnBlur.bind(this);
 
-    var el = (this.container = document.createElement("div"));
+    const el = (this.container = document.createElement("div"));
     el.className =
       "maplibregl-ctrl-geocoder maplibregl-ctrl maplibregl-ctrl-geocoder maplibregl-ctrl";
 
-    var searchIcon = this.createIcon(
+    const searchIcon = this.createIcon(
       "search",
       '<path d="M7.4 2.5c-2.7 0-4.9 2.2-4.9 4.9s2.2 4.9 4.9 4.9c1 0 1.8-.2 2.5-.8l3.7 3.7c.2.2.4.3.8.3.7 0 1.1-.4 1.1-1.1 0-.3-.1-.5-.3-.8L11.4 10c.4-.8.8-1.6.8-2.5.1-2.8-2.1-5-4.8-5zm0 1.6c1.8 0 3.2 1.4 3.2 3.2s-1.4 3.2-3.2 3.2-3.3-1.3-3.3-3.1 1.4-3.3 3.3-3.3z"/>'
     );
@@ -463,7 +461,7 @@ export default class MaplibreGeocoder {
     this.container.addEventListener("mouseenter", this._showButton);
     this.container.addEventListener("mouseleave", this._hideButton);
 
-    var actions = document.createElement("div");
+    const actions = document.createElement("div");
     actions.classList.add(
       "maplibregl-ctrl-geocoder--pin-right",
       "maplibregl-ctrl-geocoder--pin-right"
@@ -476,7 +474,7 @@ export default class MaplibreGeocoder {
     this._clearEl.className =
       "maplibregl-ctrl-geocoder--button maplibregl-ctrl-geocoder--button";
 
-    var buttonIcon = this.createIcon(
+    const buttonIcon = this.createIcon(
       "close",
       '<path d="M3.8 2.5c-.6 0-1.3.7-1.3 1.3 0 .3.2.7.5.8L7.2 9 3 13.2c-.3.3-.5.7-.5 1 0 .6.7 1.3 1.3 1.3.3 0 .7-.2 1-.5L9 10.8l4.2 4.2c.2.3.7.3 1 .3.6 0 1.3-.7 1.3-1.3 0-.3-.2-.7-.3-1l-4.4-4L15 4.6c.3-.2.5-.5.5-.8 0-.7-.7-1.3-1.3-1.3-.3 0-.7.2-1 .3L9 7.1 4.8 2.8c-.3-.1-.7-.3-1-.3z"/>'
     );
@@ -515,7 +513,7 @@ export default class MaplibreGeocoder {
       }
       this._maplibregl = this.options.maplibregl;
       if (!this._maplibregl && this.options.marker) {
-        // eslint-disable-next-line no-console
+         
         console.error(
           "No maplibregl detected in options. Map markers are disabled. Please set options.maplibregl."
         );
@@ -526,7 +524,7 @@ export default class MaplibreGeocoder {
   }
 
   createIcon(name: string, path: string) {
-    var icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     icon.setAttribute(
       "class",
       "maplibregl-ctrl-geocoder--icon maplibregl-ctrl-geocoder--icon-" +
@@ -540,10 +538,10 @@ export default class MaplibreGeocoder {
     icon.setAttribute("height", "18");
     // IE does not have innerHTML for SVG nodes
     if (!("innerHTML" in icon)) {
-      var SVGNodeContainer = document.createElement("div");
+      const SVGNodeContainer = document.createElement("div");
       SVGNodeContainer.innerHTML =
         "<svg>" + path.valueOf().toString() + "</svg>";
-      var SVGNode = SVGNodeContainer.firstChild,
+      const SVGNode = SVGNodeContainer.firstChild,
         SVGPath = SVGNode.firstChild;
       (icon as any).appendChild(SVGPath);
     } else {
@@ -567,7 +565,7 @@ export default class MaplibreGeocoder {
   }
 
   _onPaste(e) {
-    var value = (e.clipboardData || (window as any).clipboardData).getData("text");
+    const value = (e.clipboardData || (window as any).clipboardData).getData("text");
     if (
       value.length >= this.options.minLength &&
       this.options.showResultsWhileTyping
@@ -577,7 +575,7 @@ export default class MaplibreGeocoder {
   }
 
   _onKeyDown(e) {
-    var ESC_KEY_CODE = 27,
+    const ESC_KEY_CODE = 27,
       TAB_KEY_CODE = 9;
 
     if (e.keyCode === ESC_KEY_CODE && this.options.clearAndBlurOnEsc) {
@@ -586,11 +584,11 @@ export default class MaplibreGeocoder {
     }
 
     // if target has shadowRoot, then get the actual active element inside the shadowRoot
-    var target =
+    const target =
       e.target && e.target.shadowRoot
         ? e.target.shadowRoot.activeElement
         : e.target;
-    var value = target ? target.value : "";
+    const value = target ? target.value : "";
 
     if (!value) {
       this.fresh = true;
@@ -660,7 +658,7 @@ export default class MaplibreGeocoder {
   //  we cannot depend on some internal values of the suggestion state like `selected` as those will change or before
   //  our onKeyDown handler.
   _onChange() {
-    var selected = this._typeahead.selected;
+    const selected = this._typeahead.selected;
 
     // If a suggestion was selected
     if (selected && !selected.geometry) {
@@ -669,7 +667,7 @@ export default class MaplibreGeocoder {
     } else if (selected && JSON.stringify(selected) !== this.lastSelected) {
       this._clearEl.style.display = "none";
       if (this.options.flyTo) {
-        var flyOptions;
+        let flyOptions;
         this._removeResultMarkers();
         if (selected.properties && exceptions[selected.properties.short_code]) {
           // Certain geocoder search results return (and therefore zoom to fit)
@@ -686,7 +684,7 @@ export default class MaplibreGeocoder {
             );
           }
         } else if (selected.bbox) {
-          var bbox = selected.bbox;
+          const bbox = selected.bbox;
           flyOptions = extend({}, this.options.flyTo as any);
           if (this._map) {
             this._map.fitBounds(
@@ -698,7 +696,7 @@ export default class MaplibreGeocoder {
             );
           }
         } else {
-          var defaultFlyOptions = {
+          const defaultFlyOptions = {
             zoom: this.options.zoom,
           };
           flyOptions = extend({}, defaultFlyOptions, this.options.flyTo as any);
@@ -748,9 +746,11 @@ export default class MaplibreGeocoder {
     // Create config object
     const config: MaplibreGeocoderApiConfig = keys.reduce((config, key) => {
       if (this.options[key]) {
-        ["countries", "types", "language"].indexOf(key) > -1
-          ? (config[key] = this.options[key].split(/[\s,]+/))
-          : (config[key] = this.options[key]);
+        if (["countries", "types", "language"].indexOf(key) > -1) {
+          (config[key] = this.options[key].split(/[\s,]+/));
+        } else {
+          (config[key] = this.options[key]);
+        }
 
         if (
           key === "proximity" &&
@@ -774,12 +774,12 @@ export default class MaplibreGeocoder {
     this._loadingEl.style.display = "block";
     this._eventEmitter.emit("loading", { query: searchInput });
     this.inputString = searchInput;
-    var geocoderError = null;
+    let geocoderError = null;
 
     // Create config object
-    var config = this._getConfigForRequest();
+    let config = this._getConfigForRequest();
 
-    var request;
+    let request;
     if (this.options.localGeocoderOnly) {
       request = Promise.resolve();
     }
@@ -790,14 +790,13 @@ export default class MaplibreGeocoder {
       /(-?\d+\.?\d*)[, ]+(-?\d+\.?\d*)[ ]*$/.test(searchInput)
     ) {
       // parse coordinates
-      var coords = searchInput
+      const coords = searchInput
         .split(/[\s(,)?]+/)
         .map((c) => parseFloat(c))
         .reverse();
 
       // client only accepts one type for reverseGeocode, so
       // use first config type if one, if not default to poi
-      config.types ? [config.types[0]] : ["poi"];
       config = extend(config, { query: coords, limit: 1 });
 
       // drop proximity which may have been set by trackProximity since it's not supported by the reverseGeocoder
@@ -826,14 +825,14 @@ export default class MaplibreGeocoder {
       }
     }
 
-    var localGeocoderRes = [];
+    let localGeocoderRes = [];
     if (this.options.localGeocoder) {
       localGeocoderRes = this.options.localGeocoder(searchInput);
       if (!localGeocoderRes) {
         localGeocoderRes = [];
       }
     }
-    var externalGeocoderRes = Promise.resolve([]);
+    let externalGeocoderRes = Promise.resolve([]);
     request.catch((error) => {
       geocoderError = error;
     }).then((response: any) => {
@@ -895,7 +894,7 @@ export default class MaplibreGeocoder {
             res.features = res.features.filter(this.options.filter);
           }
 
-          var results = [];
+          let results = [];
           if (res.suggestions) {
             results = res.suggestions;
           } else if (res.place) {
@@ -981,8 +980,6 @@ export default class MaplibreGeocoder {
    * @param ev - the blur event
    */
   private _clearOnBlur(ev?: Event & { relatedTarget: Element }) {
-    var ctx = this;
-
     /*
      * If relatedTarget is not found, assume user targeted the suggestions list.
      * In that case, do not clear on blur. There are other edge cases where
@@ -993,14 +990,14 @@ export default class MaplibreGeocoder {
      * the list. See issue #258 for details on why we can't do that yet.
      */
     if (ev.relatedTarget) {
-      ctx._clear(ev);
+      this._clear(ev);
     }
   }
 
   _onQueryResult(response) {
-    var results = response;
+    const results = response;
     if (!results.features.length) return;
-    var result = results.features[0];
+    const result = results.features[0];
     this._typeahead.selected = result;
     this._inputEl.value = result.place_name;
     this._onChange();
@@ -1013,7 +1010,7 @@ export default class MaplibreGeocoder {
       return;
     }
     if (this._map.getZoom() > 9) {
-      var center = this._map.getCenter().wrap();
+      const center = this._map.getCenter().wrap();
       this.setProximity({ longitude: center.lng, latitude: center.lat });
     } else {
       this.setProximity(null);
@@ -1046,13 +1043,13 @@ export default class MaplibreGeocoder {
   }
 
   _renderError() {
-    var errorMessage =
+    const errorMessage =
       "<div class='maplibre-gl-geocoder--error'>There was an error reaching the server</div>";
     this._renderMessage(errorMessage);
   }
 
   _renderNoResults() {
-    var errorMessage =
+    const errorMessage =
       "<div class='maplibre-gl-geocoder--error maplibre-gl-geocoder--no-results'>No results found</div>";
     this._renderMessage(errorMessage);
   }
@@ -1076,9 +1073,9 @@ export default class MaplibreGeocoder {
   private _getPlaceholderText(): string {
     if (this.options.placeholder) return this.options.placeholder;
     if (this.options.language) {
-      var firstLanguage = this.options.language.split(",")[0];
-      var language = subtag.language(firstLanguage);
-      var localizedValue = localization[language];
+      const firstLanguage = this.options.language.split(",")[0];
+      const language = subtag.language(firstLanguage);
+      const localizedValue = localization[language];
       if (localizedValue) return localizedValue;
     }
     return "Search";
@@ -1091,7 +1088,7 @@ export default class MaplibreGeocoder {
     if (this._typeahead.data.length < 1) return;
 
     // Filter out suggestions and restrict to limit
-    var results = this._typeahead.data
+    const results = this._typeahead.data
       .filter(function (result) {
         return typeof result === "string" ? false : true;
       })
@@ -1101,9 +1098,9 @@ export default class MaplibreGeocoder {
 
     if (this.options.flyTo && this._maplibregl) {
       if (this._map) {
-        var defaultFlyOptions = { padding: 100 };
-        var flyOptions = extend({}, defaultFlyOptions, this.options.flyTo as any);
-        var bounds = new this._maplibregl.LngLatBounds();
+        const defaultFlyOptions = { padding: 100 };
+        const flyOptions = extend({}, defaultFlyOptions, this.options.flyTo as any);
+        const bounds = new this._maplibregl.LngLatBounds();
         results.forEach(function (feature) {
           bounds.extend(feature.geometry.coordinates);
         });
@@ -1158,7 +1155,7 @@ export default class MaplibreGeocoder {
    * Set the render function used in the results dropdown
    * @param fn - The function to use as a render function. This function accepts a single {@link CarmenGeojsonFeature} object as input and returns a string.
    */
-  setRenderFunction(fn: Function): this {
+  setRenderFunction(fn: (feature: CarmenGeojsonFeature) => string): this {
     if (fn && typeof fn == "function") {
       this._typeahead.render = fn;
     }
@@ -1170,7 +1167,7 @@ export default class MaplibreGeocoder {
    *
    * @returns the render function
    */
-  getRenderFunction(): Function {
+  getRenderFunction(): (feature: CarmenGeojsonFeature) => string {
     return this._typeahead.render;
   }
 
@@ -1377,16 +1374,16 @@ export default class MaplibreGeocoder {
       return;
     }
     this._removeMarker();
-    var defaultMarkerOptions = {
+    const defaultMarkerOptions = {
       color: "#4668F2",
     };
-    var markerOptions = extend({}, defaultMarkerOptions, this.options.marker as any);
+    const markerOptions = extend({}, defaultMarkerOptions, this.options.marker as any);
     this.mapMarker = new this._maplibregl.Marker(markerOptions);
 
-    var popup;
+    let popup;
     if (this.options.popup) {
-      var defaultPopupOptions = {};
-      var popupOptions = extend({}, defaultPopupOptions, this.options.popup as any);
+      const defaultPopupOptions = {};
+      const popupOptions = extend({}, defaultPopupOptions, this.options.popup as any);
       popup = new this._maplibregl.Popup(popupOptions).setHTML(
         this.options.popupRender(selected)
       );
@@ -1429,36 +1426,37 @@ export default class MaplibreGeocoder {
       return;
     }
     this._removeResultMarkers();
-    var defaultMarkerOptions = {
+    const defaultMarkerOptions = {
       color: "#4668F2",
     };
-    var markerOptions = extend(
+    let markerOptions = extend(
       {},
       defaultMarkerOptions,
       this.options.showResultMarkers as any
     );
 
-    results.forEach(
-      function (result) {
+    for (const result of results) {
+      let el: Node;
+      if (this.options.showResultMarkers) {
         if (
           this.options.showResultMarkers &&
-          this.options.showResultMarkers.element
+          (this.options.showResultMarkers as MarkerOptions).element
         ) {
-          var el = this.options.showResultMarkers.element.cloneNode(true);
+          el = (this.options.showResultMarkers as MarkerOptions).element.cloneNode(true);
           markerOptions = extend(markerOptions, { element: el });
         }
 
-        var marker = new this._maplibregl.Marker(
+        const marker = new this._maplibregl.Marker(
           extend({}, markerOptions, { element: el })
         );
 
-        var popup;
+        let popup;
         if (this.options.popup) {
-          var defaultPopupOptions = {};
-          var popupOptions = extend(
+          const defaultPopupOptions = {};
+          const popupOptions = extend(
             {},
             defaultPopupOptions,
-            this.options.popup
+            this.options.popup as any
           );
           popup = new this._maplibregl.Popup(popupOptions).setHTML(
             this.options.popupRender(result)
@@ -1477,8 +1475,8 @@ export default class MaplibreGeocoder {
           if (this.options.popup) marker.setPopup(popup);
         }
         this.resultMarkers.push(marker);
-      }.bind(this)
-    );
+      }
+    }
     return this;
   }
 
@@ -1505,7 +1503,7 @@ export default class MaplibreGeocoder {
    * - __error__ `{ error } Error as string`
    * @param fn - function that's called when the event is emitted.
    */
-  on(type: string, fn: Function): this {
+  on(type: string, fn: (e: any) => void): this {
     this._eventEmitter.on(type, fn);
     return this;
   }
