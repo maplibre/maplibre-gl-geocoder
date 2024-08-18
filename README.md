@@ -4,6 +4,9 @@ A geocoder control for [maplibre-gl-js](https://github.com/maplibre/maplibre-gl-
 
 ### Usage
 
+A full working example can be found here, which uses Nominatim:
+https://maplibre.org/maplibre-gl-js/docs/examples/geocoder/
+
 ### Usage with a module bundler
 
 ```bash
@@ -28,6 +31,7 @@ var Geo = {
 
 // Pass in or define a geocoding API that matches the above
 const geocoder = new MaplibreGeocoder(Geo, { maplibregl: maplibregl });
+map.addControl(geocoder);
 
 ```
 
@@ -40,6 +44,9 @@ It is possible to use the plugin without it being placed as a control on a mapli
 #### API Documentation
 
 See [here](https://www.maplibre.org/maplibre-gl-geocoder/) for complete reference.
+
+Also check out the example in MapLibre docs:
+https://maplibre.org/maplibre-gl-js/docs/examples/geocoder/
 
 ### Contributing
 
