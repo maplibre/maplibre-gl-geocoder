@@ -244,7 +244,6 @@ export default class MaplibreGeocoder {
     collapsed: false,
     clearAndBlurOnEsc: false,
     clearOnBlur: false,
-    placeholder: "Search",
 
     getItemValue: (item) => {
       return item.text !== undefined ? item.text : item.place_name;
@@ -323,7 +322,6 @@ export default class MaplibreGeocoder {
   private mapMarker: Marker | null;
   private resultMarkers: Marker[];
   private placeholder: string;
-  private inputString: string;
   private fresh: boolean;
   private lastSelected: string | null;
   private geocoderApi: MaplibreGeocoderApi;
@@ -331,7 +329,6 @@ export default class MaplibreGeocoder {
   constructor(geocoderApi: MaplibreGeocoderApi, options: MaplibreGeocoderOptions) {
     this._eventEmitter = new EventEmitter();
     this.options = extend({}, this.options, options);
-    this.inputString = "";
     this.fresh = true;
     this.lastSelected = null;
     this.geocoderApi = geocoderApi;
@@ -546,7 +543,7 @@ export default class MaplibreGeocoder {
   }
 
   onRemove() {
-    this.container.parentNode.removeChild(this.container);
+    this.container.remove();
 
     if (this.options.trackProximity && this._map) {
       this._map.off("moveend", this._updateProximity);
@@ -765,10 +762,9 @@ export default class MaplibreGeocoder {
     return config;
   }
 
-  _geocode(searchInput: string, isSuggestion = false, isPlaceId = false) {
+  _geocode(searchInput: string, isSuggestion = false, isPlaceId = false): Promise<any> {
     this._loadingEl.style.display = "block";
     this._eventEmitter.emit("loading", { query: searchInput });
-    this.inputString = searchInput;
     let geocoderError = null;
 
     // Create config object
