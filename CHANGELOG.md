@@ -4,6 +4,20 @@
 
 ### Bug fixes 🐛
 
+## 1.6.0
+
+### Features / Improvements 🚀
+
+- Make the clear button type="button" by @daiwai in https://github.com/maplibre/maplibre-gl-geocoder/pull/116
+- Modernize the codebase using typescript typings, rollup, typedoc and jest. by @HarelM in https://github.com/maplibre/maplibre-gl-geocoder/pull/118
+
+### Bug fixes 🐛
+
+- Fixed issues with `events` dependency https://github.com/maplibre/maplibre-gl-geocoder/issues/104
+- Fixed links to "Carmen GeoJSON" format reference https://github.com/maplibre/maplibre-gl-geocoder/issues/110
+- Fixed a lot of documentation issues by linking the docs to the code itself https://github.com/maplibre/maplibre-gl-geocoder/pull/118
+
+
 ## 1.5.0
 
 ### Features / Improvements 🚀
