@@ -1,4 +1,4 @@
-module.exports = {
+export const exceptions = {
   'fr': {
     'name': 'France',
     'bbox': [[-4.59235, 41.380007], [9.560016, 51.148506]]

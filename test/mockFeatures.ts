@@ -137,7 +137,7 @@ var BELLINGHAM = {
   center: [-122.49998672488617, 48.717186690468154],
 };
 
-module.exports = {
+export default {
   GOLDEN_GATE_BRIDGE,
   CANADA,
   QUEEN_STREET,

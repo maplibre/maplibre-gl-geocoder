@@ -4,6 +4,9 @@ A geocoder control for [maplibre-gl-js](https://github.com/maplibre/maplibre-gl-
 
 ### Usage
 
+A full working example can be found here, which uses Nominatim:
+https://maplibre.org/maplibre-gl-js/docs/examples/geocoder/
+
 ### Usage with a module bundler
 
 ```bash
@@ -14,8 +17,8 @@ npm install --save @maplibre/maplibre-gl-geocoder
 import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder';
 import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 ...
-// Functions should return Carmen GeoJSON https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
-// View config definitions in our [documentation](https://github.com/maplibre/maplibre-gl-geocoder/blob/master/API.md#setgeocoderapi)
+// Functions should return Carmen GeoJSON, see the relevant type in this project
+// View config definitions in our [documentation](https://www.maplibre.org/maplibre-gl-geocoder/)
 var Geo = {
   // required
   forwardGeocode: async (config) => { /* definition here */ },
@@ -28,6 +31,7 @@ var Geo = {
 
 // Pass in or define a geocoding API that matches the above
 const geocoder = new MaplibreGeocoder(Geo, { maplibregl: maplibregl });
+map.addControl(geocoder);
 
 ```
 
@@ -39,11 +43,14 @@ It is possible to use the plugin without it being placed as a control on a mapli
 
 #### API Documentation
 
-See [API.md](https://github.com/maplibre/maplibre-gl-geocoder/blob/master/API.md) for complete reference.
+See [here](https://www.maplibre.org/maplibre-gl-geocoder/) for complete reference.
+
+Also check out the example in MapLibre docs:
+https://maplibre.org/maplibre-gl-js/docs/examples/geocoder/
 
 ### Contributing
 
-See [CONTRIBUTING.md](https://github.com/maplibre/maplibre-gl-geocoder/blob/master/CONTRIBUTING.md).
+See [CONTRIBUTING.md](https://github.com/maplibre/maplibre-gl-geocoder/blob/main/CONTRIBUTING.md).
 
 ### Licence
 
