@@ -1,31 +1,98 @@
 name: publish
 
 on:
-  workflow_dispatch:
   push:
-    tags:
-      - v*
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  publish:
-    name: Publish
+  release-check:
+    name: Check if version changed
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Use Node.js x64
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
         with:
-          node-version: 16
-          architecture: x64
-          registry-url: "https://registry.npmjs.org"
+          fetch-depth: 0
+          ref: main
 
-      - name: Install build dependencies
+      - name: Use Node.js from nvmrc
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Check if version has been updated
+        id: check
+        uses: EndBug/version-check@v2
+          
+    outputs:
+      publish: ${{ steps.check.outputs.changed }}
+
+  release:
+    name: Release
+    needs: release-check
+    if: ${{ needs.release-check.outputs.publish == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Use Node.js from nvmrc
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Get version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+
+      - name: Install & build
         run: |
           npm ci
+          npm run build-dist
 
-      - name: Publish
+      - name: Publish NPM package
         run: |
-          npm publish --access=public --non-interactive
+          npm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ORG_TOKEN }}
+
+      - name: Tag commit and push
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ steps.package-version.outputs.current-version }}
+
+      - name: Create GitHub Release
+        id: create_regular_release
+        uses: ncipollo/release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: ${{ steps.tag_version.outputs.new_tag }}
+          body: 'Changes since last release:\n ${{ steps.tag_version.outputs.changelog }}'
+          allowUpdates: true
+          draft: false
+          prerelease: false
+
+      - name: Build the Docs
+        run: |
+          npm run docs
+
+      - name: Publish the docs
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs
+          commit_message: 'deploy docs: ${{ steps.tag_version.outputs.new_tag }}'
