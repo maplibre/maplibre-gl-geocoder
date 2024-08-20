@@ -17,7 +17,6 @@
 - Fixed links to "Carmen GeoJSON" format reference https://github.com/maplibre/maplibre-gl-geocoder/issues/110
 - Fixed a lot of documentation issues by linking the docs to the code itself https://github.com/maplibre/maplibre-gl-geocoder/pull/118
 
-
 ## 1.5.0
 
 ### Features / Improvements 🚀
