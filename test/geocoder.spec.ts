@@ -938,11 +938,10 @@ describe("geocoder", () => {
           })
         );
       });
-      /* HM TODO: Need to figure out how to test this
-      test("error is shown after an error occurred", () => {
+
+      test("error is shown after an error occurred", async () => {
         setup({ errorMessage: "A mock error message" });
         const renderMessageSpy = jest.spyOn(geocoder, "_renderMessage");
-        geocoder.query("12,");
         geocoder.on(
           "error",
           once(() => {
@@ -952,15 +951,13 @@ describe("geocoder", () => {
             expect(calledWithArgs.indexOf("There was an error reaching the server") > -1).toBeTruthy();
           })
         );
+        await expect(geocoder.query("12,")).rejects.toBe("A mock error message");
       });
-      
-    
-      test(
-        "error is shown after an error occurred [with local geocoder]",
-        () => {
+
+      test("error is shown after an error occurred [with local geocoder]", async () => {
           setup({
             errorMessage: "mock error",
-            localGeocoder: function () {
+            localGeocoder: () => {
               return [
                 {
                   type: "Feature",
@@ -973,22 +970,14 @@ describe("geocoder", () => {
               ];
             },
           });
-          var renderErrorSpy = sinon.spy(geocoder, "_renderError");
-          geocoder.query("12,");
-          geocoder.on(
-            "error",
-            once(() => {
-              t.notOk(
-                renderErrorSpy.called,
-                "the error message is not rendered when the local geocoder returns successfully"
-              );
-              
-            })
-          );
+          var renderErrorSpy = jest.spyOn(geocoder, "_renderError");
+          geocoder.on("error", once(() => {
+              expect(renderErrorSpy).not.toHaveBeenCalled();
+          }));
+          await expect(geocoder.query("12,")).rejects.toBe("mock error");
         }
       );
-      */
-    
+
       test("message is shown if no results are returned", () => {
         setup({});
         const renderMessageSpy = jest.spyOn(geocoder, "_renderNoResults");
