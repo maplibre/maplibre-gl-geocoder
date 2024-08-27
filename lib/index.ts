@@ -847,84 +847,99 @@ export default class MaplibreGeocoder {
       this._eventEmitter.emit("results", { features: localGeocoderRes });
       this._eventEmitter.emit("error", { error: err });
     }).then(async (response: MaplibreGeocoderResults) => {
-          this._loadingEl.style.display = "none";
-
-          let res = {} as MaplibreGeocoderResults & { config?: MaplibreGeocoderApiConfig, features?: CarmenGeojsonFeature[] };
-
-          if (!response) {
-            res = {
-              type: "FeatureCollection",
-              features: [],
-            };
-          } else {
-            res = response;
-          }
-
-          res.config = config;
-
-          if (this.fresh) {
-            this.fresh = false;
-          }
-
-          // supplement Maplibre Geocoding API results with locally populated results
-          res.features = res.features
-            ? localGeocoderRes.concat(res.features)
-            : localGeocoderRes;
-
-          if (this.options.externalGeocoder) {
-            externalGeocoderRes =
-              this.options.externalGeocoder(
-                searchInput,
-                res.features,
-                config
-              ) || Promise.resolve([]);
-            // supplement Geocoding API results with features returned by a promise
-            try {
-              let features = await externalGeocoderRes;
-              res.features = res.features
-                  ? features.concat(res.features)
-                  : features;
-            } catch {
-              // on error, display the original result
-            }
-          }
-          // apply results filter if provided
-          if (this.options.filter && res.features.length) {
-            res.features = res.features.filter(this.options.filter);
-          }
-
-          let results = [];
-          if ('suggestions' in res) {
-            results = res.suggestions;
-          } else if ('place' in res) {
-            results = [res.place];
-          } else {
-            results = res.features;
-          }
-
-          if (results.length) {
-            this._clearEl.style.display = "block";
-
-            this._typeahead.update(results);
-            if (
-              (!this.options.showResultsWhileTyping || isSuggestion) &&
-              this.options.showResultMarkers &&
-              (res.features.length > 0 || 'place' in res)
-            ) {
-              this._fitBoundsForMarkers();
-            }
-
-            this._eventEmitter.emit("results", res);
-          } else {
-            this._clearEl.style.display = "none";
-            this._typeahead.selected = null;
-            this._renderNoResults();
-            this._eventEmitter.emit("results", res);
-          }
-        }
-      )
-
+      await this._handleGeocoderResponse(
+        response, 
+        config,
+        searchInput,
+        isSuggestion,
+        externalGeocoderRes,
+        localGeocoderRes);
+    });
     return request;
+  }
+
+  private async _handleGeocoderResponse(
+    response: MaplibreGeocoderResults,
+    config: MaplibreGeocoderApiConfig,
+    searchInput: string,
+    isSuggestion: boolean,
+    externalGeocoderRes: Promise<any>,
+    localGeocoderRes: any[]
+  ) {
+    this._loadingEl.style.display = "none";
+
+    let res = {} as MaplibreGeocoderResults & { config?: MaplibreGeocoderApiConfig, features?: CarmenGeojsonFeature[] };
+
+    if (!response) {
+      res = {
+        type: "FeatureCollection",
+        features: [],
+      };
+    } else {
+      res = response;
+    }
+
+    res.config = config;
+
+    if (this.fresh) {
+      this.fresh = false;
+    }
+
+    // supplement Maplibre Geocoding API results with locally populated results
+    res.features = res.features
+      ? localGeocoderRes.concat(res.features)
+      : localGeocoderRes;
+
+    if (this.options.externalGeocoder) {
+      externalGeocoderRes =
+        this.options.externalGeocoder(
+          searchInput,
+          res.features,
+          config
+        ) || Promise.resolve([]);
+      // supplement Geocoding API results with features returned by a promise
+      try {
+        let features = await externalGeocoderRes;
+        res.features = res.features
+            ? features.concat(res.features)
+            : features;
+      } catch {
+        // on error, display the original result
+      }
+    }
+    // apply results filter if provided
+    if (this.options.filter && res.features.length) {
+      res.features = res.features.filter(this.options.filter);
+    }
+
+    let results = [];
+    if ('suggestions' in res) {
+      results = res.suggestions;
+    } else if ('place' in res) {
+      results = [res.place];
+    } else {
+      results = res.features;
+    }
+
+    if (results.length) {
+      this._clearEl.style.display = "block";
+
+      this._typeahead.update(results);
+      if (
+        (!this.options.showResultsWhileTyping || isSuggestion) &&
+        this.options.showResultMarkers &&
+        (res.features.length > 0 || 'place' in res)
+      ) {
+        this._fitBoundsForMarkers();
+      }
+
+      this._eventEmitter.emit("results", res);
+    } else {
+      this._clearEl.style.display = "none";
+      this._typeahead.selected = null;
+      this._renderNoResults();
+      this._eventEmitter.emit("results", res);
+    }
   }
 
   /**
