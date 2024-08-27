@@ -1,4 +1,4 @@
-import MaplibreGeocoder, { type MaplibreGeocoderApi } from "../dist/maplibre-gl-geocoder.js";
+import MaplibreGeocoder, { type MaplibreGeocoderApi } from "../lib/index";
 import type { FitBoundsOptions, FlyToOptions, LngLatBoundsLike } from "maplibre-gl";
 
 export class LngLatMock {
@@ -126,28 +126,28 @@ export function mockGeocoderApi(features, errorMessage?: string): MaplibreGeocod
 export function createMockGeocoderApiWithSuggestions(features, suggestions, errorMessage?: string): MaplibreGeocoderApi {
     return {
         forwardGeocode: () => {
-        return new Promise((resolve, reject) => {
-            if (errorMessage) reject(errorMessage);
-            resolve({ features: (features || []) });
-        });
+            return new Promise((resolve, reject) => {
+                if (errorMessage) reject(errorMessage);
+                resolve({ features: (features || []) });
+            });
         },
         reverseGeocode: () => {
-        return new Promise((resolve, reject) => {
-            if (errorMessage) reject(errorMessage);
-            resolve({ features: (features || []) });
-        });
+            return new Promise((resolve, reject) => {
+                if (errorMessage) reject(errorMessage);
+                resolve({ features: (features || []) });
+            });
         },
         getSuggestions: () => {
-        return new Promise((resolve, reject) => {
-            if (errorMessage) reject(errorMessage);
-            resolve({ suggestions: suggestions || [], features: [] });
-        });
+            return new Promise((resolve, reject) => {
+                if (errorMessage) reject(errorMessage);
+                resolve({ suggestions: suggestions || [], features: [] });
+            });
         },
         searchByPlaceId: () => {
-        return new Promise((resolve, reject) => {
-            if (errorMessage) reject(errorMessage);
-            resolve({ features: features[0] || [] });
-        });
+            return new Promise((resolve, reject) => {
+                if (errorMessage) reject(errorMessage);
+                resolve({ features: features[0] || [] });
+            });
         },
     } as any;
 }

@@ -1,4 +1,4 @@
-import MaplibreGeocoder from "../dist/maplibre-gl-geocoder.js";
+import MaplibreGeocoder from "../lib/index";
 import once from "lodash.once";
 import Features from "./mockFeatures";
 import { createMarkerMock, createPopupMock, LngLatBoundsMock, MapMock, init, createMockGeocoderApiWithSuggestions } from "./utils";
