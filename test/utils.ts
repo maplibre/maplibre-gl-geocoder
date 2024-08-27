@@ -111,13 +111,13 @@ export function mockGeocoderApi(features, errorMessage?: string): MaplibreGeocod
         forwardGeocode: async () => {
         return new Promise(async (resolve, reject) => {
             if (errorMessage) reject(errorMessage);
-            resolve({ features: features || [] });
+            resolve({ features: features || [] } as any);
         });
         },
         reverseGeocode: async () => {
         return new Promise(async (resolve, reject) => {
             if (errorMessage) reject(errorMessage);
-            resolve({ features: features || [] });
+            resolve({ features: features || [] } as any);
         });
         },
     };
