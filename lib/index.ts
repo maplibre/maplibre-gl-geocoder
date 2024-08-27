@@ -1026,9 +1026,8 @@ export default class MaplibreGeocoder {
    * Set & query the input
    * @param searchInput - location name or other search input
    */
-  query(searchInput: string): this {
-    this._geocode(searchInput).then(this._onQueryResult);
-    return this;
+  query(searchInput: string) {
+    return this._geocode(searchInput).then(this._onQueryResult);
   }
 
   _renderError() {
