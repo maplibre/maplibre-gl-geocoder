@@ -783,9 +783,9 @@ export default class MaplibreGeocoder {
       ? (this.options.localGeocoder(searchInput) || [])
       : [];
     let externalGeocoderResults = [];
-    request.catch(async (err) => {
-      this._handleGeocodeErrorResponse(err, localGeocoderResults, externalGeocoderResults);
-    }).then(async (response: MaplibreGeocoderResults) => {
+    
+    try {
+      let response = await request;
       await this._handleGeocodeResponse(
         response, 
         config,
@@ -793,7 +793,9 @@ export default class MaplibreGeocoder {
         isSuggestion,
         externalGeocoderResults,
         localGeocoderResults);
-    });
+    } catch (err) {
+      this._handleGeocodeErrorResponse(err, localGeocoderResults, externalGeocoderResults);
+    }
     return request;
   }
 
@@ -1096,7 +1098,6 @@ export default class MaplibreGeocoder {
         results.forEach(function (feature) {
           bounds.extend(feature.geometry.coordinates);
         });
-
         this._map.fitBounds(bounds, flyOptions);
       }
     }
@@ -1498,6 +1499,24 @@ export default class MaplibreGeocoder {
   on(type: string, fn: (e: any) => void): this {
     this._eventEmitter.on(type, fn);
     return this;
+  }
+
+  /**
+   * Subscribe to events that happen within the plugin only once.
+   * @param type - Event name.
+   * Available events and the data passed into their respective event objects are:
+   *
+   * - __clear__ `Emitted when the input is cleared`
+   * - __loading__ `{ query } Emitted when the geocoder is looking up a query`
+   * - __results__ `{ results } Fired when the geocoder returns a response`
+   * - __result__ `{ result } Fired when input is set`
+   * - __error__ `{ error } Error as string`
+   * @returns a Promise that resolves when the event is emitted.
+   */
+  once(type: string): Promise<void> {
+    return new Promise((resolve) => {
+      this._eventEmitter.once(type, resolve);
+    });
   }
 
   /**

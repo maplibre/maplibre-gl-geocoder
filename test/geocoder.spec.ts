@@ -4,11 +4,10 @@ import Features from "./mockFeatures";
 import { createMarkerMock, createPopupMock, LngLatBoundsMock, MapMock, init, createMockGeocoderApiWithSuggestions } from "./utils";
 
 describe("geocoder", () => {
-  let container: HTMLElement, map: MapMock, geocoder: any;
+  let map: MapMock, geocoder: any;
 
   function setup(opts?: any) {
     const initResults = init(opts);
-    container = initResults.container;
     map = initResults.map;
     geocoder = initResults.geocoder;
   }
@@ -18,39 +17,30 @@ describe("geocoder", () => {
         expect(geocoder).toBeDefined();
     });
 
-    test("set/get input", () => {
-        expect.assertions(3);
+    test("set/get input", async () => {
         setup({
             proximity: { longitude: -79.45, latitude: 43.65 },
             features: [Features.QUEEN_STREET],
         });
         geocoder.query("Queen Street");
         var mapMoveSpy = jest.spyOn(map, "flyTo");
-        geocoder.on(
-            "result",
-            (e) => {
-                expect(mapMoveSpy).toHaveBeenCalledTimes(1);
-                var mapMoveArgs = mapMoveSpy.mock.calls[0][0];
-                expect(mapMoveArgs.center[0]).not.toBe(0);
-                expect(mapMoveArgs.center[1]).not.toBe(0);
-            }
-        );
+        await geocoder.once("result");
+        expect(mapMoveSpy).toHaveBeenCalledTimes(1);
+        var mapMoveArgs = mapMoveSpy.mock.calls[0][0];
+        expect(mapMoveArgs.center[0]).not.toBe(0);
+        expect(mapMoveArgs.center[1]).not.toBe(0);
     });
 
-    test("Selected value is reset after a result is selected", () => {
+    test("Selected value is reset after a result is selected", async () => {
         expect.assertions(2);
         setup({
             proximity: { longitude: -79.45, latitude: 43.65 },
             features: [Features.QUEEN_STREET],
         });
         geocoder.query("Queen Street");
-        geocoder.on(
-            "result",
-            (e) => {
-            expect(geocoder.lastSelected).toBeDefined();
-            expect(geocoder._typeahead.selected).toBeNull();
-            }
-        );
+        await geocoder.once("result");
+        expect(geocoder.lastSelected).toBeDefined();
+        expect(geocoder._typeahead.selected).toBeNull();
     });
 
     test("options", (done) => {
@@ -290,8 +280,8 @@ describe("geocoder", () => {
         geocoder.on(
           "result",
           once((e) => {
-            expect(fitBoundsSpy).toHaveBeenCalledTimes(1);
-            var fitBoundsArgs = fitBoundsSpy.mock.calls[0][0];
+            expect(fitBoundsSpy).toHaveBeenCalledTimes(2);
+            var fitBoundsArgs = fitBoundsSpy.mock.calls[1][0];
             // flatten
             var mapBBox = [
               fitBoundsArgs[0][0],
@@ -314,8 +304,8 @@ describe("geocoder", () => {
         geocoder.on(
           "result",
           once(() => {
-            expect(fitBoundsSpy).toHaveBeenCalledTimes(1);
-            var fitBoundsArgs = fitBoundsSpy.mock.calls[0][0];
+            expect(fitBoundsSpy).toHaveBeenCalledTimes(2);
+            var fitBoundsArgs = fitBoundsSpy.mock.calls[1][0];
             // flatten
             var mapBBox = [
               fitBoundsArgs[0][0],
@@ -595,8 +585,8 @@ describe("geocoder", () => {
         geocoder.on(
           "result",
           once(() => {
-            expect(mapFlyMethod).toHaveBeenCalledTimes(1);
-            var calledWithArgs = mapFlyMethod.mock.calls[0][1];
+            expect(mapFlyMethod).toHaveBeenCalledTimes(2);
+            var calledWithArgs = mapFlyMethod.mock.calls[1][1];
             expect(calledWithArgs.speed).toBe(5);
           })
         );
@@ -615,8 +605,8 @@ describe("geocoder", () => {
           geocoder.on(
             "result",
             once(() => {
-                expect(mapFlyMethod).toHaveBeenCalledTimes(1);
-                var calledWithArgs = mapFlyMethod.mock.calls[0][1];
+                expect(mapFlyMethod).toHaveBeenCalledTimes(2);
+                var calledWithArgs = mapFlyMethod.mock.calls[1][1];
                 expect(calledWithArgs.speed).toBe(5);
             })
           );
@@ -636,8 +626,8 @@ describe("geocoder", () => {
         geocoder.on(
           "result",
           once(() => {
-            expect(markerConstructorSpy).toHaveBeenCalledTimes(1);
-            var calledWithOptions = markerConstructorSpy.mock.calls[0][0];
+            expect(markerConstructorSpy).toHaveBeenCalledTimes(2);
+            var calledWithOptions = markerConstructorSpy.mock.calls[1][0];
             expect(calledWithOptions.color).toBe("#4668F2");
           })
         );
@@ -660,8 +650,8 @@ describe("geocoder", () => {
         geocoder.on(
           "result",
           once(() => {
-            expect(markerConstructorSpy).toHaveBeenCalledTimes(1);
-            var calledWithOptions = markerConstructorSpy.mock.calls[0][0];
+            expect(markerConstructorSpy).toHaveBeenCalledTimes(2);
+            var calledWithOptions = markerConstructorSpy.mock.calls[1][0];
             expect(calledWithOptions.color).toBe("purple");
             expect(calledWithOptions.draggable).toBe(true);
             expect(calledWithOptions.anchor).toBe("top");
@@ -700,7 +690,7 @@ describe("geocoder", () => {
         geocoder.on(
           "result",
           once(() => {
-            expect(popupConstructorSpy).toHaveBeenCalledTimes(1);
+            expect(popupConstructorSpy).toHaveBeenCalledTimes(2);
           })
         );
       });
@@ -721,8 +711,8 @@ describe("geocoder", () => {
         geocoder.on(
           "result",
           once(() => {
-            expect(popupConstructorSpy).toHaveBeenCalledTimes(1);
-            var calledWithOptions = popupConstructorSpy.mock.calls[0][0];
+            expect(popupConstructorSpy).toHaveBeenCalledTimes(2);
+            var calledWithOptions = popupConstructorSpy.mock.calls[1][0];
             expect(calledWithOptions.closeOnMove).toBe(true);
           })
         );
@@ -996,7 +986,6 @@ describe("geocoder", () => {
             localGeocoderOnly: true,
           };
           // no access token here
-          container = document.createElement("div");
           const map = new MapMock({});
           geocoder = new MaplibreGeocoder({} as any, opts);
           expect(() => map.addControl(geocoder)).toThrow();
