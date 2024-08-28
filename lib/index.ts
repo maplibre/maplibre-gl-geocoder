@@ -14,8 +14,26 @@ import {placeholder as localization} from "./localization";
  */
 export type CarmenGeojsonFeature = GeoJSON.Feature & {
   id: string;
-  place_name: string;
+  /**
+   * Text representing the feature (e.g. "Austin").
+   */
   text: string;
+  /**
+   * Optional. The language code of the text returned in text.
+   */
+  language?: string;
+  /**
+   * Human-readable text representing the full result hierarchy (e.g. "Austin, Texas, United States").
+   */
+  place_name: string;
+  /**
+   * An array of index types that this feature may be returned as. Most features have only one type matching its id.
+   */
+  place_type: string[];
+  /**
+   * Optional. Array bounding box of the form [minx,miny,maxx,maxy].
+   */
+  bbox?: [number, number, number, number];
 };
 
 export type MaplibreGeocoderOptions = {
