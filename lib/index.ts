@@ -160,6 +160,11 @@ export type MaplibreGeocoderOptions = {
    */
   reverseMode?: "distance" | "score"
   /**
+   * If setting promiximity, this is the minimum zoom level at which to start taking it into account.
+   * @default 9
+   */
+  proximityMinZoom?: number;
+  /**
    * A function that specifies how the selected result should be rendered in the search bar. HTML tags in the output string will not be rendered. Defaults to `(item) => item.place_name`.
    * @example
    *
@@ -272,6 +277,7 @@ export default class MaplibreGeocoder {
     collapsed: false,
     clearAndBlurOnEsc: false,
     clearOnBlur: false,
+    proximityMinZoom: 9,
 
     getItemValue: (item) => {
       return item.text !== undefined ? item.text : item.place_name;
@@ -1024,7 +1030,7 @@ export default class MaplibreGeocoder {
     if (!this._map) {
       return;
     }
-    if (this._map.getZoom() > 9) {
+    if (this._map.getZoom() > this.options.proximityMinZoom) {
       const center = this._map.getCenter().wrap();
       this.setProximity({ longitude: center.lng, latitude: center.lat });
     } else {
