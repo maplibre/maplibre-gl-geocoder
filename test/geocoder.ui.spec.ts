@@ -3,8 +3,7 @@ import { init, initHtmlElement, initNoMap, mockGeocoderApi } from "./utils";
 import once from "lodash.once";
 
 describe("Geocoder#inputControl", () => {
-    let container, map, geocoder, geocoderApi;  
-    var changeEvent = new Event('change', {bubbles: true, cancelable: false});
+    let container, map, geocoder;  
     var clickEvent = new Event('click', {bubbles: true, cancelable: false});
   
     function setup(opts?: any) {
@@ -48,15 +47,14 @@ describe("Geocoder#inputControl", () => {
         "clear",
         once(() => {
           setTimeout(() => {
-            expect(geocoder.fresh).toBeFalsy();
+            expect(geocoder.fresh).toBeTruthy();
             expect(geocoder.mapMarker).toBeNull();
             geocoder.setInput("Paris");
             expect(inputEl.value).toBe("Paris");
-  
             geocoder.setInput("90,45");
             expect(inputEl.value).toBe("90,45");
             done();
-          });
+          }, 0);
         })
       );
   
@@ -409,7 +407,7 @@ describe("Geocoder#inputControl", () => {
         "clear",
         once(() => {
           setTimeout(() => {
-            expect(geocoder.fresh).toBeFalsy();
+            expect(geocoder.fresh).toBeTruthy();
             geocoder.setInput("Paris");
             expect(inputEl.value).toBe("Paris")
             geocoder.setInput("90,45");

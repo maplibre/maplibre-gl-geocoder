@@ -210,7 +210,7 @@ describe("geocoder", () => {
           flyTo: false,
           limit: 6,
           localGeocoder: (q) => {
-            return [q];
+            return [{text: q}];
           },
         });
         geocoder.query("-30,150");
@@ -227,7 +227,7 @@ describe("geocoder", () => {
                         geocoder.on(
                             "results",
                             once((e) => {
-                                expect(e.features[0]).toBe("London");
+                                expect(e.features[0].text).toBe("London");
                                 done();
                             })
                         );

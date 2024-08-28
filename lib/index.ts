@@ -772,7 +772,7 @@ export default class MaplibreGeocoder {
     return config;
   }
 
-  _geocode(searchInput: string, isSuggestion = false, isPlaceId = false): Promise<MaplibreGeocoderResults> {
+  async _geocode(searchInput: string, isSuggestion = false, isPlaceId = false): Promise<MaplibreGeocoderResults> {
     this._loadingEl.style.display = "block";
     this._eventEmitter.emit("loading", { query: searchInput });
 
@@ -784,25 +784,9 @@ export default class MaplibreGeocoder {
       : [];
     let externalGeocoderResults = [];
     request.catch(async (err) => {
-      this._loadingEl.style.display = "none";
-
-      // in the event of an error in the Geocoding API still display results from the localGeocoder
-      if (localGeocoderResults.length && this.options.localGeocoder) {
-        this._clearEl.style.display = "block";
-        this._typeahead.update(localGeocoderResults);
-      } else if (externalGeocoderResults.length && this.options.externalGeocoder) {
-        this._clearEl.style.display = "block";
-        this._typeahead.update(externalGeocoderResults);
-      } else {
-        this._clearEl.style.display = "none";
-        this._typeahead.selected = null;
-        this._renderError();
-      }
-
-      this._eventEmitter.emit("results", { features: localGeocoderResults });
-      this._eventEmitter.emit("error", { error: err });
+      this._handleGeocodeErrorResponse(err, localGeocoderResults, externalGeocoderResults);
     }).then(async (response: MaplibreGeocoderResults) => {
-      await this._handleGeocoderResponse(
+      await this._handleGeocodeResponse(
         response, 
         config,
         searchInput,
@@ -857,7 +841,7 @@ export default class MaplibreGeocoder {
     return this.geocoderApi.reverseGeocode(config);
   }
 
-  private async _handleGeocoderResponse(
+  private async _handleGeocodeResponse(
     response: MaplibreGeocoderResults,
     config: MaplibreGeocoderApiConfig,
     searchInput: string,
@@ -879,7 +863,6 @@ export default class MaplibreGeocoder {
     }
 
     res.config = config;
-
     if (this.fresh) {
       this.fresh = false;
     }
@@ -918,7 +901,6 @@ export default class MaplibreGeocoder {
 
     if (results.length) {
       this._clearEl.style.display = "block";
-
       this._typeahead.update(results);
       if (
         (!this.options.showResultsWhileTyping || isSuggestion) &&
@@ -927,14 +909,35 @@ export default class MaplibreGeocoder {
       ) {
         this._fitBoundsForMarkers();
       }
-
+      
       this._eventEmitter.emit("results", res);
     } else {
       this._clearEl.style.display = "none";
       this._typeahead.selected = null;
       this._renderNoResults();
+      
       this._eventEmitter.emit("results", res);
     }
+  }
+
+  private _handleGeocodeErrorResponse(error: Error, localGeocoderResults: any[], externalGeocoderResults: any[]) {
+    this._loadingEl.style.display = "none";
+
+      // in the event of an error in the Geocoding API still display results from the localGeocoder
+      if (localGeocoderResults.length && this.options.localGeocoder) {
+        this._clearEl.style.display = "block";
+        this._typeahead.update(localGeocoderResults);
+      } else if (externalGeocoderResults.length && this.options.externalGeocoder) {
+        this._clearEl.style.display = "block";
+        this._typeahead.update(externalGeocoderResults);
+      } else {
+        this._clearEl.style.display = "none";
+        this._typeahead.selected = null;
+        this._renderError();
+      }
+
+      this._eventEmitter.emit("results", { features: localGeocoderResults });
+      this._eventEmitter.emit("error", { error });
   }
 
   /**
