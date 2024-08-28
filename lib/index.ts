@@ -9,6 +9,11 @@ import {exceptions} from "./exceptions";
 import {placeholder as localization} from "./localization";
 
 /**
+ * A regular expression to match coordinates.
+ */
+const COORDINATES_REGEXP = /(-?\d+\.?\d*)[, ]+(-?\d+\.?\d*)[ ]*$/;
+
+/**
  * A Carmen GeoJSON Feature.
  * @see https://web.archive.org/web/20210224184722/https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
  */
@@ -204,7 +209,7 @@ export type MaplibreGeocoderApiConfig = {
   /**
    * Search query string
    */
-  query?: string;
+  query?: string | number[];
 }
 
 export type MaplibreGeocoderFeatureResults = { type: "FeatureCollection", features: CarmenGeojsonFeature[]};
@@ -771,80 +776,30 @@ export default class MaplibreGeocoder {
     this._loadingEl.style.display = "block";
     this._eventEmitter.emit("loading", { query: searchInput });
 
-    // Create config object
     let config = this._getConfigForRequest();
+    let request = this._createGeocodeRequest(config, searchInput, isSuggestion, isPlaceId);
 
-    let request: Promise<MaplibreGeocoderResults>;
-    if (this.options.localGeocoderOnly) {
-      request = Promise.resolve({} as any);
-    }
-    // check if searchInput resembles coordinates, and if it does,
-    // make the request a reverseGeocode
-    else if (
-      this.options.reverseGeocode &&
-      /(-?\d+\.?\d*)[, ]+(-?\d+\.?\d*)[ ]*$/.test(searchInput)
-    ) {
-      // parse coordinates
-      const coords = searchInput
-        .split(/[\s(,)?]+/)
-        .map((c) => parseFloat(c))
-        .reverse();
-
-      // client only accepts one type for reverseGeocode, so
-      // use first config type if one, if not default to poi
-      config = extend(config, { query: coords, limit: 1 });
-
-      // drop proximity which may have been set by trackProximity since it's not supported by the reverseGeocoder
-      if ("proximity" in config) {
-        delete config.proximity;
-      }
-
-      request = this.geocoderApi.reverseGeocode(config);
-    } else {
-      config = extend(config, { query: searchInput });
-      if (!this.geocoderApi.getSuggestions) {
-        request = this.geocoderApi.forwardGeocode(config);
-      } else {
-        // user clicked on a suggestion
-        if (isSuggestion) {
-          // suggestion has place Id
-          if (this.geocoderApi.searchByPlaceId && isPlaceId) {
-            request = this.geocoderApi.searchByPlaceId(config);
-          } else {
-            request = this.geocoderApi.forwardGeocode(config);
-          }
-        } else {
-          // user typed in text and should receive suggestions
-          request = this.geocoderApi.getSuggestions(config);
-        }
-      }
-    }
-
-    let localGeocoderRes = [];
-    if (this.options.localGeocoder) {
-      localGeocoderRes = this.options.localGeocoder(searchInput);
-      if (!localGeocoderRes) {
-        localGeocoderRes = [];
-      }
-    }
-    let externalGeocoderRes = Promise.resolve([]);
+    let localGeocoderResults = this.options.localGeocoder
+      ? (this.options.localGeocoder(searchInput) || [])
+      : [];
+    let externalGeocoderResults = [];
     request.catch(async (err) => {
       this._loadingEl.style.display = "none";
 
       // in the event of an error in the Geocoding API still display results from the localGeocoder
-      if (
-        (localGeocoderRes.length && this.options.localGeocoder) ||
-        ((await externalGeocoderRes).length && this.options.externalGeocoder)
-      ) {
+      if (localGeocoderResults.length && this.options.localGeocoder) {
         this._clearEl.style.display = "block";
-        this._typeahead.update(localGeocoderRes);
+        this._typeahead.update(localGeocoderResults);
+      } else if (externalGeocoderResults.length && this.options.externalGeocoder) {
+        this._clearEl.style.display = "block";
+        this._typeahead.update(externalGeocoderResults);
       } else {
         this._clearEl.style.display = "none";
         this._typeahead.selected = null;
         this._renderError();
       }
 
-      this._eventEmitter.emit("results", { features: localGeocoderRes });
+      this._eventEmitter.emit("results", { features: localGeocoderResults });
       this._eventEmitter.emit("error", { error: err });
     }).then(async (response: MaplibreGeocoderResults) => {
       await this._handleGeocoderResponse(
@@ -852,10 +807,54 @@ export default class MaplibreGeocoder {
         config,
         searchInput,
         isSuggestion,
-        externalGeocoderRes,
-        localGeocoderRes);
+        externalGeocoderResults,
+        localGeocoderResults);
     });
     return request;
+  }
+
+  private _createGeocodeRequest(config: MaplibreGeocoderApiConfig, searchInput: string, isSuggestion: boolean, isPlaceId: boolean): Promise<MaplibreGeocoderResults> {
+    if (this.options.localGeocoderOnly) {
+      return Promise.resolve({} as any);
+    }
+    if (this.options.reverseGeocode && COORDINATES_REGEXP.test(searchInput)) {
+      // searchInput resembles coordinates, make the request a reverseGeocode
+      return this._createReverseGeocodeRequest(searchInput, config);
+    } 
+    config.query = searchInput;
+    if (!this.geocoderApi.getSuggestions) {
+      return this.geocoderApi.forwardGeocode(config);
+    }
+    if (!isSuggestion) {
+      // user typed in text and should receive suggestions
+      return this.geocoderApi.getSuggestions(config);
+    }
+    // user clicked on a suggestion
+    if (this.geocoderApi.searchByPlaceId && isPlaceId) {
+      // suggestion has place Id
+      return this.geocoderApi.searchByPlaceId(config);
+    } 
+    return this.geocoderApi.forwardGeocode(config);
+  }
+
+  private _createReverseGeocodeRequest(searchInput: string, config: MaplibreGeocoderApiConfig) {
+    // parse coordinates
+    const coords = searchInput
+      .split(/[\s(,)?]+/)
+      .map((c) => parseFloat(c))
+      .reverse();
+
+    // client only accepts one type for reverseGeocode, so
+    // use first config type if one, if not default to poi
+    config.query = coords;
+    config.limit = 1;
+
+    // drop proximity which may have been set by trackProximity since it's not supported by the reverseGeocoder
+    if ("proximity" in config) {
+      delete config.proximity;
+    }
+
+    return this.geocoderApi.reverseGeocode(config);
   }
 
   private async _handleGeocoderResponse(
@@ -863,8 +862,8 @@ export default class MaplibreGeocoder {
     config: MaplibreGeocoderApiConfig,
     searchInput: string,
     isSuggestion: boolean,
-    externalGeocoderRes: Promise<any>,
-    localGeocoderRes: any[]
+    externalGeocoderResults: any[],
+    localGeocoderResults: any[]
   ) {
     this._loadingEl.style.display = "none";
 
@@ -887,25 +886,21 @@ export default class MaplibreGeocoder {
 
     // supplement Maplibre Geocoding API results with locally populated results
     res.features = res.features
-      ? localGeocoderRes.concat(res.features)
-      : localGeocoderRes;
+      ? localGeocoderResults.concat(res.features)
+      : localGeocoderResults;
 
-    if (this.options.externalGeocoder) {
-      externalGeocoderRes =
-        this.options.externalGeocoder(
-          searchInput,
-          res.features,
-          config
-        ) || Promise.resolve([]);
+    let externalGeocoderResultsPromise = this.options.externalGeocoder 
+      ? (this.options.externalGeocoder(searchInput, res.features, config) || Promise.resolve([]))
+      : Promise.resolve([]);
       // supplement Geocoding API results with features returned by a promise
-      try {
-        let features = await externalGeocoderRes;
-        res.features = res.features
-            ? features.concat(res.features)
-            : features;
-      } catch {
-        // on error, display the original result
-      }
+    try {
+      let features = await externalGeocoderResultsPromise;
+      externalGeocoderResults.splice(0, 0, ...features);
+      res.features = res.features
+          ? features.concat(res.features)
+          : features;
+    } catch {
+      // on error, display the original result
     }
     // apply results filter if provided
     if (this.options.filter && res.features.length) {
