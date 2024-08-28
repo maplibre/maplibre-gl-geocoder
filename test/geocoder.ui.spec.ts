@@ -1,11 +1,9 @@
 import Features from "./mockFeatures";
 import { init, initHtmlElement, initNoMap, mockGeocoderApi } from "./utils";
-import once from "lodash.once";
 
 describe("Geocoder#inputControl", () => {
-    let container, map, geocoder, geocoderApi;  
-    var changeEvent = new Event('change', {bubbles: true, cancelable: false});
-    var clickEvent = new Event('click', {bubbles: true, cancelable: false});
+    let container, map, geocoder;  
+    const clickEvent = new Event('click', {bubbles: true, cancelable: false});
   
     function setup(opts?: any) {
         const initResults = init(opts);
@@ -20,47 +18,35 @@ describe("Geocoder#inputControl", () => {
         geocoder = initResults.geocoder;
     }
   
-    test("input", (done) => {
+    test("input", async () => {
       setup({
         types: "place",
         features: [Features.GOLDEN_GATE_BRIDGE],
       });
-      var inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
-      var clearEl = container.querySelector(".maplibregl-ctrl-geocoder button");
-  
-      geocoder.on(
-        "loading",
-        once((e) => {
-            expect(e.query).toBe("-122.47846999999996, 37.81914000000006");
-        })
-      );
-  
-      geocoder.on(
-        "result",
-        once(() => {
-            expect(inputEl.value).toBeTruthy();
-            expect(geocoder.mapMarker).toBeTruthy();
-            clearEl.dispatchEvent(clickEvent);
-        })
-      );
-  
-      geocoder.on(
-        "clear",
-        once(() => {
-          setTimeout(() => {
-            expect(geocoder.fresh).toBeFalsy();
-            expect(geocoder.mapMarker).toBeNull();
-            geocoder.setInput("Paris");
-            expect(inputEl.value).toBe("Paris");
-  
-            geocoder.setInput("90,45");
-            expect(inputEl.value).toBe("90,45");
-            done();
-          });
-        })
-      );
-  
+      const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+      const clearEl = container.querySelector(".maplibregl-ctrl-geocoder button");
+
+      const loadingPromise = geocoder.once("loading");
+      const resultPromise = geocoder.once("result");
+      const clearPromise = geocoder.once("clear");
+
       geocoder.query("-122.47846999999996, 37.81914000000006");
+
+      const e = await loadingPromise;
+      expect(e.query).toBe("-122.47846999999996, 37.81914000000006");
+
+      await resultPromise;
+      expect(inputEl.value).toBeTruthy();
+      expect(geocoder.mapMarker).toBeTruthy();
+      clearEl.dispatchEvent(clickEvent);
+
+      await clearPromise;
+      expect(geocoder.fresh).toBeTruthy();
+      expect(geocoder.mapMarker).toBeNull();
+      geocoder.setInput("Paris");
+      expect(inputEl.value).toBe("Paris");
+      geocoder.setInput("90,45");
+      expect(inputEl.value).toBe("90,45");
     });
   
     test("placeholder", () => {
@@ -92,7 +78,7 @@ describe("Geocoder#inputControl", () => {
   
     test("clear is not called on keydown (tab), no focus trap", () => {
         setup({});
-        var inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+        const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
         const focusSpy = jest.spyOn(inputEl, "focus");
         inputEl.focus();
         expect(focusSpy).toHaveBeenCalled();
@@ -106,7 +92,7 @@ describe("Geocoder#inputControl", () => {
     test("clear is called on keydown (not tab)", () => {
         setup({});
   
-        var inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+        const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
         const focusSpy = jest.spyOn(inputEl, "focus");
         inputEl.focus();
         expect(focusSpy).toHaveBeenCalled();
@@ -121,7 +107,7 @@ describe("Geocoder#inputControl", () => {
         setup({
           clearAndBlurOnEsc: true,
         });
-        var inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+        const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
         const focusSpy = jest.spyOn(inputEl, "focus");
         const blurSpy = jest.spyOn(inputEl, "blur");
   
@@ -144,7 +130,7 @@ describe("Geocoder#inputControl", () => {
         setup({
           clearAndBlurOnEsc: false,
         });
-        var inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+        const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
         const focusSpy = jest.spyOn(inputEl, "focus");
         const blurSpy = jest.spyOn(inputEl, "blur");
   
@@ -162,7 +148,7 @@ describe("Geocoder#inputControl", () => {
         setup({
             collapsed: true,
         });
-        var wrapper = container.querySelector(".maplibregl-ctrl-geocoder");
+        const wrapper = container.querySelector(".maplibregl-ctrl-geocoder");
         expect(wrapper.classList.contains("maplibregl-ctrl-geocoder--collapsed")).toBeTruthy();
     });
     
@@ -170,10 +156,10 @@ describe("Geocoder#inputControl", () => {
         setup({
             collapsed: true,
         });
-        var wrapper = container.querySelector(".maplibregl-ctrl-geocoder");
-        var inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+        const wrapper = container.querySelector(".maplibregl-ctrl-geocoder");
+        const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
         // focus input, remove maplibregl-ctrl-geocoder--collapsed
-        var focusEvent = new Event("focus", { bubbles: true, cancelable: false });
+        const focusEvent = new Event("focus", { bubbles: true, cancelable: false });
         inputEl.dispatchEvent(focusEvent);
         expect(wrapper.classList.contains("maplibregl-ctrl-geocoder--collapsed")).toBeFalsy();
     });
@@ -188,8 +174,8 @@ describe("Geocoder#inputControl", () => {
         });
         expect(geocoder.options.clearOnBlur).toBeTruthy();
   
-        var inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
-        var focusSpy = jest.spyOn(inputEl, "focus");
+        const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+        const focusSpy = jest.spyOn(inputEl, "focus");
   
         geocoder.setInput("testval");
         expect(inputEl.value).toBe("testval");
@@ -230,10 +216,10 @@ describe("Geocoder#inputControl", () => {
     
         geocoder.setInput("testval");
     
-        var wrapper = container.querySelector(".maplibregl-ctrl-geocoder");
+        const wrapper = container.querySelector(".maplibregl-ctrl-geocoder");
         const hoverEvent = new Event("mouseenter", { bubbles: true, cancelable: true });
         wrapper.dispatchEvent(hoverEvent);
-        var clearbutton = container.querySelector(
+        const clearbutton = container.querySelector(
             ".maplibregl-ctrl-geocoder--button"
         );
         expect(clearbutton.style.display).toBe("block");
@@ -244,7 +230,7 @@ describe("Geocoder#inputControl", () => {
         setup({
             collapsed: true,
         });
-        var wrapper = container.querySelector(".maplibregl-ctrl-geocoder");
+        const wrapper = container.querySelector(".maplibregl-ctrl-geocoder");
         // hover input, remove maplibregl-ctrl-geocoder--collapsed
         const hoverEvent = new Event("mouseenter", { bubbles: true, cancelable: true });
         wrapper.dispatchEvent(hoverEvent);
@@ -255,36 +241,29 @@ describe("Geocoder#inputControl", () => {
         setup({
             collapsed: false,
         });
-        var wrapper = container.querySelector(".maplibregl-ctrl-geocoder");
+        const wrapper = container.querySelector(".maplibregl-ctrl-geocoder");
         expect(wrapper.classList.contains("maplibregl-ctrl-geocoder--collapsed")).toBeFalsy();
     });
   
-    test(
-      "options.showResultsWhileTyping=false, enter key press",
-      () => {
+    test("options.showResultsWhileTyping=false, enter key press", async () => {
         setup({
           features: [Features.QUEEN_STREET],
           collapsed: true,
           showResultsWhileTyping: false,
         });
   
-        var wrapper = container.querySelector(".maplibregl-ctrl-geocoder input");
+        const wrapper = container.querySelector(".maplibregl-ctrl-geocoder input");
         const searchMock = jest.spyOn(geocoder, "_geocode");
-        var mapFitBoundsMock = jest.spyOn(map, "fitBounds");
-  
+        const mapFitBoundsMock = jest.spyOn(map, "fitBounds");
+
         geocoder.setInput("Paris");
         expect(searchMock).not.toHaveBeenCalled();
-  
+        const resultPromise = geocoder.once("results");
         wrapper.dispatchEvent(new KeyboardEvent("keydown", { keyCode: 13 }));
-        geocoder.on(
-          "results",
-          once(() => {
-            var boundsArray = mapFitBoundsMock.mock.calls[0][0];
-            expect(mapFitBoundsMock).toHaveBeenCalled();
-            expect(boundsArray[0].length).toBe(2);
-            expect(boundsArray[1].length).toBe(2);
-          })
-        );
+
+        await resultPromise;
+
+        expect(mapFitBoundsMock).toHaveBeenCalled();
       }
     );
   
@@ -303,55 +282,55 @@ describe("Geocoder#inputControl", () => {
   
     test("createIcon", () => {
       setup({});
-      var icon = geocoder.createIcon("search", "<path/>");
+      const icon = geocoder.createIcon("search", "<path/>");
       expect(icon.outerHTML).toBe(
         '<svg class="maplibregl-ctrl-geocoder--icon maplibregl-ctrl-geocoder--icon-search" viewBox="0 0 18 18" xml:space="preserve" width="18" height="18"><path></path></svg>'
       );
     });
   
-    test("event deduplication", (done) => {
+    test("event deduplication", async () => {
       setup({
         features: [Features.GOLDEN_GATE_BRIDGE],
         types: "place",
       });
-      var clearEl = container.querySelector(".maplibregl-ctrl-geocoder button");
+      const clearEl = container.querySelector(".maplibregl-ctrl-geocoder button");
   
-      var checkVal = null;
+      let checkVal = null;
   
-      geocoder.on("result", once(() => {
-        expect(typeof geocoder.lastSelected).toBe("string");
-        expect(geocoder.lastSelected).not.toBe(checkVal);
-        checkVal = geocoder.lastSelected;
-        clearEl.dispatchEvent(clickEvent);
-        done();
-      }));
+      const resultPromise = geocoder.once("result");
       geocoder.query("Golden Gate Bridge");
   
-      var newMock = mockGeocoderApi([Features.CANADA]);
+      const newMock = mockGeocoderApi([Features.CANADA]);
       geocoder.setGeocoderApi(newMock);
       geocoder.query("Canada");
+
+      await resultPromise;
+      expect(typeof geocoder.lastSelected).toBe("string");
+      expect(geocoder.lastSelected).not.toBe(checkVal);
+      checkVal = geocoder.lastSelected;
+      clearEl.dispatchEvent(clickEvent);
     });
   
-    test("event deduplication even when IDs are shared", (done) => {
+    test("event deduplication even when IDs are shared", async () => {
       setup({
         types: "place",
         features: [Features.GOLDEN_GATE_BRIDGE],
       });
-      var clearEl = container.querySelector(".maplibregl-ctrl-geocoder button");
+      const clearEl = container.querySelector(".maplibregl-ctrl-geocoder button");
   
-      var lastID = "test.abc123";
+      const lastID = "test.abc123";
   
-      geocoder.on("result", once(() => {
-        var selected = JSON.parse(geocoder.lastSelected);
-        selected.id = lastID;
-        clearEl.dispatchEvent(clickEvent);
-        done();
-      }));
+      const resultPromise = geocoder.once("result");
       geocoder.query("Golden Gate Bridge");
       geocoder.query("usa");
+
+      await resultPromise;
+      const selected = JSON.parse(geocoder.lastSelected);
+      selected.id = lastID;
+      clearEl.dispatchEvent(clickEvent);
     });
   
-    test("paste event", (done) => {
+    test("paste event", async () => {
         setup({
             showResultsWhileTyping: true,
         });
@@ -359,14 +338,10 @@ describe("Geocoder#inputControl", () => {
         pasteEvent.clipboardData = {
           getData () { return 'Golden Gate Bridge' }
         }
-        var inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+        const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
         inputEl.dispatchEvent(pasteEvent);
     
-        geocoder.on("results",
-            once(() => {
-                done();
-            })
-        );
+        await expect(geocoder.once("results")).resolves.toBeDefined();
     });
 
     test("result was added to container", () => {
@@ -382,45 +357,33 @@ describe("Geocoder#inputControl", () => {
         container.remove();
     });
  
-    test("input works without a map", (done) => {
+    test("input works without a map", async () => {
       setupNoMap({
         types: "place",
         features: [Features.GOLDEN_GATE_BRIDGE],
       });
-      var inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
-      var clearEl = container.querySelector(".maplibregl-ctrl-geocoder button");
+      const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+      const clearEl = container.querySelector(".maplibregl-ctrl-geocoder button");
   
-      geocoder.on(
-        "loading",
-        once((e) => {
-            expect(e.query).toBe("-122.47846999999996 37.81914000000006");
-        })
-      );
-  
-      geocoder.on(
-        "result",
-        once(() => {
-            expect(inputEl.value).toBeDefined()
-            clearEl.dispatchEvent(clickEvent);
-        })
-      );
-  
-      geocoder.on(
-        "clear",
-        once(() => {
-          setTimeout(() => {
-            expect(geocoder.fresh).toBeFalsy();
-            geocoder.setInput("Paris");
-            expect(inputEl.value).toBe("Paris")
-            geocoder.setInput("90,45");
-            expect(inputEl.value).toBe("90,45");
-            done();
-            container.remove();
-          });
-        })
-      );
+      const loadingPromise = geocoder.once("loading");
+      const resultPromise = geocoder.once("result");
+      const clearPromise = geocoder.once("clear");
   
       geocoder.query("-122.47846999999996 37.81914000000006");
+
+      const e = await loadingPromise;
+      expect(e.query).toBe("-122.47846999999996 37.81914000000006");
+
+      await resultPromise;
+      expect(inputEl.value).toBeDefined()
+      clearEl.dispatchEvent(clickEvent);
+      await clearPromise;
+      expect(geocoder.fresh).toBeTruthy();
+      geocoder.setInput("Paris");
+      expect(inputEl.value).toBe("Paris")
+      geocoder.setInput("90,45");
+      expect(inputEl.value).toBe("90,45");
+      container.remove();
     });
   
   

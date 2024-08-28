@@ -1,4 +1,4 @@
-var GOLDEN_GATE_BRIDGE = {
+const GOLDEN_GATE_BRIDGE = {
   geometry: {
     type: "Point",
     coordinates: [-122.47846999999996, 37.81914000000006],
@@ -20,7 +20,7 @@ var GOLDEN_GATE_BRIDGE = {
   center: [-122.47846999999996, 37.81914000000006],
 };
 
-var CANADA = {
+const CANADA = {
   geometry: {
     type: "Point",
     coordinates: [-113.64257999999995, 60.108670000000075],
@@ -37,7 +37,7 @@ var CANADA = {
   bbox: [-140.99778, 41.6751050889, -52.6480987209, 83.23324],
 };
 
-var QUEEN_STREET = {
+const QUEEN_STREET = {
   geometry: {
     type: "Point",
     coordinates: [0.41218404200003533, 51.18466021800003],
@@ -57,7 +57,7 @@ var QUEEN_STREET = {
   center: [0.41218404200003533, 51.18466021800003],
 };
 
-var PARIS = {
+const PARIS = {
   geometry: {
     type: "Point",
     coordinates: [2.3414000000000215, 48.85717000000005],
@@ -76,7 +76,7 @@ var PARIS = {
   center: [2.3414000000000215, 48.85717000000005],
 };
 
-var LONDON = {
+const LONDON = {
   geometry: {
     type: "Point",
     coordinates: [-0.12769869299995662, 51.507408360000056],
@@ -95,7 +95,7 @@ var LONDON = {
   center: [-0.12769869299995662, 51.507408360000056],
 };
 
-var TANZANIA = {
+const TANZANIA = {
   geometry: {
     type: "Point",
     coordinates: [34.517755, -6.193388],
@@ -114,7 +114,7 @@ var TANZANIA = {
   center: [34.517755, -6.193388],
 };
 
-var BELLINGHAM = {
+const BELLINGHAM = {
   geometry: {
     type: "Point",
     coordinates: [-122.49998672488617, 48.717186690468154],

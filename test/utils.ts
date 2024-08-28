@@ -1,4 +1,4 @@
-import MaplibreGeocoder, { type MaplibreGeocoderApi } from "../dist/maplibre-gl-geocoder.js";
+import MaplibreGeocoder, { type MaplibreGeocoderApi } from "../lib/index";
 import type { FitBoundsOptions, FlyToOptions, LngLatBoundsLike } from "maplibre-gl";
 
 export class LngLatMock {
@@ -18,10 +18,10 @@ export class MapMock {
     addControl(c) { this.container.appendChild(c.onAdd(this))};
     removeControl(c) {c.onRemove(this)};
     getZoom() {return this.zoom};
-    on(type: string, cb: Function) { this.cbMap[type] = cb; };
-    off(type: string, cb: Function) { delete this.cbMap[type]; }
-    flyTo(opts: FlyToOptions) {};
-    fitBounds(bounds: LngLatBoundsLike, options?: FitBoundsOptions) {};
+    on(type: string, cb: (e: any) => void) { this.cbMap[type] = cb; };
+    off(type: string, _cb: (e: any) => void) { delete this.cbMap[type]; }
+    flyTo(_opts: FlyToOptions) {};
+    fitBounds(_bounds: LngLatBoundsLike, _options?: FitBoundsOptions) {};
     getCenter() {return this.center};
     jumpTo(options: { zoom: number; center: number[]; }) {
         this.center = new LngLatMock(options.center[0], options.center[1]);
@@ -40,7 +40,7 @@ export class MapMock {
 export function createMarkerMock() {
     const markerWithSpy = jest.fn();
     markerWithSpy.mockImplementation(() => {
-        let obj = {
+        const obj = {
             setLngLat: () => { return obj; },
             addTo: () => { return obj; },
             remove: () => {},
@@ -54,7 +54,7 @@ export function createMarkerMock() {
 export function createPopupMock() {
     const popupWithSpy = jest.fn();
     popupWithSpy.mockImplementation(() => {
-        let obj = {
+        const obj = {
             setHTML: () => { return obj; },
         }
         return obj;
@@ -71,12 +71,12 @@ export function init(opts?: any) {
     opts = opts || {};
     opts.enableEventLogging = false;
     opts.maplibregl = opts.maplibregl || { Marker: createMarkerMock(), LngLatBounds: LngLatBoundsMock };
-    let container = document.createElement("div");
-    let map = new MapMock({ container: container });
-    let geocoderApi =
+    const container = document.createElement("div");
+    const map = new MapMock({ container: container });
+    const geocoderApi =
       opts.geocoderApi ||
       mockGeocoderApi(opts.features, opts.errorMessage);
-    let geocoder = new MaplibreGeocoder(geocoderApi, opts);
+    const geocoder = new MaplibreGeocoder(geocoderApi, opts);
     map.addControl(geocoder);
     return { map, geocoder, container };
 }
@@ -84,11 +84,11 @@ export function init(opts?: any) {
 export function initNoMap(opts) {
     opts = opts || {};
     opts.enableEventLogging = false;
-    let container = document.createElement("div");
+    const container = document.createElement("div");
     container.className = "notAMap";
     document.body.appendChild(container);
-    let geocoderApi = mockGeocoderApi(opts.features, opts.errorMessage);
-    let geocoder = new MaplibreGeocoder(geocoderApi, opts);
+    const geocoderApi = mockGeocoderApi(opts.features, opts.errorMessage);
+    const geocoder = new MaplibreGeocoder(geocoderApi, opts);
     geocoder.addTo(".notAMap");
     return {geocoder, container}
 }
@@ -96,11 +96,11 @@ export function initNoMap(opts) {
 export function initHtmlElement(opts?: any) {
     opts = opts || {};
     opts.enableEventLogging = false;
-    let container = document.createElement("div");
+    const container = document.createElement("div");
     container.className = "notAMap";
     document.body.appendChild(container);
-    let geocoderApi = mockGeocoderApi(opts.features, opts.errorMessage);
-    let geocoder = new MaplibreGeocoder(geocoderApi, opts);
+    const geocoderApi = mockGeocoderApi(opts.features, opts.errorMessage);
+    const geocoder = new MaplibreGeocoder(geocoderApi, opts);
     geocoder.addTo(container);
     return {geocoder, container}
 }
@@ -109,15 +109,15 @@ export function initHtmlElement(opts?: any) {
 export function mockGeocoderApi(features, errorMessage?: string): MaplibreGeocoderApi {
     return {
         forwardGeocode: async () => {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             if (errorMessage) reject(errorMessage);
-            resolve({ features: features || [] });
+            resolve({ features: features || [] } as any);
         });
         },
         reverseGeocode: async () => {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             if (errorMessage) reject(errorMessage);
-            resolve({ features: features || [] });
+            resolve({ features: features || [] } as any);
         });
         },
     };
@@ -126,28 +126,28 @@ export function mockGeocoderApi(features, errorMessage?: string): MaplibreGeocod
 export function createMockGeocoderApiWithSuggestions(features, suggestions, errorMessage?: string): MaplibreGeocoderApi {
     return {
         forwardGeocode: () => {
-        return new Promise((resolve, reject) => {
-            if (errorMessage) reject(errorMessage);
-            resolve({ features: (features || []) });
-        });
+            return new Promise((resolve, reject) => {
+                if (errorMessage) reject(errorMessage);
+                resolve({ features: (features || []) });
+            });
         },
         reverseGeocode: () => {
-        return new Promise((resolve, reject) => {
-            if (errorMessage) reject(errorMessage);
-            resolve({ features: (features || []) });
-        });
+            return new Promise((resolve, reject) => {
+                if (errorMessage) reject(errorMessage);
+                resolve({ features: (features || []) });
+            });
         },
         getSuggestions: () => {
-        return new Promise((resolve, reject) => {
-            if (errorMessage) reject(errorMessage);
-            resolve({ suggestions: suggestions || [], features: [] });
-        });
+            return new Promise((resolve, reject) => {
+                if (errorMessage) reject(errorMessage);
+                resolve({ suggestions: suggestions || [], features: [] });
+            });
         },
         searchByPlaceId: () => {
-        return new Promise((resolve, reject) => {
-            if (errorMessage) reject(errorMessage);
-            resolve({ features: features[0] || [] });
-        });
+            return new Promise((resolve, reject) => {
+                if (errorMessage) reject(errorMessage);
+                resolve({ features: features[0] || [] });
+            });
         },
     } as any;
 }

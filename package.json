@@ -50,7 +50,6 @@
     "eslint": "^9.9.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "lodash.once": "^4.0.0",
     "maplibre-gl": "^4.5.1",
     "rollup": "^4.21.0",
     "rollup-plugin-dts": "^6.1.1",
