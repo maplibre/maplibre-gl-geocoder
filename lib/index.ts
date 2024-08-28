@@ -1513,7 +1513,7 @@ export default class MaplibreGeocoder {
    * - __error__ `{ error } Error as string`
    * @returns a Promise that resolves when the event is emitted.
    */
-  once(type: string): Promise<void> {
+  once(type: string): Promise<any> {
     return new Promise((resolve) => {
       this._eventEmitter.once(type, resolve);
     });
@@ -1524,7 +1524,7 @@ export default class MaplibreGeocoder {
    * @param type - Event name.
    * @param fn - Function that should unsubscribe to the event emitted.
    */
-  off(type: string, fn): this {
+  off(type: string, fn: (e: any) => void): this {
     this._eventEmitter.removeListener(type, fn);
     return this;
   }

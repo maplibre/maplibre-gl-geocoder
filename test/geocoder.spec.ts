@@ -43,7 +43,7 @@ describe("geocoder", () => {
         expect(geocoder._typeahead.selected).toBeNull();
     });
 
-    test("options", (done) => {
+    test("options", async () => {
         setup({
           flyTo: false,
           country: "fr",
@@ -53,28 +53,18 @@ describe("geocoder", () => {
     
         geocoder.query("Paris");
     
-        geocoder.on(
-          "results",
-          once((e) => {
-            expect(e.features.length).toBe(1);
-            expect(geocoder.fresh).toBe(false);
-          }
-        ));
-    
-        geocoder.on(
-          "result",
-          once((e) => {
-            var center = map.getCenter();
-            expect(center.lng).toBe(0);
-            expect(center.lat).toBe(0);
-            expect(e.result.place_name).toBe("Paris, France");
-            done();
-          })
-        );
+        let e = await geocoder.once("results");
+        expect(e.features.length).toBe(1);
+        expect(geocoder.fresh).toBe(false);
+        
+        e = await geocoder.once("result")
+        var center = map.getCenter();
+        expect(center.lng).toBe(0);
+        expect(center.lat).toBe(0);
+        expect(e.result.place_name).toBe("Paris, France");
       });
 
-      test("options.bbox", () => {
-        expect.assertions(3);
+      test("options.bbox", async () => {
         var bbox = [
           -122.71901248631752, 37.62347223479118, -122.18070124967602,
           37.87996631184369,
@@ -85,32 +75,24 @@ describe("geocoder", () => {
         });
     
         geocoder.query("London");
-        geocoder.on(
-          "results",
-          once((e) => {
-            expect(e.features.length).toBe(1);
-            expect(e.config.bbox).toBe(bbox);
-            expect(e.features[0].text).toBe("London, Greater London, England, GBR");
-          })
-        );
+        const e = await geocoder.once("results")
+        expect(e.features.length).toBe(1);
+        expect(e.config.bbox).toBe(bbox);
+        expect(e.features[0].text).toBe("London, Greater London, England, GBR");
       });
 
-      test("options.reverseGeocode - true", () => {
+      test("options.reverseGeocode - true", async () => {
         expect.assertions(4);
         setup({
           reverseGeocode: true,
           features: [Features.TANZANIA],
         });
         geocoder.query("-6.1933875, 34.5177548");
-        geocoder.on(
-          "results",
-          once((e) => {
-            expect(e.features.length).toBe(1);
-            expect(e.features[0].place_name.indexOf("Tanzania")).toBeGreaterThan(-1);
-            expect(e.features[0].place_name.indexOf("Singida")).toBeGreaterThan(-1);
-            expect(e.config.limit).toBe(1);
-          })
-        );
+        const e = await geocoder.once("results");
+        expect(e.features.length).toBe(1);
+        expect(e.features[0].place_name.indexOf("Tanzania")).toBeGreaterThan(-1);
+        expect(e.features[0].place_name.indexOf("Singida")).toBeGreaterThan(-1);
+        expect(e.config.limit).toBe(1);
       });
 
       test("options.reverseGeocode - false by default", () => {
