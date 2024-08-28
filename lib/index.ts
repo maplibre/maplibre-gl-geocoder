@@ -776,16 +776,16 @@ export default class MaplibreGeocoder {
     this._loadingEl.style.display = "block";
     this._eventEmitter.emit("loading", { query: searchInput });
 
-    let config = this._getConfigForRequest();
-    let request = this._createGeocodeRequest(config, searchInput, isSuggestion, isPlaceId);
+    const config = this._getConfigForRequest();
+    const request = this._createGeocodeRequest(config, searchInput, isSuggestion, isPlaceId);
 
-    let localGeocoderResults = this.options.localGeocoder
+    const localGeocoderResults = this.options.localGeocoder
       ? (this.options.localGeocoder(searchInput) || [])
       : [];
-    let externalGeocoderResults = [];
+    const externalGeocoderResults = [];
     
     try {
-      let response = await request;
+      const response = await request;
       await this._handleGeocodeResponse(
         response, 
         config,
@@ -874,12 +874,12 @@ export default class MaplibreGeocoder {
       ? localGeocoderResults.concat(res.features)
       : localGeocoderResults;
 
-    let externalGeocoderResultsPromise = this.options.externalGeocoder 
+    const externalGeocoderResultsPromise = this.options.externalGeocoder 
       ? (this.options.externalGeocoder(searchInput, res.features, config) || Promise.resolve([]))
       : Promise.resolve([]);
       // supplement Geocoding API results with features returned by a promise
     try {
-      let features = await externalGeocoderResultsPromise;
+      const features = await externalGeocoderResultsPromise;
       externalGeocoderResults.splice(0, 0, ...features);
       res.features = res.features
           ? features.concat(res.features)
@@ -1032,7 +1032,7 @@ export default class MaplibreGeocoder {
    * @param searchInput - location name or other search input
    */
   async query(searchInput: string) {
-    let results = await this._geocode(searchInput);
+    const results = await this._geocode(searchInput);
     this._onQueryResult(results as any);
   }
 
