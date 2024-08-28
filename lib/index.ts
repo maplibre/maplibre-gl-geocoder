@@ -577,8 +577,9 @@ export default class MaplibreGeocoder {
   }
 
   _onKeyDown(e) {
-    const ESC_KEY_CODE = 27,
-      TAB_KEY_CODE = 9;
+    const ESC_KEY_CODE = 27;
+    const TAB_KEY_CODE = 9;
+    const ENTER_KEY_CODE = 13;
 
     if (e.keyCode === ESC_KEY_CODE && this.options.clearAndBlurOnEsc) {
       this._clear(e);
@@ -607,7 +608,7 @@ export default class MaplibreGeocoder {
       return;
 
     // ENTER
-    if (e.keyCode === 13) {
+    if (e.keyCode === ENTER_KEY_CODE) {
       if (!this.options.showResultsWhileTyping) {
         if (!this._typeahead.selected) {
           this._geocode(target.value);
@@ -1083,7 +1084,7 @@ export default class MaplibreGeocoder {
 
     // Filter out suggestions and restrict to limit
     const results = this._typeahead.data
-      .filter(function (result) {
+      .filter((result) => {
         return typeof result === "string" ? false : true;
       })
       .slice(0, this.options.limit);
@@ -1095,9 +1096,9 @@ export default class MaplibreGeocoder {
         const defaultFlyOptions = { padding: 100 };
         const flyOptions = extend({}, defaultFlyOptions, this.options.flyTo as any);
         const bounds = new this._maplibregl.LngLatBounds();
-        results.forEach(function (feature) {
+        for (const feature of results) {
           bounds.extend(feature.geometry.coordinates);
-        });
+        }
         this._map.fitBounds(bounds, flyOptions);
       }
     }
