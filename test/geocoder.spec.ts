@@ -22,10 +22,10 @@ describe("geocoder", () => {
             features: [Features.QUEEN_STREET],
         });
         geocoder.query("Queen Street");
-        var mapMoveSpy = jest.spyOn(map, "flyTo");
+        const mapMoveSpy = jest.spyOn(map, "flyTo");
         await geocoder.once("result");
         expect(mapMoveSpy).toHaveBeenCalledTimes(1);
-        var mapMoveArgs = mapMoveSpy.mock.calls[0][0];
+        const mapMoveArgs = mapMoveSpy.mock.calls[0][0];
         expect(mapMoveArgs.center[0]).not.toBe(0);
         expect(mapMoveArgs.center[1]).not.toBe(0);
     });
@@ -56,14 +56,14 @@ describe("geocoder", () => {
         expect(geocoder.fresh).toBe(false);
         
         e = await geocoder.once("result")
-        var center = map.getCenter();
+        const center = map.getCenter();
         expect(center.lng).toBe(0);
         expect(center.lat).toBe(0);
         expect(e.result.place_name).toBe("Paris, France");
       });
 
       test("options.bbox", async () => {
-        var bbox = [
+        const bbox = [
           -122.71901248631752, 37.62347223479118, -122.18070124967602,
           37.87996631184369,
         ];
@@ -143,7 +143,7 @@ describe("geocoder", () => {
       test("options:zoom", async () => {
         setup({ zoom: 12, features: [Features.BELLINGHAM] });
         const q = geocoder.query("1714 14th St NW");
-        var mapMoveSpy = jest.spyOn(map, "flyTo");
+        const mapMoveSpy = jest.spyOn(map, "flyTo");
         await geocoder.once("results");
         await q;
         const mapMoveArgs = mapMoveSpy.mock.calls[0][0];
@@ -213,9 +213,9 @@ describe("geocoder", () => {
         await geocoder.once("results");
         await q;
         expect(fitBoundsSpy).toHaveBeenCalledTimes(2);
-        var fitBoundsArgs = fitBoundsSpy.mock.calls[1][0];
+        const fitBoundsArgs = fitBoundsSpy.mock.calls[1][0];
         // flatten
-        var mapBBox = [
+        const mapBBox = [
           fitBoundsArgs[0][0],
           fitBoundsArgs[0][1],
           fitBoundsArgs[1][0],
@@ -233,22 +233,22 @@ describe("geocoder", () => {
         await geocoder.once("results");
         await q;
         expect(fitBoundsSpy).toHaveBeenCalledTimes(2);
-        var fitBoundsArgs = fitBoundsSpy.mock.calls[1][0];
+        const fitBoundsArgs = fitBoundsSpy.mock.calls[1][0];
         // flatten
-        var mapBBox = [
+        const mapBBox = [
           fitBoundsArgs[0][0],
           fitBoundsArgs[0][1],
           fitBoundsArgs[1][0],
           fitBoundsArgs[1][1],
         ];
-        var expectedBBoxFlat = [-140.99778, 41.675105, -52.648099, 83.23324];
+        const expectedBBoxFlat = [-140.99778, 41.675105, -52.648099, 83.23324];
         for (let i = 0; i <  mapBBox.length; i++) {
             expect(mapBBox[i]).toBeCloseTo(expectedBBoxFlat[i]);
         }
       });
 
       test("options.filter", async () => {
-        var features = [
+        const features = [
           {
             geometry: {
               type: "Point",
@@ -326,7 +326,7 @@ describe("geocoder", () => {
       });
 
       test("options.setProximity", async () => {
-        var features = [];
+        const features = [];
         setup({ features });
     
         map.setZoom(13);
@@ -346,7 +346,7 @@ describe("geocoder", () => {
           },
         });
     
-        var fixture = {
+        const fixture = {
           id: "abc123",
           place_name: "San Francisco, California",
         };
@@ -358,14 +358,14 @@ describe("geocoder", () => {
 
       test("setRenderFunction with no input", () => {
         setup({});
-        var result = geocoder.setRenderFunction();
+        const result = geocoder.setRenderFunction();
         expect(typeof geocoder._typeahead.render).toBe("function");
         expect(result instanceof MaplibreGeocoder).toBeTruthy();
       });
 
       test("setRenderFunction with function input", () => {
         setup({});
-        var result = geocoder.setRenderFunction(function (item) {
+        const result = geocoder.setRenderFunction(function (item) {
           return item.place_name;
         });
         expect(typeof geocoder._typeahead.render).toBe("function");
@@ -374,7 +374,7 @@ describe("geocoder", () => {
 
       test("getRenderFunction default", () => {
         setup({});
-        var result = geocoder.getRenderFunction();
+        const result = geocoder.getRenderFunction();
         expect(result).toBeDefined();
         expect(typeof result).toBe("function");
       });
@@ -385,7 +385,7 @@ describe("geocoder", () => {
             return item.place_name;
           },
         });
-        var result = geocoder.getRenderFunction();
+        const result = geocoder.getRenderFunction();
         expect(result).toBeDefined();
         expect(typeof result).toBe("function");
       });
@@ -397,7 +397,7 @@ describe("geocoder", () => {
           },
         });
     
-        var fixture = {
+        const fixture = {
           id: "abc123",
           place_name: "San Francisco, California",
         };
@@ -410,7 +410,7 @@ describe("geocoder", () => {
       test("options.getItemValue default", () => {
         setup({});
     
-        var fixture = {
+        const fixture = {
           id: "abc123",
           place_name: "San Francisco, California",
         };
@@ -427,7 +427,7 @@ describe("geocoder", () => {
         });
         const mapFlyMethod = jest.spyOn(map, "flyTo");
         geocoder.query("Golden Gate Bridge");
-        const e = await geocoder.once("results");
+        await geocoder.once("results");
         expect(mapFlyMethod).not.toHaveBeenCalled();
       });
  
@@ -442,7 +442,7 @@ describe("geocoder", () => {
         await geocoder.once("results");
         await q;
         expect(mapFlyMethod).toHaveBeenCalledTimes(1);
-        var calledWithArgs = mapFlyMethod.mock.calls[0][0];
+        const calledWithArgs = mapFlyMethod.mock.calls[0][0];
         expect(calledWithArgs.center[0]).toBeCloseTo(-122.4785);
         expect(calledWithArgs.center[1]).toBeCloseTo(37.8191);
         expect(calledWithArgs.zoom).toBe(16);
@@ -462,7 +462,7 @@ describe("geocoder", () => {
         await geocoder.once("results");
         await q;
         expect(mapFlyMethod).toHaveBeenCalledTimes(1);
-        var calledWithArgs = mapFlyMethod.mock.calls[0][0];
+        const calledWithArgs = mapFlyMethod.mock.calls[0][0];
         expect(calledWithArgs.center[0]).toBeCloseTo(-122.4785);
         expect(calledWithArgs.center[1]).toBeCloseTo(37.8191);
         expect(calledWithArgs.zoom).toBe(4);
@@ -481,7 +481,7 @@ describe("geocoder", () => {
         await geocoder.once("results");
         await q;
         expect(mapFlyMethod).toHaveBeenCalledTimes(2);
-        var calledWithArgs = mapFlyMethod.mock.calls[1][1];
+        const calledWithArgs = mapFlyMethod.mock.calls[1][1];
         expect(calledWithArgs.speed).toBe(5);
       });
     
@@ -497,7 +497,7 @@ describe("geocoder", () => {
           await geocoder.once("results");
           await q;
           expect(mapFlyMethod).toHaveBeenCalledTimes(2);
-          var calledWithArgs = mapFlyMethod.mock.calls[1][1];
+          const calledWithArgs = mapFlyMethod.mock.calls[1][1];
           expect(calledWithArgs.speed).toBe(5);
         }
       );
@@ -514,7 +514,7 @@ describe("geocoder", () => {
         await geocoder.once("results");
         await q;
         expect(markerConstructorSpy).toHaveBeenCalledTimes(2);
-        var calledWithOptions = markerConstructorSpy.mock.calls[1][0];
+        const calledWithOptions = markerConstructorSpy.mock.calls[1][0];
         expect(calledWithOptions.color).toBe("#4668F2");
       });
 
@@ -534,7 +534,7 @@ describe("geocoder", () => {
         await geocoder.once("results");
         await q;
         expect(markerConstructorSpy).toHaveBeenCalledTimes(2);
-        var calledWithOptions = markerConstructorSpy.mock.calls[1][0];
+        const calledWithOptions = markerConstructorSpy.mock.calls[1][0];
         expect(calledWithOptions.color).toBe("purple");
         expect(calledWithOptions.draggable).toBe(true);
         expect(calledWithOptions.anchor).toBe("top");
@@ -582,7 +582,7 @@ describe("geocoder", () => {
         await geocoder.once("results");
         await q;
         expect(popupConstructorSpy).toHaveBeenCalledTimes(2);
-        var calledWithOptions = popupConstructorSpy.mock.calls[1][0];
+        const calledWithOptions = popupConstructorSpy.mock.calls[1][0];
         expect(calledWithOptions.closeOnMove).toBe(true);
       });
       
@@ -594,7 +594,7 @@ describe("geocoder", () => {
         });
     
         geocoder.query("Golden Gate Bridge");
-        const e = await geocoder.once("results");
+        await geocoder.once("results");
         expect(popupConstructorSpy).not.toHaveBeenCalled();
       });
        
@@ -713,7 +713,7 @@ describe("geocoder", () => {
             return false;
           },
         });
-        var filter = geocoder.getFilter();
+        const filter = geocoder.getFilter();
         expect(typeof filter).toBe("function");
         expect(["a", "b", "c"].filter(filter)).toEqual([]);
       });
@@ -724,15 +724,15 @@ describe("geocoder", () => {
             return true;
           },
         });
-        var initialFilter = geocoder.getFilter();
-        var filtered = ["a", "b", "c"].filter(initialFilter);
+        const initialFilter = geocoder.getFilter();
+        const filtered = ["a", "b", "c"].filter(initialFilter);
         expect(typeof initialFilter).toBe("function");
         expect(filtered).toEqual(["a", "b", "c"]);
         geocoder.setFilter(() => {
           return false;
         });
-        var nextFilter = geocoder.options.filter;
-        var nextFiltered = ["a", "b", "c"].filter(nextFilter);
+        const nextFilter = geocoder.options.filter;
+        const nextFiltered = ["a", "b", "c"].filter(nextFilter);
         expect(typeof nextFilter).toBe("function");
         expect(nextFiltered).toEqual([]);
       });
@@ -750,7 +750,7 @@ describe("geocoder", () => {
         expect(geocoder._typeahead.data.length).toBe(0);
         expect(geocoder._typeahead.selected).toBeNull();
         expect(typeaheadRenderErrorSpy).toHaveBeenCalledTimes(1);
-        var calledWithArgs = typeaheadRenderErrorSpy.mock.calls[0][0];
+        const calledWithArgs = typeaheadRenderErrorSpy.mock.calls[0][0];
         expect(calledWithArgs).toBe("<h1>This is a test</h1>");
       });
       
@@ -762,7 +762,7 @@ describe("geocoder", () => {
         await geocoder.once("results");
         geocoder._renderError();
         expect(renderMessageSpy).toHaveBeenCalledTimes(1);
-        var calledWithArgs = renderMessageSpy.mock.calls[0][0] as any;
+        const calledWithArgs = renderMessageSpy.mock.calls[0][0] as any;
         expect(calledWithArgs.indexOf("maplibre-gl-geocoder--error") > -1).toBeTruthy();
       });
       
@@ -771,10 +771,10 @@ describe("geocoder", () => {
         const renderMessageSpy = jest.spyOn(geocoder, "_renderMessage");
     
         geocoder.query("Golden Gate Bridge");
-        const e = await geocoder.once("results");
+        await geocoder.once("results");
         geocoder._renderNoResults();
         expect(renderMessageSpy).toHaveBeenCalledTimes(1);
-        var calledWithArgs = renderMessageSpy.mock.calls[0][0] as any;
+        const calledWithArgs = renderMessageSpy.mock.calls[0][0] as any;
         expect(calledWithArgs.indexOf("maplibre-gl-geocoder--error") > -1).toBeTruthy();
         expect(calledWithArgs.indexOf("maplibre-gl-geocoder--no-results") > -1).toBeTruthy();
       });
@@ -785,7 +785,7 @@ describe("geocoder", () => {
         const q = geocoder.query("12,");
         await geocoder.once("error");
         expect(renderMessageSpy).toHaveBeenCalledTimes(1);
-        var calledWithArgs = renderMessageSpy.mock.calls[0][0] as any;
+        const calledWithArgs = renderMessageSpy.mock.calls[0][0] as any;
         expect(calledWithArgs.indexOf("maplibre-gl-geocoder--error") > -1).toBeTruthy();
         expect(calledWithArgs.indexOf("There was an error reaching the server") > -1).toBeTruthy();
         await expect(q).rejects.toBe("A mock error message");
@@ -807,7 +807,7 @@ describe("geocoder", () => {
               ];
             },
           });
-          var renderErrorSpy = jest.spyOn(geocoder, "_renderError");
+          const renderErrorSpy = jest.spyOn(geocoder, "_renderError");
           const q = geocoder.query("12,");
           await geocoder.once("error");
           expect(renderErrorSpy).not.toHaveBeenCalled();
@@ -825,7 +825,7 @@ describe("geocoder", () => {
       
     
       test("throws an error if localGeocoderOnly mode is active but no localGeocoder is supplied", () => {
-          var opts = {
+          const opts = {
             localGeocoderOnly: true,
           };
           // no access token here
@@ -847,7 +847,7 @@ describe("geocoder", () => {
           showResultsWhileTyping: true,
         });
         const searchMock = jest.spyOn(geocoder, "_geocode");
-        var event = {
+        const event = {
             clipboardData: {
                 getData: () => "Golden Gate Bridge",
             },
@@ -863,7 +863,7 @@ describe("geocoder", () => {
         minLength: 5,
         });
         const searchMock = jest.spyOn(geocoder, "_geocode");
-        var event = {
+        const event = {
             clipboardData: {
                 getData: () => "abc",
             },
@@ -875,7 +875,7 @@ describe("geocoder", () => {
       test("geocoder#onPaste not triggered when there is no text", () => {
         setup();
         const searchMock = jest.spyOn(geocoder, "_geocode");
-        var event = {
+        const event = {
             clipboardData: {
                 getData: () => "",
             },
