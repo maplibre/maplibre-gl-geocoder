@@ -188,7 +188,7 @@ export type MaplibreGeocoderOptions = {
   /**
    * A function accepting the query string, current features list, and geocoder options which performs geocoding to supplement results from the Maplibre Geocoding API. Expected to return a Promise which resolves to an Array of {@link CarmenGeojsonFeature}.
    */
-  externalGeocoder?: (query: string, list: any, confic: MaplibreGeocoderApiConfig) => Promise<CarmenGeojsonFeature[]>;
+  externalGeocoder?: (query: string, features: CarmenGeojsonFeature[], confic: MaplibreGeocoderApiConfig) => Promise<CarmenGeojsonFeature[]>;
   /**
    * A function which accepts a {@link CarmenGeojsonFeature} to filter out results from the Geocoding API response before they are included in the suggestions list. Return `true` to keep the item, `false` otherwise.
    */
@@ -801,8 +801,6 @@ export default class MaplibreGeocoder {
     const localGeocoderResults = this.options.localGeocoder
       ? (this.options.localGeocoder(searchInput) || [])
       : [];
-    const externalGeocoderResults = [];
-    
     try {
       const response = await request;
       await this._handleGeocodeResponse(
@@ -810,10 +808,9 @@ export default class MaplibreGeocoder {
         config,
         searchInput,
         isSuggestion,
-        externalGeocoderResults,
         localGeocoderResults);
     } catch (err) {
-      this._handleGeocodeErrorResponse(err, localGeocoderResults, externalGeocoderResults);
+      this._handleGeocodeErrorResponse(err, localGeocoderResults);
     }
     return request;
   }
@@ -867,8 +864,7 @@ export default class MaplibreGeocoder {
     config: MaplibreGeocoderApiConfig,
     searchInput: string,
     isSuggestion: boolean,
-    externalGeocoderResults: any[],
-    localGeocoderResults: any[]
+    localGeocoderResults: CarmenGeojsonFeature[]
   ) {
     this._loadingEl.style.display = "none";
 
@@ -899,7 +895,6 @@ export default class MaplibreGeocoder {
       // supplement Geocoding API results with features returned by a promise
     try {
       const features = await externalGeocoderResultsPromise;
-      externalGeocoderResults.splice(0, 0, ...features);
       res.features = res.features
           ? features.concat(res.features)
           : features;
@@ -941,16 +936,13 @@ export default class MaplibreGeocoder {
     }
   }
 
-  private _handleGeocodeErrorResponse(error: Error, localGeocoderResults: any[], externalGeocoderResults: any[]) {
+  private _handleGeocodeErrorResponse(error: Error, localGeocoderResults: CarmenGeojsonFeature[]) {
     this._loadingEl.style.display = "none";
 
       // in the event of an error in the Geocoding API still display results from the localGeocoder
       if (localGeocoderResults.length && this.options.localGeocoder) {
         this._clearEl.style.display = "block";
         this._typeahead.update(localGeocoderResults);
-      } else if (externalGeocoderResults.length && this.options.externalGeocoder) {
-        this._clearEl.style.display = "block";
-        this._typeahead.update(externalGeocoderResults);
       } else {
         this._clearEl.style.display = "none";
         this._typeahead.selected = null;
@@ -1009,8 +1001,10 @@ export default class MaplibreGeocoder {
     }
   }
 
-  _onQueryResult(response: MaplibreGeocoderResults & { features: CarmenGeojsonFeature[] }) {
-    const results = response;
+  _onQueryResult(results: MaplibreGeocoderResults) {
+    if (!('features' in results)) {
+      return;
+    }
     if (!results.features.length) return;
     const result = results.features[0];
     this._typeahead.selected = result;
@@ -1052,7 +1046,7 @@ export default class MaplibreGeocoder {
    */
   async query(searchInput: string) {
     const results = await this._geocode(searchInput);
-    this._onQueryResult(results as any);
+    this._onQueryResult(results);
   }
 
   _renderError() {
