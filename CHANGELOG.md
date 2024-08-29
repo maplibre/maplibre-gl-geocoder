@@ -4,6 +4,17 @@
 
 ### Bug fixes 🐛
 
+## 1.7.0
+
+### Features / Improvements 🚀
+
+- Refactored test and `geocode` method heavily to make the code more readable in https://github.com/maplibre/maplibre-gl-geocoder/pull/127
+- Added `once` to the public API to support promises and registering to an event once in https://github.com/maplibre/maplibre-gl-geocoder/pull/127
+
+### Bug fixes 🐛
+
+- Some bug fixes related to local and external geocoding in https://github.com/maplibre/maplibre-gl-geocoder/pull/127
+
 ## 1.6.0
 
 ### Features / Improvements 🚀
