@@ -1,4 +1,4 @@
-## Maplibre GL Geocoder
+## MapLibre GL Geocoder
 
 A geocoder control for [maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js).
 
