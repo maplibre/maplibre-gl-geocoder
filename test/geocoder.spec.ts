@@ -339,6 +339,24 @@ describe("geocoder", () => {
         expect(e.config.proximity[1]).toBe(43.6568);
       });
 
+      test("set proximity to null for world zoom level", async () => {
+        setup({});
+    
+        geocoder.setProximity({ longitude: 10, latitude: 11 });
+
+        map.setZoom(5);
+        expect(geocoder.getProximity()).toBeNull();
+      });
+
+      test("set proximity to null for world zoom level", async () => {
+        setup({proximityMinZoom: 4});
+    
+        geocoder.setProximity({ longitude: 10, latitude: 11 });
+
+        map.setZoom(5);
+        expect(geocoder.getProximity()).not.toBeNull();
+      });
+
       test("options.render", () => {
         setup({
           render: (feature) => {
