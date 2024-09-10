@@ -6,7 +6,6 @@
   "module": "dist/maplibre-gl-geocoder.mjs",
   "typings": "dist/maplibre-gl-geocoder.d.ts",
   "style": "dist/maplibre-gl-geocoder.css",
-  "type": "module",
   "scripts": {
     "watch": "rollup --configPlugin @rollup/plugin-typescript -c --watch",
     "build": "rollup --configPlugin @rollup/plugin-typescript -c",
