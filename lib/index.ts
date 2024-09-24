@@ -166,16 +166,6 @@ export type MaplibreGeocoderOptions = {
   proximityMinZoom?: number;
   /**
    * A function that specifies how the selected result should be rendered in the search bar. HTML tags in the output string will not be rendered. Defaults to `(item) => item.place_name`.
-   * @example
-   *
-   * const GeoApi = {
-   *   forwardGeocode: (config) => { return { features: [] } },
-   *   reverseGeocode: (config) => { return { features: [] } }
-   *   getSuggestions: (config) => { return { suggestions: {text: string, placeId?: string}[] }}
-   *   searchByPlaceId: (config) => { return { place: {type: string, geometry: {type: string, coordinates: [number]} place_name: string, text: string, center: [number] }[] }}
-   * }
-   * const geocoder = new MaplibreGeocoder(GeoApi, {});
-   * map.addControl(geocoder);
    */
   getItemValue?: (item: CarmenGeojsonFeature) => string;
   /**
@@ -255,6 +245,7 @@ export type MaplibreGeocoderApi = {
   reverseGeocode: (config: MaplibreGeocoderApiConfig) => Promise<MaplibreGeocoderFeatureResults>;
   getSuggestions?: (config: MaplibreGeocoderApiConfig) => Promise<MaplibreGeocoderSuggestionResults>;
   searchByPlaceId?: (config: MaplibreGeocoderApiConfig) => Promise<MaplibreGeocoderPlaceResults>;
+
 };
 
 /**
@@ -384,6 +375,8 @@ export default class MaplibreGeocoder {
    * const GeoApi = {
    *   forwardGeocode: (config) => { return { features: [] } },
    *   reverseGeocode: (config) => { return { features: [] } }
+   *   getSuggestions: (config) => { return { suggestions: {text: string, placeId?: string}[] }}
+   *   searchByPlaceId: (config) => { return { place: {type: string, geometry: {type: string, coordinates: [number]} place_name: string, text: string, center: [number] } }}
    * }
    * const geocoder = new MaplibreGeocoder(GeoAPI, {});
    * geocoder.addTo('#geocoder-container');
