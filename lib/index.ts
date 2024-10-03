@@ -375,8 +375,6 @@ export default class MaplibreGeocoder {
    * const GeoApi = {
    *   forwardGeocode: (config) => { return { features: [] } },
    *   reverseGeocode: (config) => { return { features: [] } }
-   *   getSuggestions: (config) => { return { suggestions: {text: string, placeId?: string}[] }}
-   *   searchByPlaceId: (config) => { return { place: {type: string, geometry: {type: string, coordinates: [number]} place_name: string, text: string, center: [number] } }}
    * }
    * const geocoder = new MaplibreGeocoder(GeoAPI, {});
    * geocoder.addTo('#geocoder-container');
