@@ -227,7 +227,7 @@ export type MaplibreGeocoderApiConfig = {
 
 export type MaplibreGeocoderFeatureResults = { type: "FeatureCollection", features: CarmenGeojsonFeature[]};
 export type MaplibreGeocoderSuggestionResults = { suggestions: { text: string, placeId?: string }[] };
-export type MaplibreGeocoderPlaceResults = { place: CarmenGeojsonFeature };
+export type MaplibreGeocoderPlaceResults = { place: CarmenGeojsonFeature }[];
 export type MaplibreGeocoderResults = MaplibreGeocoderFeatureResults | MaplibreGeocoderSuggestionResults | MaplibreGeocoderPlaceResults;
 
 /**
@@ -907,7 +907,7 @@ export default class MaplibreGeocoder {
     if ('suggestions' in res) {
       results = res.suggestions;
     } else if ('place' in res) {
-      results = [res.place];
+      results = res.place;
     } else {
       results = res.features;
     }
