@@ -43,7 +43,7 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^12.1.1",
     "@types/eslint__js": "^8.42.3",
-    "@types/jest": "^29.5.12",
+    "@types/jest": "^29.5.14",
     "@types/lodash.debounce": "^4.0.9",
     "@types/xtend": "^4.0.6",
     "eslint": "^9.13.0",
