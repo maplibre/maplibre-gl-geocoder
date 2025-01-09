@@ -1,6 +1,6 @@
 {
   "name": "@maplibre/maplibre-gl-geocoder",
-  "version": "1.7.0",
+  "version": "2.0.0",
   "description": "A geocoder control for Maplibre GL JS",
   "main": "dist/maplibre-gl-geocoder.js",
   "module": "dist/maplibre-gl-geocoder.mjs",
