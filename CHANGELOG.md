@@ -7,6 +7,8 @@
 
 ### Bug fixes 🐛
 
+- fix(build): remove type: module from package.json to fix cjs dist by @thaddmt in https://github.com/maplibre/maplibre-gl-geocoder/pull/140
+
 ## 1.7.0
 
 ### Features / Improvements 🚀
