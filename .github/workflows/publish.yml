@@ -81,7 +81,7 @@ jobs:
         with:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: ${{ steps.tag_version.outputs.new_tag }}
-          body: 'Changes since last release:\n ${{ steps.tag_version.outputs.changelog }}'
+          body: ${{ steps.tag_version.outputs.changelog }}
           allowUpdates: true
           draft: false
           prerelease: false
