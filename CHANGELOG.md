@@ -2,10 +2,18 @@
 
 ### Features / Improvements 🚀
 
+### Bug fixes 🐛
+
+## 1.7.1
+
+### Features / Improvements 🚀
+
 - Add option to set proximity min zoom by @HarelM in https://github.com/maplibre/maplibre-gl-geocoder/pull/130
 - Add `once` event registration capability by @HarelM in https://github.com/maplibre/maplibre-gl-geocoder/pull/127
 
 ### Bug fixes 🐛
+
+- fix(build): remove type: module from package.json to fix cjs dist by @thaddmt in https://github.com/maplibre/maplibre-gl-geocoder/pull/140
 
 ## 1.7.0
 
