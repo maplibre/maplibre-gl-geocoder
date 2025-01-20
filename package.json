@@ -7,7 +7,7 @@
   "typings": "dist/maplibre-gl-geocoder.d.ts",
   "style": "dist/maplibre-gl-geocoder.css",
   "scripts": {
-    "watch": "rollup --configPlugin @rollup/plugin-typescript -c --watch",
+    "watch": "npm run build -- --watch",
     "build": "rollup --configPlugin @rollup/plugin-typescript -c",
     "build-css": "mkdir -p dist && cp lib/index.css dist/maplibre-gl-geocoder.css",
     "build-dist": "npm run build && npm run build-css",
