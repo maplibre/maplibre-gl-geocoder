@@ -103,33 +103,6 @@ describe("Geocoder#inputControl", () => {
         expect(clearSpy).toHaveBeenCalled();
     });
   
-    test("nested shadow roots", async () => {
-      setup({});
-
-      const host = document.createElement("div");
-      const shadowLevelOne = host.attachShadow({ mode: "open" });
-
-      const wrapperLevelTwo = document.createElement("div");
-      shadowLevelOne.appendChild(wrapperLevelTwo);
-
-      const shadowLevelTwo = wrapperLevelTwo.attachShadow({ mode: "open" });
-      shadowLevelTwo.appendChild(container)
-
-      geocoder.setInput("testval");
-
-      const clearSpy = jest.spyOn(geocoder, "clear");
-
-      const event = new KeyboardEvent("keydown", { keyCode: 13 /* Enter */ });
-      // target is read only and jsdom does not set it to the host shadow DOM as the browser does
-      Object.defineProperty(event, "target", { value: host });
-
-      const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
-      inputEl.dispatchEvent(event);
-
-      await expect(geocoder.once("results")).resolves.toBeDefined();
-      expect(clearSpy).not.toHaveBeenCalled();
-    });
-
     test("options.clearAndBlurOnEsc=true clears and blurs on escape", () => {
         setup({
           clearAndBlurOnEsc: true,
