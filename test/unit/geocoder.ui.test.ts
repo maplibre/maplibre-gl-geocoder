@@ -1,3 +1,4 @@
+import { describe, test, expect, vi } from 'vitest';
 import Features from "./mockFeatures";
 import { init, initHtmlElement, initNoMap, mockGeocoderApi } from "./utils";
 
@@ -79,11 +80,11 @@ describe("Geocoder#inputControl", () => {
     test("clear is not called on keydown (tab), no focus trap", () => {
         setup({});
         const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
-        const focusSpy = jest.spyOn(inputEl, "focus");
+        const focusSpy = vi.spyOn(inputEl, "focus");
         inputEl.focus();
         expect(focusSpy).toHaveBeenCalled();
-        const keySpy = jest.spyOn(geocoder, "_onKeyDown");
-        const clearSpy = jest.spyOn(geocoder, "clear");
+        const keySpy = vi.spyOn(geocoder, "_onKeyDown");
+        const clearSpy = vi.spyOn(geocoder, "clear");
         geocoder._onKeyDown(new KeyboardEvent("keydown", { code: "9", keyCode: 9 }));
         expect(keySpy).toHaveBeenCalled();
         expect(clearSpy).not.toHaveBeenCalled();
@@ -93,11 +94,11 @@ describe("Geocoder#inputControl", () => {
         setup({});
   
         const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
-        const focusSpy = jest.spyOn(inputEl, "focus");
+        const focusSpy = vi.spyOn(inputEl, "focus");
         inputEl.focus();
         expect(focusSpy).toHaveBeenCalled();
-        const keySpy = jest.spyOn(geocoder, "_onKeyDown");
-        const clearSpy = jest.spyOn(geocoder, "clear");
+        const keySpy = vi.spyOn(geocoder, "_onKeyDown");
+        const clearSpy = vi.spyOn(geocoder, "clear");
         geocoder._onKeyDown(new KeyboardEvent("keydown", { code: "1", keyCode: 1 }));
         expect(keySpy).toHaveBeenCalled();
         expect(clearSpy).toHaveBeenCalled();
@@ -108,8 +109,8 @@ describe("Geocoder#inputControl", () => {
           clearAndBlurOnEsc: true,
         });
         const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
-        const focusSpy = jest.spyOn(inputEl, "focus");
-        const blurSpy = jest.spyOn(inputEl, "blur");
+        const focusSpy = vi.spyOn(inputEl, "focus");
+        const blurSpy = vi.spyOn(inputEl, "blur");
   
         inputEl.focus();
         expect(focusSpy).toHaveBeenCalled();
@@ -131,8 +132,8 @@ describe("Geocoder#inputControl", () => {
           clearAndBlurOnEsc: false,
         });
         const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
-        const focusSpy = jest.spyOn(inputEl, "focus");
-        const blurSpy = jest.spyOn(inputEl, "blur");
+        const focusSpy = vi.spyOn(inputEl, "focus");
+        const blurSpy = vi.spyOn(inputEl, "blur");
   
         inputEl.focus();
         expect(focusSpy).toHaveBeenCalled();
@@ -175,7 +176,7 @@ describe("Geocoder#inputControl", () => {
         expect(geocoder.options.clearOnBlur).toBeTruthy();
   
         const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
-        const focusSpy = jest.spyOn(inputEl, "focus");
+        const focusSpy = vi.spyOn(inputEl, "focus");
   
         geocoder.setInput("testval");
         expect(inputEl.value).toBe("testval");
@@ -253,8 +254,8 @@ describe("Geocoder#inputControl", () => {
         });
   
         const wrapper = container.querySelector(".maplibregl-ctrl-geocoder input");
-        const searchMock = jest.spyOn(geocoder, "_geocode");
-        const mapFitBoundsMock = jest.spyOn(map, "fitBounds");
+        const searchMock = vi.spyOn(geocoder, "_geocode");
+        const mapFitBoundsMock = vi.spyOn(map, "fitBounds");
 
         geocoder.setInput("Paris");
         expect(searchMock).not.toHaveBeenCalled();
@@ -273,7 +274,7 @@ describe("Geocoder#inputControl", () => {
           showResultsWhileTyping: true,
         });
   
-        const searchMock = jest.spyOn(geocoder, "_geocode");
+        const searchMock = vi.spyOn(geocoder, "_geocode");
   
         geocoder.setInput("Paris");
         expect(searchMock).toHaveBeenCalled();

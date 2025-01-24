@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import MaplibreGeocoder, { type MaplibreGeocoderApi } from "../../lib/index";
 import type { FitBoundsOptions, FlyToOptions, LngLatBoundsLike } from "maplibre-gl";
 
@@ -38,7 +39,7 @@ export class MapMock {
 }
 
 export function createMarkerMock() {
-    const markerWithSpy = jest.fn();
+    const markerWithSpy = vi.fn();
     markerWithSpy.mockImplementation(() => {
         const obj = {
             setLngLat: () => { return obj; },
@@ -52,7 +53,7 @@ export function createMarkerMock() {
 }
 
 export function createPopupMock() {
-    const popupWithSpy = jest.fn();
+    const popupWithSpy = vi.fn();
     popupWithSpy.mockImplementation(() => {
         const obj = {
             setHTML: () => { return obj; },

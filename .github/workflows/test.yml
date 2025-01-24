@@ -6,8 +6,8 @@ on:
   pull_request:
 
 jobs:
-  test:
-    name: test
+  unit-tests:
+    name: Unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,18 +22,61 @@ jobs:
           npm ci
           npm run build-dist
 
-      - name: Test
+      - name: Run unit tests
         run: |
-          npm test
+          npm run test-unit-ci
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
-          files: ${{ github.workspace }}/coverage/coverage-final.json
+          files: ${{ github.workspace }}/coverage/vitest/unit/coverage-final.json
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
           disable_search: true
 
-      - name: Docs
+  integration-tests:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js x64
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install build dependencies
+        run: |
+          npm ci
+          npm run build-dist
+
+      - name: Run integration tests
+        run: |
+          npm run test-integration-ci
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ${{ github.workspace }}/coverage/vitest/integration/coverage-final.json
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          disable_search: true
+
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js x64
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install build dependencies
+        run: |
+          npm ci
+   
+      - name: Build docs
         run: |
           npm run docs
