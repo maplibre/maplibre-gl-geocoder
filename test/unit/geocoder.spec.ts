@@ -1,4 +1,4 @@
-import MaplibreGeocoder from "../lib/index";
+import MaplibreGeocoder from "../../lib/index";
 import Features from "./mockFeatures";
 import { createMarkerMock, createPopupMock, LngLatBoundsMock, MapMock, init, createMockGeocoderApiWithSuggestions } from "./utils";
 

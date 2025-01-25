@@ -610,12 +610,7 @@ export default class MaplibreGeocoder {
       return this._inputEl.blur();
     }
 
-    // if target has shadowRoot, then get the actual active element inside the shadowRoot
-    const target =
-      e.target && e.target.shadowRoot
-        ? e.target.shadowRoot.activeElement
-        : e.target;
-    const value = target ? target.value : "";
+    const value = this._inputEl.value;
 
     if (!value) {
       this.fresh = true;
@@ -635,7 +630,7 @@ export default class MaplibreGeocoder {
     if (e.keyCode === ENTER_KEY_CODE) {
       if (!this.options.showResultsWhileTyping) {
         if (!this._typeahead.selected) {
-          this._geocode(target.value);
+          this._geocode(value);
         }
       } else {
         // Pressing enter on the search box will do a search for the currently string input
@@ -643,7 +638,7 @@ export default class MaplibreGeocoder {
           this._typeahead.selected == null &&
           this.geocoderApi.getSuggestions
         ) {
-          this._geocode(target.value, true);
+          this._geocode(value, true);
 
           // If suggestions API is not defined pressing enter while the input box is selected will try to fit the results into the current map view
         } else if (this._typeahead.selected == null) {
@@ -657,10 +652,10 @@ export default class MaplibreGeocoder {
 
     // Show results while typing and greater than min length
     if (
-      target.value.length >= this.options.minLength &&
+      value.length >= this.options.minLength &&
       this.options.showResultsWhileTyping
     ) {
-      this._geocode(target.value);
+      this._geocode(value);
     }
   }
 

@@ -1,4 +1,4 @@
-import MaplibreGeocoder, { type MaplibreGeocoderApi } from "../lib/index";
+import MaplibreGeocoder, { type MaplibreGeocoderApi } from "../../lib/index";
 import type { FitBoundsOptions, FlyToOptions, LngLatBoundsLike } from "maplibre-gl";
 
 export class LngLatMock {

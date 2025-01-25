@@ -7,11 +7,13 @@
   "typings": "dist/maplibre-gl-geocoder.d.ts",
   "style": "dist/maplibre-gl-geocoder.css",
   "scripts": {
-    "watch": "rollup --configPlugin @rollup/plugin-typescript -c --watch",
+    "watch": "npm run build -- --watch",
     "build": "rollup --configPlugin @rollup/plugin-typescript -c",
     "build-css": "mkdir -p dist && cp lib/index.css dist/maplibre-gl-geocoder.css",
     "build-dist": "npm run build && npm run build-css",
-    "test": "jest",
+    "test": "npm run test-unit && npm run test-integration",
+    "test-unit": "jest",
+    "test-integration": "vitest run --config vitest.config.integration.ts",
     "docs": "typedoc --entryPoints lib/index.ts --out docs --treatWarningsAsErrors",
     "lint": "eslint"
   },
@@ -50,13 +52,16 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "maplibre-gl": "^5.0.1",
+    "puppeteer": "^24.1.0",
     "rollup": "^4.31.0",
     "rollup-plugin-dts": "^6.1.1",
+    "st": "^3.0.1",
     "ts-jest": "^29.2.4",
     "ts-node": "^10.9.2",
     "typedoc": "^0.27.6",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.20.0"
+    "typescript-eslint": "^8.20.0",
+    "vitest": "^3.0.3"
   },
   "peerDependencies": {
     "maplibre-gl": ">=4.0.0"

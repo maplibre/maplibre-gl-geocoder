@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>MapLibre GL JS debug page for nested shadow DOM test</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:;base64,=" />
+    <script src="/node_modules/maplibre-gl/dist/maplibre-gl.js"></script>
+    <script src="/dist/maplibre-gl-geocoder.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body,
+      #host {
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <template id="map-template">
+      <link
+        rel="stylesheet"
+        href="/node_modules/maplibre-gl/dist/maplibre-gl.css"
+      />
+      <link rel="stylesheet" href="/dist/maplibre-gl-geocoder.css" />
+
+      <style>
+        #map {
+          height: 100%;
+        }
+      </style>
+      <div id="map"></div>
+    </template>
+
+    <div id="host"></div>
+    <script>
+      const host = document.getElementById("host");
+      const shadowLevelOne = host.attachShadow({ mode: "open" });
+
+      const wrapperLevelTwo = document.createElement("div");
+      wrapperLevelTwo.style.height = "100%";
+      shadowLevelOne.appendChild(wrapperLevelTwo);
+
+      const shadowLevelTwo = wrapperLevelTwo.attachShadow({ mode: "open" });
+      const template = document.getElementById("map-template");
+      shadowLevelTwo.appendChild(template.content);
+
+      const map = new maplibregl.Map({
+        container: shadowLevelTwo.getElementById("map"),
+        preserveDrawingBuffer: true,
+        zoom: 1,
+        fadeDuration: 0,
+        center: [0, 0],
+        style: {
+          version: 8,
+          sources: {
+            land: {
+              type: "geojson",
+              data: `/test/integration/browser/fixtures/land.json`,
+            },
+          },
+          layers: [
+            {
+              id: "background",
+              type: "background",
+              paint: {
+                "background-color": "#72d0f2",
+              },
+            },
+            {
+              id: "land",
+              type: "fill",
+              source: "land",
+              paint: {
+                "fill-color": "#f0e9e1",
+              },
+            },
+          ],
+        },
+      });
+
+      const all_features = [
+        {
+          geometry: {
+            type: "Point",
+            coordinates: [0.41218404200003533, 51.18466021800003],
+          },
+          place_name: "Queen Street, Maidstone, Kent, England, GBR",
+        },
+        {
+          geometry: {
+            type: "Point",
+            coordinates: [-0.12769869299995662, 51.507408360000056],
+          },
+          place_name: "London, Greater London, England, GBR",
+        },
+      ];
+
+      const geocoderApi = {
+        forwardGeocode: async (config) => {
+          return {
+            features: all_features.filter((feature) =>
+              feature.place_name
+                .toLowerCase()
+                .includes(config.query.toLowerCase()),
+            ),
+          };
+        },
+      };
+
+      map.addControl(
+        new MaplibreGeocoder(geocoderApi, {
+          maplibregl,
+        }),
+      );
+    </script>
+  </body>
+</html>

@@ -1,10 +1,16 @@
 ## Developing
 
-Install Node.js ^20
+Install Node.js version aligned with .nvmrc
 
-    nvm install 20
+    nvm install
 
-    npm install & npm start & open http://localhost:9966/
+    npm install
+
+    npm run build-css
+
+    npm run watch
+
+    Open `test/test.html` locally in your browser.
 
 ## Testing
 

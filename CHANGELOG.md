@@ -4,6 +4,8 @@
 
 ### Bug fixes 🐛
 
+- Fix _onKeyDown not working when map is inside custom web component https://github.com/maplibre/maplibre-gl-geocoder/pull/234
+
 ## 1.7.1
 
 ### Features / Improvements 🚀
