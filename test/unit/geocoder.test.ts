@@ -1,3 +1,4 @@
+import { describe, test, expect, vi } from 'vitest';
 import MaplibreGeocoder from "../../lib/index";
 import Features from "./mockFeatures";
 import { createMarkerMock, createPopupMock, LngLatBoundsMock, MapMock, init, createMockGeocoderApiWithSuggestions } from "./utils";
@@ -22,7 +23,7 @@ describe("geocoder", () => {
             features: [Features.QUEEN_STREET],
         });
         geocoder.query("Queen Street");
-        const mapMoveSpy = jest.spyOn(map, "flyTo");
+        const mapMoveSpy = vi.spyOn(map, "flyTo");
         await geocoder.once("result");
         expect(mapMoveSpy).toHaveBeenCalledTimes(1);
         const mapMoveArgs = mapMoveSpy.mock.calls[0][0];
@@ -143,7 +144,7 @@ describe("geocoder", () => {
       test("options:zoom", async () => {
         setup({ zoom: 12, features: [Features.BELLINGHAM] });
         const q = geocoder.query("1714 14th St NW");
-        const mapMoveSpy = jest.spyOn(map, "flyTo");
+        const mapMoveSpy = vi.spyOn(map, "flyTo");
         await geocoder.once("results");
         await q;
         const mapMoveArgs = mapMoveSpy.mock.calls[0][0];
@@ -209,7 +210,7 @@ describe("geocoder", () => {
       test("country bbox", async () => {
         setup({ features: [Features.CANADA] });
         const q = geocoder.query("Canada");
-        const fitBoundsSpy = jest.spyOn(map, "fitBounds");
+        const fitBoundsSpy = vi.spyOn(map, "fitBounds");
         await geocoder.once("results");
         await q;
         expect(fitBoundsSpy).toHaveBeenCalledTimes(2);
@@ -229,7 +230,7 @@ describe("geocoder", () => {
       test("country bbox exception", async () => {
         setup({ features: [Features.CANADA] });
         const q = geocoder.query("Canada");
-        const fitBoundsSpy = jest.spyOn(map, "fitBounds");
+        const fitBoundsSpy = vi.spyOn(map, "fitBounds");
         await geocoder.once("results");
         await q;
         expect(fitBoundsSpy).toHaveBeenCalledTimes(2);
@@ -443,7 +444,7 @@ describe("geocoder", () => {
           flyTo: false,
           features: [Features.GOLDEN_GATE_BRIDGE],
         });
-        const mapFlyMethod = jest.spyOn(map, "flyTo");
+        const mapFlyMethod = vi.spyOn(map, "flyTo");
         geocoder.query("Golden Gate Bridge");
         await geocoder.once("results");
         expect(mapFlyMethod).not.toHaveBeenCalled();
@@ -455,7 +456,7 @@ describe("geocoder", () => {
           features: [Features.GOLDEN_GATE_BRIDGE],
         });
     
-        const mapFlyMethod = jest.spyOn(map, "flyTo");
+        const mapFlyMethod = vi.spyOn(map, "flyTo");
         const q = geocoder.query("Golden Gate Bridge");
         await geocoder.once("results");
         await q;
@@ -475,7 +476,7 @@ describe("geocoder", () => {
           },
           features: [Features.GOLDEN_GATE_BRIDGE],
         });
-        const mapFlyMethod = jest.spyOn(map, "flyTo");
+        const mapFlyMethod = vi.spyOn(map, "flyTo");
         const q = geocoder.query("Golden Gate Bridge");
         await geocoder.once("results");
         await q;
@@ -494,7 +495,7 @@ describe("geocoder", () => {
             speed: 5,
           },
         });
-        const mapFlyMethod = jest.spyOn(map, "fitBounds");
+        const mapFlyMethod = vi.spyOn(map, "fitBounds");
         const q = geocoder.query("Brazil");
         await geocoder.once("results");
         await q;
@@ -510,7 +511,7 @@ describe("geocoder", () => {
               speed: 5,
             },
           });
-          const mapFlyMethod = jest.spyOn(map, "fitBounds");
+          const mapFlyMethod = vi.spyOn(map, "fitBounds");
           const q = geocoder.query("Canada");
           await geocoder.once("results");
           await q;
@@ -619,7 +620,7 @@ describe("geocoder", () => {
       test("geocode#onRemove", () => {
         setup({ marker: true });
     
-        const removeMarkerMethod = jest.spyOn(geocoder, "_removeMarker");
+        const removeMarkerMethod = vi.spyOn(geocoder, "_removeMarker");
     
         geocoder.onRemove();
     
@@ -757,7 +758,7 @@ describe("geocoder", () => {
       
       test("geocoder#_renderMessage", async () => {
         setup({ features: [Features.GOLDEN_GATE_BRIDGE] });
-        const typeaheadRenderErrorSpy = jest.spyOn(geocoder._typeahead, "renderError");
+        const typeaheadRenderErrorSpy = vi.spyOn(geocoder._typeahead, "renderError");
     
         const q = geocoder.query("Golden Gate Bridge");
         await geocoder.once("results");
@@ -774,7 +775,7 @@ describe("geocoder", () => {
       
       test("geocoder#_renderError", async () => {
         setup({ features: [Features.GOLDEN_GATE_BRIDGE] });
-        const renderMessageSpy = jest.spyOn(geocoder, "_renderMessage");
+        const renderMessageSpy = vi.spyOn(geocoder, "_renderMessage");
     
         geocoder.query("Golden Gate Bridge");
         await geocoder.once("results");
@@ -786,7 +787,7 @@ describe("geocoder", () => {
       
       test("geocoder#_renderNoResults", async () => {
         setup({ features: [Features.GOLDEN_GATE_BRIDGE] });
-        const renderMessageSpy = jest.spyOn(geocoder, "_renderMessage");
+        const renderMessageSpy = vi.spyOn(geocoder, "_renderMessage");
     
         geocoder.query("Golden Gate Bridge");
         await geocoder.once("results");
@@ -799,7 +800,7 @@ describe("geocoder", () => {
 
       test("error is shown after an error occurred", async () => {
         setup({ errorMessage: "A mock error message" });
-        const renderMessageSpy = jest.spyOn(geocoder, "_renderMessage");
+        const renderMessageSpy = vi.spyOn(geocoder, "_renderMessage");
         const q = geocoder.query("12,");
         await geocoder.once("error");
         expect(renderMessageSpy).toHaveBeenCalledTimes(1);
@@ -825,7 +826,7 @@ describe("geocoder", () => {
               ];
             },
           });
-          const renderErrorSpy = jest.spyOn(geocoder, "_renderError");
+          const renderErrorSpy = vi.spyOn(geocoder, "_renderError");
           const q = geocoder.query("12,");
           await geocoder.once("error");
           expect(renderErrorSpy).not.toHaveBeenCalled();
@@ -835,7 +836,7 @@ describe("geocoder", () => {
 
       test("message is shown if no results are returned", async () => {
         setup({});
-        const renderMessageSpy = jest.spyOn(geocoder, "_renderNoResults");
+        const renderMessageSpy = vi.spyOn(geocoder, "_renderNoResults");
         geocoder.query("abcdefghijkl"); //this will return no results
         await geocoder.once("results");
         expect(renderMessageSpy).toHaveBeenCalledTimes(1);
@@ -864,7 +865,7 @@ describe("geocoder", () => {
         setup({
           showResultsWhileTyping: true,
         });
-        const searchMock = jest.spyOn(geocoder, "_geocode");
+        const searchMock = vi.spyOn(geocoder, "_geocode");
         const event = {
             clipboardData: {
                 getData: () => "Golden Gate Bridge",
@@ -880,7 +881,7 @@ describe("geocoder", () => {
         setup({
         minLength: 5,
         });
-        const searchMock = jest.spyOn(geocoder, "_geocode");
+        const searchMock = vi.spyOn(geocoder, "_geocode");
         const event = {
             clipboardData: {
                 getData: () => "abc",
@@ -892,7 +893,7 @@ describe("geocoder", () => {
 
       test("geocoder#onPaste not triggered when there is no text", () => {
         setup();
-        const searchMock = jest.spyOn(geocoder, "_geocode");
+        const searchMock = vi.spyOn(geocoder, "_geocode");
         const event = {
             clipboardData: {
                 getData: () => "",

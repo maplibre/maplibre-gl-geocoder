@@ -2,6 +2,8 @@
 
 ### Features / Improvements 🚀
 
+- Migrate unit tests to Vitest https://github.com/maplibre/maplibre-gl-geocoder/pull/238
+
 ### Bug fixes 🐛
 
 - Fix _onKeyDown not working when map is inside custom web component https://github.com/maplibre/maplibre-gl-geocoder/pull/234
