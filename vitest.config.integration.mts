@@ -11,7 +11,7 @@ export default defineConfig({
             provider: 'v8',
             reporter: ['json', 'html'],
             all: true,
-            include: ['src'],
+            include: ['lib'],
             reportsDirectory: './coverage/vitest/integration',
         },
     },

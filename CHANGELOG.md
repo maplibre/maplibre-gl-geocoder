@@ -2,7 +2,7 @@
 
 ### Features / Improvements 🚀
 
-- Migrate unit tests to Vitest https://github.com/maplibre/maplibre-gl-geocoder/pull/237
+- Migrate unit tests to Vitest https://github.com/maplibre/maplibre-gl-geocoder/pull/238
 
 ### Bug fixes 🐛
 
