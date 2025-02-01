@@ -252,7 +252,7 @@ export type MaplibreGeocoderApi = {
   /**
    * Reverse geocode function should return an object including a collection of {@link CarmenGeojsonFeature}.
    */
-  reverseGeocode: (config: MaplibreGeocoderApiConfig) => Promise<MaplibreGeocoderFeatureResults>;
+  reverseGeocode?: (config: MaplibreGeocoderApiConfig) => Promise<MaplibreGeocoderFeatureResults>;
   getSuggestions?: (config: MaplibreGeocoderApiConfig) => Promise<MaplibreGeocoderSuggestionResults>;
   searchByPlaceId?: (config: MaplibreGeocoderApiConfig) => Promise<MaplibreGeocoderPlaceResults>;
 };
