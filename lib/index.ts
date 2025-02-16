@@ -1077,7 +1077,7 @@ export default class MaplibreGeocoder {
    * @param key - key in the localization object
    * @returns localized string
    */
-  private _localize(key: string): string {
+  private _localize(key: keyof typeof localization): string {
     const language = subtag.language(this.options.language.split(',')[0]);
     return this.options.language && localization?.[key][language] ? localization[key][language] : localization[key]['en']
   }
