@@ -77,10 +77,16 @@ describe("Geocoder#inputControl", () => {
       }
     );
 
+    test("placeholder localization defaults to English when translation is missing",() => {
+        setup({ language: "non_existant_language" });
+        expect(map.getContainer().querySelector(".maplibregl-ctrl-geocoder input").placeholder).toBe("Search");
+      }
+    );
+
     test("error message localization", async () => {
       setup({language: "de-DE"});
       const resultsPromise = geocoder.once("results");
-      geocoder.query("a_place_that_does_not_exist")
+      geocoder.query("non_existant_place")
       await resultsPromise
       expect(map.getContainer().querySelector(".maplibre-gl-geocoder--error").textContent.trim()).toBe("Keine Ergebnisse gefunden");
     });
@@ -88,9 +94,17 @@ describe("Geocoder#inputControl", () => {
     test("error message localization with more than one language specified", async () => {
       setup({language: "de-DE,lv,fr"});
       const resultsPromise = geocoder.once("results");
-      geocoder.query("a_place_that_does_not_exist")
+      geocoder.query("non_existant_place")
       await resultsPromise
       expect(map.getContainer().querySelector(".maplibre-gl-geocoder--error").textContent.trim()).toBe("Keine Ergebnisse gefunden");
+    });
+
+    test("error message localization defaults to English when translation is missing", async () => {
+      setup({language: "non_existant_language"});
+      const resultsPromise = geocoder.once("results");
+      geocoder.query("non_existant_place")
+      await resultsPromise
+      expect(map.getContainer().querySelector(".maplibre-gl-geocoder--error").textContent.trim()).toBe("No results found");
     });
   
     test("clear is not called on keydown (tab), no focus trap", () => {
