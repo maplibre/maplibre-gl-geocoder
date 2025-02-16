@@ -26,10 +26,20 @@ const placeholder = {
   'fi': 'Hae',//finnish
   'is': 'Leita',//icelandic
   'ko': '수색',//korean
-  'pl':  'Szukaj', //polish
+  'pl': 'Szukaj', //polish
   'sl': 'Iskanje', //slovenian
   'fa': 'جستجو',  //persian(aka farsi)
   'ru': 'Поиск'//russian
 }
 
-export {placeholder};
+const errorNoResults = {
+  'en': 'No results found',
+  'de': 'Keine Ergebnisse gefunden'
+}
+
+const errorConnectionFailed = {
+  'en': 'There was an error reaching the server',
+  'de': 'Verbindung fehlgeschlagen'
+}
+
+export default { placeholder, errorNoResults, errorConnectionFailed };

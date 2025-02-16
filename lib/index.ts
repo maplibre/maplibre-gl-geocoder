@@ -6,7 +6,7 @@ import {EventEmitter} from "events";
 import type {Marker, Popup, Map, FlyToOptions, MarkerOptions, default as MaplibreGl} from "maplibre-gl";
 
 import {exceptions} from "./exceptions";
-import {placeholder as localization} from "./localization";
+import localization from "./localization";
 
 /**
  * A regular expression to match coordinates.
@@ -1052,13 +1052,14 @@ export default class MaplibreGeocoder {
 
   _renderError() {
     const errorMessage =
-      "<div class='maplibre-gl-geocoder--error'>There was an error reaching the server</div>";
+      `<div class='maplibre-gl-geocoder--error'>${this._localize("errorConnectionFailed")}</div>`;
     this._renderMessage(errorMessage);
   }
 
   _renderNoResults() {
     const errorMessage =
-      "<div class='maplibre-gl-geocoder--error maplibre-gl-geocoder--no-results'>No results found</div>";
+      `<div class='maplibre-gl-geocoder--error maplibre-gl-geocoder--no-results'>
+        ${this._localize("errorNoResults")}</div>`;
     this._renderMessage(errorMessage);
   }
 
@@ -1070,23 +1071,15 @@ export default class MaplibreGeocoder {
   }
 
   /**
-   * Get the text to use as the search bar placeholder
+   * Get a localised string for a given key
    *
-   * If placeholder is provided in options, then use options.placeholder
-   * Otherwise, if language is provided in options, then use the localized string of the first language if available
-   * Otherwise use the default
-   *
-   * @returns the value to use as the search bar placeholder
+   * If language is provided in options, attempt to return localized string, otherwise return the key 
+   * @param key - key in the localization object
+   * @returns localized string
    */
-  private _getPlaceholderText(): string {
-    if (this.options.placeholder) return this.options.placeholder;
-    if (this.options.language) {
-      const firstLanguage = this.options.language.split(",")[0];
-      const language = subtag.language(firstLanguage);
-      const localizedValue = localization[language];
-      if (localizedValue) return localizedValue;
-    }
-    return "Search";
+  private _localize(key: string): string {
+    const language = subtag.language(this.options.language.split(',')[0]);
+    return this.options.language && localization?.[key][language] ? localization[key][language] : key
   }
 
   /**
@@ -1245,7 +1238,7 @@ export default class MaplibreGeocoder {
    * @param placeholder - the text to use as the input element's placeholder
    */
   setPlaceholder(placeholder?: string): this {
-    this.placeholder = placeholder ? placeholder : this._getPlaceholderText();
+    this.placeholder = placeholder ? placeholder : this.options.placeholder || this._localize("placeholder");
     this._inputEl.placeholder = this.placeholder;
     this._inputEl.setAttribute("aria-label", this.placeholder);
     return this;
