@@ -76,6 +76,22 @@ describe("Geocoder#inputControl", () => {
         expect(map.getContainer().querySelector(".maplibregl-ctrl-geocoder input").placeholder).toBe("Suche");
       }
     );
+
+    test("error message localization", async () => {
+      setup({language: "de-DE"});
+      const resultsPromise = geocoder.once("results");
+      geocoder.query("a_place_that_does_not_exist")
+      await resultsPromise
+      expect(map.getContainer().querySelector(".maplibre-gl-geocoder--error").textContent.trim()).toBe("Keine Ergebnisse gefunden");
+    });
+
+    test("error message localization with more than one language specified", async () => {
+      setup({language: "de-DE,lv,fr"});
+      const resultsPromise = geocoder.once("results");
+      geocoder.query("a_place_that_does_not_exist")
+      await resultsPromise
+      expect(map.getContainer().querySelector(".maplibre-gl-geocoder--error").textContent.trim()).toBe("Keine Ergebnisse gefunden");
+    });
   
     test("clear is not called on keydown (tab), no focus trap", () => {
         setup({});
