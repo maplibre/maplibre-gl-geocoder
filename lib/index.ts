@@ -1073,13 +1073,13 @@ export default class MaplibreGeocoder {
   /**
    * Get a localised string for a given key
    *
-   * If language is provided in options, attempt to return localized string, otherwise return the key 
+   * If language is provided in options, attempt to return localized string (defaults to English)
    * @param key - key in the localization object
    * @returns localized string
    */
   private _localize(key: string): string {
     const language = subtag.language(this.options.language.split(',')[0]);
-    return this.options.language && localization?.[key][language] ? localization[key][language] : key
+    return this.options.language && localization?.[key][language] ? localization[key][language] : localization[key]['en']
   }
 
   /**
