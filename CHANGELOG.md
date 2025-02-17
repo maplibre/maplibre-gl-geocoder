@@ -4,6 +4,7 @@
 
 - Migrate unit tests to Vitest https://github.com/maplibre/maplibre-gl-geocoder/pull/238
 - Make the `reverseGeocode` field in `MaplibreGeocoderAPI` optional https://github.com/maplibre/maplibre-gl-geocoder/pull/245
+- Localise error messages https://github.com/maplibre/maplibre-gl-geocoder/pull/258
 
 ### Bug fixes 🐛
 
