@@ -60,7 +60,7 @@
     "typedoc": "^0.27.9",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.27.0",
-    "vitest": "^3.0.3"
+    "vitest": "^3.0.9"
   },
   "peerDependencies": {
     "maplibre-gl": ">=4.0.0"
