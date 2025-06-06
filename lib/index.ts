@@ -528,6 +528,10 @@ export default class MaplibreGeocoder {
       noInitialSelection: true,
     });
 
+    this.container.addEventListener("click", () => {
+      this._typeahead.update(this._typeahead.data);
+    });
+
     this.setRenderFunction(this.options.render);
     this._typeahead.getItemValue = this.options.getItemValue;
 
