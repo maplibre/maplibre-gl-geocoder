@@ -1,10 +1,15 @@
 ## main
 
-- Add localization for Spanish https://github.com/maplibre/maplibre-gl-geocoder/pull/337
-
 ### Features / Improvements 🚀
 
 ### Bug fixes 🐛
+
+## 1.9.0
+
+### Features / Improvements 🚀
+
+- Add localization for Spanish https://github.com/maplibre/maplibre-gl-geocoder/pull/337
+- Show search results on click after selection https://github.com/maplibre/maplibre-gl-geocoder/pull/355
 
 ## 1.8.0
 
