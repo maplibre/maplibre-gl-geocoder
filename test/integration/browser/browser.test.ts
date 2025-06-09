@@ -61,4 +61,22 @@ describe("Browser tests", () => {
 
     expect(results).toEqual(["Queen Street", "London"]);
   });
+
+  test("Show most recent search results after selecting a result and clicking on geocoder again", async () => {
+    await page.focus("div >>> .maplibregl-ctrl-geocoder--input");
+    await page.keyboard.type("england");
+    await page.keyboard.press("Enter");
+
+    await page.waitForSelector("div >>> .maplibregl-ctrl-geocoder--result", {
+      visible: true,
+    });
+
+    const searchResults = await page.$$('div >>> .maplibregl-ctrl-geocoder--result');
+    await searchResults[1].click();
+
+    await page.click("div >>> .maplibregl-ctrl-geocoder--input");
+
+    const searchResults2 = await page.$$('div >>> .maplibregl-ctrl-geocoder--result');
+    expect(searchResults2.length).toBe(2);
+  });
 });
