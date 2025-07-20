@@ -46,7 +46,7 @@ It is possible to use the plugin without it being placed as a control on a mapli
 See [here](https://www.maplibre.org/maplibre-gl-geocoder/) for complete reference.
 
 Also check out the example in MapLibre docs:
-https://maplibre.org/maplibre-gl-js/docs/examples/geocoder/
+https://maplibre.org/maplibre-gl-js/docs/examples/geocode-with-nominatim/
 
 ### Contributing
 
