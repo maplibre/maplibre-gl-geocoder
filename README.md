@@ -5,7 +5,7 @@ A geocoder control for [maplibre-gl-js](https://github.com/maplibre/maplibre-gl-
 ### Usage
 
 A full working example can be found here, which uses Nominatim:
-https://maplibre.org/maplibre-gl-js/docs/examples/geocoder/
+https://maplibre.org/maplibre-gl-js/docs/examples/geocode-with-nominatim/
 
 ### Usage with a module bundler
 
@@ -46,7 +46,7 @@ It is possible to use the plugin without it being placed as a control on a mapli
 See [here](https://www.maplibre.org/maplibre-gl-geocoder/) for complete reference.
 
 Also check out the example in MapLibre docs:
-https://maplibre.org/maplibre-gl-js/docs/examples/geocoder/
+https://maplibre.org/maplibre-gl-js/docs/examples/geocode-with-nominatim/
 
 ### Contributing
 
