@@ -42,11 +42,11 @@
   },
   "homepage": "https://github.com/maplibre/maplibre-gl-geocoder#readme",
   "devDependencies": {
-    "@eslint/js": "^9.30.0",
+    "@eslint/js": "^9.32.0",
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.4",
-    "@types/eslint__js": "^8.42.3",
+    "@types/eslint__js": "^9.14.0",
     "@types/lodash.debounce": "^4.0.9",
     "@types/xtend": "^4.0.6",
     "@vitest/coverage-v8": "^3.2.4",
