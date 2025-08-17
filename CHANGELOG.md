@@ -2,6 +2,8 @@
 
 ### Features / Improvements 🚀
 
+- Add localization for French https://github.com/maplibre/maplibre-gl-geocoder/pull/412
+
 ### Bug fixes 🐛
 
 ## 1.9.0
