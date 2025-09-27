@@ -466,7 +466,7 @@ export default class MaplibreGeocoder {
     );
 
     this._inputEl = document.createElement("input");
-    this._inputEl.type = "text";
+    this._inputEl.type = "search";
     this._inputEl.className =
       "maplibregl-ctrl-geocoder--input";
 
