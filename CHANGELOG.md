@@ -1,11 +1,16 @@
 ## main
 
+### Bug fixes 🐛
+
+### Features / Improvements 🚀
+
+## 1.9.1
+
 ### Features / Improvements 🚀
 
 - Add localization for French https://github.com/maplibre/maplibre-gl-geocoder/pull/412
 - Fix mobile Chrome search by changing input type https://github.com/maplibre/maplibre-gl-geocoder/pull/447
 
-### Bug fixes 🐛
 
 ## 1.9.0
 
