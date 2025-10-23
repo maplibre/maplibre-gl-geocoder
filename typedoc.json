@@ -1,6 +1,6 @@
 {
     "navigationLinks": {
-      "Example": "https://maplibre.org/maplibre-gl-js/docs/examples/geocoder/",
+      "Example": "https://maplibre.org/maplibre-gl-js/docs/examples/geocode-with-nominatim/",
       "GitHub": "https://github.com/maplibre/maplibre-gl-geocoder"
   },
 }
