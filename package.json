@@ -54,7 +54,7 @@
     "maplibre-gl": "^5.13.0",
     "puppeteer": "^24.31.0",
     "rollup": "^4.53.3",
-    "rollup-plugin-dts": "^6.2.3",
+    "rollup-plugin-dts": "^6.3.0",
     "st": "^3.0.3",
     "ts-node": "^10.9.2",
     "typedoc": "^0.28.14",
