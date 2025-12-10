@@ -1,5 +1,9 @@
 name: publish
 
+permissions:
+  id-token: write  # Required for trusted publishing
+  contents: write
+
 on:
   push:
     branches: [main]
@@ -63,8 +67,6 @@ jobs:
       - name: Publish NPM package
         run: |
           npm publish --access=public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_ORG_TOKEN }}
 
       - name: Tag commit and push
         id: tag_version
