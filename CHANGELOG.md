@@ -4,6 +4,8 @@
 
 ### Features / Improvements 🚀
 
+<!-- auto-changelog-above -->
+
 ## 1.9.1
 
 ### Features / Improvements 🚀
