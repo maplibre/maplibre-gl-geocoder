@@ -1,161 +1,53 @@
-## main
-
-### Bug fixes 🐛
-
-### Features / Improvements 🚀
-
-## 1.9.1
-
-### Features / Improvements 🚀
-
-- Add localization for French https://github.com/maplibre/maplibre-gl-geocoder/pull/412
-- Fix mobile Chrome search by changing input type https://github.com/maplibre/maplibre-gl-geocoder/pull/447
-
-
-## 1.9.0
-
-### Features / Improvements 🚀
-
-- Add localization for Spanish https://github.com/maplibre/maplibre-gl-geocoder/pull/337
-- Show search results on click after selection https://github.com/maplibre/maplibre-gl-geocoder/pull/355
-
-## 1.8.0
-
-### Features / Improvements 🚀
-
-- Migrate unit tests to Vitest https://github.com/maplibre/maplibre-gl-geocoder/pull/238
-- Make the `reverseGeocode` field in `MaplibreGeocoderAPI` optional https://github.com/maplibre/maplibre-gl-geocoder/pull/245
-- Localise error messages https://github.com/maplibre/maplibre-gl-geocoder/pull/258
-
-### Bug fixes 🐛
-
-- Fix _onKeyDown not working when map is inside custom web component https://github.com/maplibre/maplibre-gl-geocoder/pull/234
-
-## 1.7.1
-
-### Features / Improvements 🚀
-
-- Add option to set proximity min zoom by @HarelM in https://github.com/maplibre/maplibre-gl-geocoder/pull/130
-- Add `once` event registration capability by @HarelM in https://github.com/maplibre/maplibre-gl-geocoder/pull/127
-
-### Bug fixes 🐛
-
-- fix(build): remove type: module from package.json to fix cjs dist by @thaddmt in https://github.com/maplibre/maplibre-gl-geocoder/pull/140
-
-## 1.7.0
-
-### Features / Improvements 🚀
-
-- Refactored test and `geocode` method heavily to make the code more readable in https://github.com/maplibre/maplibre-gl-geocoder/pull/127
-- Added `once` to the public API to support promises and registering to an event once in https://github.com/maplibre/maplibre-gl-geocoder/pull/127
-
-### Bug fixes 🐛
-
-- Some bug fixes related to local and external geocoding in https://github.com/maplibre/maplibre-gl-geocoder/pull/127
-
-## 1.6.0
-
-### Features / Improvements 🚀
-
-- Make the clear button type="button" by @daiwai in https://github.com/maplibre/maplibre-gl-geocoder/pull/116
-- Modernize the codebase using typescript typings, rollup, typedoc and jest. by @HarelM in https://github.com/maplibre/maplibre-gl-geocoder/pull/118
-
-### Bug fixes 🐛
-
-- Fixed issues with `events` dependency https://github.com/maplibre/maplibre-gl-geocoder/issues/104
-- Fixed links to "Carmen GeoJSON" format reference https://github.com/maplibre/maplibre-gl-geocoder/issues/110
-- Fixed a lot of documentation issues by linking the docs to the code itself https://github.com/maplibre/maplibre-gl-geocoder/pull/118
-
-## 1.5.0
-
-### Features / Improvements 🚀
-
-- Update suggestions API to support placeId [#84](https://github.com/maplibre/maplibre-gl-geocoder/pull/84)
-
-## 1.4.2
-
-### Features / Improvements 🚀
-
-### Bug fixes 🐛
-
-- fix: fix bug with fitbounds array, fix bug where clearbutton doesnt show up after pressing enter [#79](https://github.com/maplibre/maplibre-gl-geocoder/pull/79)
-
-## 1.4.1
-
-### Features / Improvements 🚀
-
-### Bug fixes 🐛
-
-- fix: fix bug where search cannot be done without fully clearing input [#72](https://github.com/maplibre/maplibre-gl-geocoder/pull/72)
-- Bump sinon from 7.2.7 to 14.0.0 (#66)(https://github.com/maplibre/maplibre-gl-geocoder/pull/66)
-- Bump tape from 4.10.1 to 5.5.3 (#56)(https://github.com/maplibre/maplibre-gl-geocoder/pull/56)
-
-## 1.4.0
-
-### Features / Improvements 🚀
-
-- accept any version of MapLibre GL JS greater or equal to 1.14.0 [#49](https://github.com/maplibre/maplibre-gl-geocoder/pull/49)
-
-### Bug fixes 🐛
-
-## 1.3.1
-
-### Features / Improvements 🚀
-
-- N/A
-
-### Bug fixes 🐛
-
-- update vulnerable version of nanoid to 3.2.0 [#35](https://github.com/maplibre/maplibre-gl-geocoder/pull/35)
-- remove yarn.lock and prefer using package-lock.json [#40](https://github.com/maplibre/maplibre-gl-geocoder/pull/40)
-
-## 1.3.0
-
-### Features / Improvements 🚀
-
-- Added suggestions API and UI around display suggestions [#27](https://github.com/maplibre/maplibre-gl-geocoder/pull/27)
-
-### Bug fixes 🐛
-
-- N/A
-
-## 1.2.0
-
-### Features / Improvements 🚀
-
-- Switch from `suggestions` library to `suggestions-list`, change enter key logic to support selecting list items with enter key [#14](https://github.com/maplibre/maplibre-gl-geocoder/pull/14)
-- Added debounce option [#15](https://github.com/maplibre/maplibre-gl-geocoder/pull/10)
-
-### Bug fixes 🐛
-
-- Use the correct debounce parameter [#13](https://github.com/maplibre/maplibre-gl-geocoder/pull/13)
-
-## 1.1.1
-
-### Features / Improvements 🚀
-
-- Add optional debounceSearch parameter to decide how long to wait before sending Geocoder input box query to server
-
-### Bug fixes 🐛
-
-- N/A
-
-## 1.1.0
-
-### Features / Improvements 🚀
-
-- Updated Geocoder to by default only perform search on enter key press, added option to search when typing [#5](https://github.com/maplibre/maplibre-gl-geocoder/pull/5)
-
-### Bug fixes 🐛
-
-- create cloned html element for multiple marker results [#6](https://github.com/maplibre/maplibre-gl-geocoder/pull/6)
-
-## 1.0.0
-
-### Features / Improvements 🚀
-
-- Initial Launch of forked maplibre-gl-geocoder from mapbox-gl-geocoder
-
-### Bug fixes 🐛
-
-- N/A
+### Changelog
+
+All notable changes to this project will be documented in this file. Dates are displayed in UTC.
+
+Generated by [`auto-changelog`](https://github.com/CookPete/auto-changelog).
+
+#### [Unreleased](https://github.com/maplibre/maplibre-gl-geocoder/compare/v1.9.1...HEAD)
+
+- Refactor version bump workflow to use release type [`#501`](https://github.com/maplibre/maplibre-gl-geocoder/pull/501)
+- Update Node.js version in .nvmrc to 24.11 [`#500`](https://github.com/maplibre/maplibre-gl-geocoder/pull/500)
+- Enhance GitHub Actions workflow for publishing [`#499`](https://github.com/maplibre/maplibre-gl-geocoder/pull/499)
+- chore(deps): bump actions/setup-node from 5 to 6 [`#469`](https://github.com/maplibre/maplibre-gl-geocoder/pull/469)
+- chore(deps-dev): bump puppeteer from 24.31.0 to 24.32.1 [`#497`](https://github.com/maplibre/maplibre-gl-geocoder/pull/497)
+- chore(deps-dev): bump typescript-eslint from 8.48.0 to 8.48.1 [`#498`](https://github.com/maplibre/maplibre-gl-geocoder/pull/498)
+- chore(deps-dev): bump maplibre-gl from 5.13.0 to 5.14.0 [`#496`](https://github.com/maplibre/maplibre-gl-geocoder/pull/496)
+- chore(deps-dev): bump typedoc from 0.28.14 to 0.28.15 [`#494`](https://github.com/maplibre/maplibre-gl-geocoder/pull/494)
+- chore(deps-dev): bump rollup-plugin-dts from 6.2.3 to 6.3.0 [`#495`](https://github.com/maplibre/maplibre-gl-geocoder/pull/495)
+- chore(deps-dev): bump rollup from 4.53.2 to 4.53.3 [`#490`](https://github.com/maplibre/maplibre-gl-geocoder/pull/490)
+- chore(deps-dev): bump maplibre-gl from 5.12.0 to 5.13.0 [`#492`](https://github.com/maplibre/maplibre-gl-geocoder/pull/492)
+- chore(deps-dev): bump typescript-eslint from 8.46.3 to 8.47.0 [`#491`](https://github.com/maplibre/maplibre-gl-geocoder/pull/491)
+- chore(deps): bump actions/checkout from 5 to 6 [`#493`](https://github.com/maplibre/maplibre-gl-geocoder/pull/493)
+- chore(deps-dev): bump puppeteer from 24.29.1 to 24.31.0 [`#489`](https://github.com/maplibre/maplibre-gl-geocoder/pull/489)
+- chore(deps-dev): bump glob from 10.4.5 to 10.5.0 [`#488`](https://github.com/maplibre/maplibre-gl-geocoder/pull/488)
+- chore(deps-dev): bump js-yaml from 4.1.0 to 4.1.1 [`#486`](https://github.com/maplibre/maplibre-gl-geocoder/pull/486)
+- chore(deps-dev): bump eslint from 9.39.0 to 9.39.1 [`#485`](https://github.com/maplibre/maplibre-gl-geocoder/pull/485)
+- chore(deps-dev): bump rollup from 4.52.5 to 4.53.2 [`#484`](https://github.com/maplibre/maplibre-gl-geocoder/pull/484)
+- chore(deps-dev): bump puppeteer from 24.28.0 to 24.29.1 [`#483`](https://github.com/maplibre/maplibre-gl-geocoder/pull/483)
+- chore(deps-dev): bump maplibre-gl from 5.10.0 to 5.12.0 [`#482`](https://github.com/maplibre/maplibre-gl-geocoder/pull/482)
+- chore(deps-dev): bump typescript-eslint from 8.46.2 to 8.46.3 [`#481`](https://github.com/maplibre/maplibre-gl-geocoder/pull/481)
+- chore(deps-dev): bump maplibre-gl from 5.9.0 to 5.10.0 [`#473`](https://github.com/maplibre/maplibre-gl-geocoder/pull/473)
+- chore(deps-dev): bump @rollup/plugin-commonjs from 28.0.9 to 29.0.0 [`#478`](https://github.com/maplibre/maplibre-gl-geocoder/pull/478)
+- chore(deps-dev): bump @rollup/plugin-typescript from 12.1.4 to 12.3.0 [`#475`](https://github.com/maplibre/maplibre-gl-geocoder/pull/475)
+- chore(deps-dev): bump eslint from 9.38.0 to 9.39.0 [`#477`](https://github.com/maplibre/maplibre-gl-geocoder/pull/477)
+- chore(deps-dev): bump puppeteer from 24.25.0 to 24.28.0 [`#476`](https://github.com/maplibre/maplibre-gl-geocoder/pull/476)
+- chore(deps-dev): bump @rollup/plugin-commonjs from 28.0.8 to 28.0.9 [`#472`](https://github.com/maplibre/maplibre-gl-geocoder/pull/472)
+- Fix broken link [`#471`](https://github.com/maplibre/maplibre-gl-geocoder/pull/471)
+- chore(deps): bump vite from 7.1.5 to 7.1.11 [`#470`](https://github.com/maplibre/maplibre-gl-geocoder/pull/470)
+- chore(deps-dev): bump typescript-eslint from 8.45.0 to 8.46.1 [`#468`](https://github.com/maplibre/maplibre-gl-geocoder/pull/468)
+- chore(deps-dev): bump rollup from 4.52.4 to 4.52.5 [`#465`](https://github.com/maplibre/maplibre-gl-geocoder/pull/465)
+- chore(deps-dev): bump puppeteer from 24.23.0 to 24.25.0 [`#467`](https://github.com/maplibre/maplibre-gl-geocoder/pull/467)
+- chore(deps-dev): bump eslint from 9.37.0 to 9.38.0 [`#466`](https://github.com/maplibre/maplibre-gl-geocoder/pull/466)
+- chore(deps-dev): bump typedoc from 0.28.13 to 0.28.14 [`#460`](https://github.com/maplibre/maplibre-gl-geocoder/pull/460)
+- chore(deps-dev): bump maplibre-gl from 5.8.0 to 5.9.0 [`#462`](https://github.com/maplibre/maplibre-gl-geocoder/pull/462)
+- chore(deps-dev): bump @rollup/plugin-commonjs from 28.0.6 to 28.0.8 [`#463`](https://github.com/maplibre/maplibre-gl-geocoder/pull/463)
+- chore(deps-dev): bump @rollup/plugin-node-resolve from 16.0.2 to 16.0.3 [`#458`](https://github.com/maplibre/maplibre-gl-geocoder/pull/458)
+- chore(deps-dev): bump puppeteer from 24.22.3 to 24.23.0 [`#453`](https://github.com/maplibre/maplibre-gl-geocoder/pull/453)
+- chore(deps-dev): bump typescript-eslint from 8.44.1 to 8.45.0 [`#451`](https://github.com/maplibre/maplibre-gl-geocoder/pull/451)
+- chore(deps-dev): bump @rollup/plugin-node-resolve from 16.0.1 to 16.0.2 [`#455`](https://github.com/maplibre/maplibre-gl-geocoder/pull/455)
+- chore(deps-dev): bump maplibre-gl from 5.7.3 to 5.8.0 [`#454`](https://github.com/maplibre/maplibre-gl-geocoder/pull/454)
+- chore(deps-dev): bump rollup from 4.52.3 to 4.52.4 [`#457`](https://github.com/maplibre/maplibre-gl-geocoder/pull/457)
+- chore(deps-dev): bump typescript from 5.9.2 to 5.9.3 [`#452`](https://github.com/maplibre/maplibre-gl-geocoder/pull/452)
+- chore(deps-dev): bump eslint from 9.36.0 to 9.37.0 [`#450`](https://github.com/maplibre/maplibre-gl-geocoder/pull/450)
+- chore(deps-dev): bump rollup from 4.52.2 to 4.52.3 [`#449`](https://github.com/maplibre/maplibre-gl-geocoder/pull/449)
