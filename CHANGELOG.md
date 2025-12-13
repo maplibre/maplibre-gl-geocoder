@@ -5,6 +5,11 @@
 ### 🐞 Bug fixes
 - _...Add new stuff here..._
 
+## 1.9.3
+
+### 🐞 Bug fixes
+- Fix broken package (1.9.2) due to CI changes
+
 ## 1.9.2
 
 ### Bug fixes 🐛
