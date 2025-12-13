@@ -3,6 +3,7 @@ name: publish
 permissions:
   id-token: write  # Required for trusted publishing
   contents: write
+  attestations: write
 
 on:
   push:
@@ -10,8 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  bump-version-pr:
+  release:
     uses: maplibre/reusable-workflows/.github/workflows/npm-publish.yml@main
     with:
-      version: ${{ github.event.inputs.release_type }}
       build-command: npm run build-dist
