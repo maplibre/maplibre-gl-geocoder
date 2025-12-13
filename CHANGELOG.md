@@ -5,17 +5,13 @@
 ### 🐞 Bug fixes
 - _...Add new stuff here..._
 
-- Refactor version bump workflow to use release type ([#501](https://github.com/maplibre/maplibre-gl-geocoder/pull/501)) (by [HarelM](https://github.com/HarelM))
-- Update Node.js version in .nvmrc to 24.11 ([#500](https://github.com/maplibre/maplibre-gl-geocoder/pull/500)) (by [HarelM](https://github.com/HarelM))
-- Enhance GitHub Actions workflow for publishing ([#499](https://github.com/maplibre/maplibre-gl-geocoder/pull/499)) (by [HarelM](https://github.com/HarelM))
-- Fix broken link ([#471](https://github.com/maplibre/maplibre-gl-geocoder/pull/471)) (by [teobouvard](https://github.com/teobouvard))
 ## 1.9.2
 
 ### Bug fixes 🐛
-_...Add new stuff here..._
+- Fix broken link ([#471](https://github.com/maplibre/maplibre-gl-geocoder/pull/471)) (by [teobouvard](https://github.com/teobouvard))
 
 ### Features / Improvements 🚀
-_...Add new stuff here..._
+- Update Node.js version to 24.11 ([#500](https://github.com/maplibre/maplibre-gl-geocoder/pull/500)) (by [HarelM](https://github.com/HarelM))
 
 ## 1.9.1
 
