@@ -1,10 +1,17 @@
 ## main
+### ✨ Features and improvements
+- _...Add new stuff here..._
+
+### 🐞 Bug fixes
+- _...Add new stuff here..._
+
+## 1.9.2
 
 ### Bug fixes 🐛
-_...Add new stuff here..._
+- Fix broken link ([#471](https://github.com/maplibre/maplibre-gl-geocoder/pull/471)) (by [teobouvard](https://github.com/teobouvard))
 
 ### Features / Improvements 🚀
-_...Add new stuff here..._
+- Update Node.js version to 24.11 ([#500](https://github.com/maplibre/maplibre-gl-geocoder/pull/500)) (by [HarelM](https://github.com/HarelM))
 
 ## 1.9.1
 
