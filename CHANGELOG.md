@@ -1,4 +1,11 @@
 ## main
+### ✨ Features and improvements
+- _...Add new stuff here..._
+
+### 🐞 Bug fixes
+- _...Add new stuff here..._
+
+## 1.9.2
 
 ### Bug fixes 🐛
 
