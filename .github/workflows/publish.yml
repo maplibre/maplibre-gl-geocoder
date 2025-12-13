@@ -11,7 +11,7 @@ on:
 
 jobs:
   bump-version-pr:
-    uses: maplibre/reusable-workflows/.github/workflows/npm-publish@main
+    uses: maplibre/reusable-workflows/.github/workflows/npm-publish.yml@main
     with:
       version: ${{ github.event.inputs.release_type }}
       build-command: npm run build-dist
