@@ -5,6 +5,11 @@
 ### 🐞 Bug fixes
 - _...Add new stuff here..._
 
+## 1.9.3
+### ✨ Features and improvements
+
+### 🐞 Bug fixes
+
 ## 1.9.2
 
 ### Bug fixes 🐛
