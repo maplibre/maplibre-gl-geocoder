@@ -6,9 +6,9 @@
 - _...Add new stuff here..._
 
 ## 1.9.3
-### ✨ Features and improvements
 
 ### 🐞 Bug fixes
+- Fix broken package (1.9.2) due to CI changes
 
 ## 1.9.2
 
