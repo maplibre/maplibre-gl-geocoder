@@ -915,7 +915,7 @@ export default class MaplibreGeocoder {
     if ('suggestions' in res) {
       results = res.suggestions;
     } else if ('place' in res) {
-      results = [res.place];
+      results = Array.isArray(res.place) ? res.place : [res.place];
     } else {
       results = res.features;
     }
