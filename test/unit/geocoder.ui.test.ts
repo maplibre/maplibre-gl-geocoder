@@ -1,6 +1,6 @@
 import { describe, test, expect, vi } from 'vitest';
 import Features from "./mockFeatures";
-import { init, initHtmlElement, initNoMap, mockGeocoderApi } from "./utils";
+import { createMockGeocoderApiWithSuggestions, init, initHtmlElement, initNoMap, mockGeocoderApi } from "./utils";
 
 describe("Geocoder#inputControl", () => {
     let container, map, geocoder;  
@@ -294,6 +294,39 @@ describe("Geocoder#inputControl", () => {
 
         await resultPromise;
 
+        expect(mapFitBoundsMock).toHaveBeenCalled();
+      }
+    );
+
+    test("options.showResultsWhileTyping=true (default), click search result", async () => {
+        setup({
+          geocoderApi: createMockGeocoderApiWithSuggestions(
+            [Features.GOLDEN_GATE_BRIDGE],
+            [{ text: "Golden Gate Bridge", placeId: "place123" }]
+          ),
+          showResultsWhileTyping: true,
+          minLength: 3,
+          marker: false,
+        });
+
+        const searchMock = vi.spyOn(geocoder, "_geocode");
+        const mapFitBoundsMock = vi.spyOn(map, "fitBounds");
+        const resultsPromise = geocoder.once("results");
+
+        geocoder.setInput("Paris");
+        await resultsPromise;
+        expect(searchMock).toHaveBeenCalled();
+        const firstResultItem = container.querySelector(".suggestions > li");
+
+        if (!firstResultItem) {
+          throw new Error("Search results were not rendered in the DOM.");
+        }
+
+        const clickResultPromise = geocoder.once("results");
+        firstResultItem.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true }));
+        await clickResultPromise;
+
+        expect(searchMock).toHaveBeenCalled();
         expect(mapFitBoundsMock).toHaveBeenCalled();
       }
     );

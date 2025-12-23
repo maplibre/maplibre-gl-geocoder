@@ -147,7 +147,7 @@ export function createMockGeocoderApiWithSuggestions(features, suggestions, erro
         searchByPlaceId: () => {
             return new Promise((resolve, reject) => {
                 if (errorMessage) reject(errorMessage);
-                resolve({ features: features[0] || [] });
+                resolve({ place: features || [] });
             });
         },
     } as any;
