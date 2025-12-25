@@ -240,6 +240,8 @@ export type MaplibreGeocoderResults = MaplibreGeocoderFeatureResults | MaplibreG
 export type MaplibreGeocoderResultsEvent = MaplibreGeocoderResults & { config?: MaplibreGeocoderApiConfig, features?: CarmenGeojsonFeature[] };
 
 export type TypeaheadFactory = (input: HTMLInputElement, data: (CarmenGeojsonFeature | MaplibreGeocoderSuggestion)[], options: TypeaheadOptions) => Typeahead<CarmenGeojsonFeature | MaplibreGeocoderSuggestion>;
+// Re-export
+export type { TypeaheadOptions, default as Typeahead } from "suggestions-list";
 
 /**
  * An API which contains reverseGeocode and forwardGeocode functions to be used by this plugin
