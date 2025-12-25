@@ -726,7 +726,7 @@ export default class MaplibreGeocoder {
   //  we cannot depend on some internal values of the suggestion state like `selected` as those will change or before
   //  our onKeyDown handler.
   _onChange() {
-    const selected: CarmenGeojsonFeature | MaplibreGeocoderSuggestion = this._typeahead.selected;
+    const selected = this._typeahead.selected;
 
     // If a suggestion was selected
     if (!selected) return;
