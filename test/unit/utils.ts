@@ -38,13 +38,13 @@ export class MapMock {
     getContainer() { return this.container; }
 }
 
-export function createMarkerMock() {
+export function createMarkerMock(removeSpy?: () => void) {
     const markerWithSpy = vi.fn();
     markerWithSpy.mockImplementation(() => {
         const obj = {
             setLngLat: () => { return obj; },
             addTo: () => { return obj; },
-            remove: () => { },
+            remove: removeSpy || (() => { }),
             setPopup: () => { return obj; },
         }
         return obj;

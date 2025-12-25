@@ -1430,7 +1430,7 @@ export default class MaplibreGeocoder {
     const markerOptions = extend({}, defaultMarkerOptions, this.options.marker as any);
     this.mapMarker = new this._maplibregl.Marker(markerOptions);
 
-    let popup;
+    let popup: Popup | null = null;
     if (this.options.popup) {
       const defaultPopupOptions = {};
       const popupOptions = extend({}, defaultPopupOptions, this.options.popup as any);

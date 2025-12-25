@@ -536,7 +536,7 @@ describe("geocoder", () => {
     expect(calledWithOptions.color).toBe("#4668F2");
   });
 
-  test("options.marker  [constructor properties]", async () => {
+  test("options.marker [constructor properties]", async () => {
     const markerConstructorSpy = createMarkerMock();
     setup({
       features: [Features.GOLDEN_GATE_BRIDGE],
@@ -585,7 +585,7 @@ describe("geocoder", () => {
     expect(popupConstructorSpy).toHaveBeenCalledTimes(2);
   });
 
-  test("options.popup  [constructor properties]", async () => {
+  test("options.popup [constructor properties]", async () => {
     const popupConstructorSpy = createPopupMock();
     setup({
       marker: true,
@@ -616,15 +616,19 @@ describe("geocoder", () => {
     expect(popupConstructorSpy).not.toHaveBeenCalled();
   });
 
-  test("geocode#onRemove", () => {
-    setup({ marker: true });
-
-    //const removeMarkerMethod = vi.spyOn(geocoder, "_removeMarker");
-
+  test.only("geocode#onRemove", async () => {
+    const removedSpy = vi.fn();
+    setup({
+      features: [Features.GOLDEN_GATE_BRIDGE],
+      marker: true,
+      maplibregl: {
+        Marker: createMarkerMock(removedSpy),
+        LngLatBounds: LngLatBoundsMock,
+      } as any
+    });
+    await geocoder.query("Golden Gate Bridge");
     geocoder.onRemove();
-
-    //expect(removeMarkerMethod).toHaveBeenCalledTimes(1);
-    //expect(geocoder._map).toBeNull();
+    expect(removedSpy).toHaveBeenCalled();
   });
 
   test("geocoder#setLanguage", () => {
