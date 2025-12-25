@@ -1,10 +1,10 @@
 import { vi } from 'vitest';
-import MaplibreGeocoder, { type MaplibreGeocoderApi } from "../../lib/index";
+import MaplibreGeocoder, { CarmenGeojsonFeature, MaplibreGeocoderOptions, MaplibreGeocoderSuggestion, TypeaheadFactory, type MaplibreGeocoderApi } from "../../lib/index";
 import type { FitBoundsOptions, FlyToOptions, LngLatBoundsLike } from "maplibre-gl";
 
 export class LngLatMock {
-    constructor(public lng: number, public lat: number) {}
-    wrap() {return this};
+    constructor(public lng: number, public lat: number) { }
+    wrap() { return this };
 }
 
 export class MapMock {
@@ -16,22 +16,22 @@ export class MapMock {
         this.container = opts.container;
     }
 
-    addControl(c) { this.container.appendChild(c.onAdd(this))};
-    removeControl(c) {c.onRemove(this)};
-    getZoom() {return this.zoom};
+    addControl(c) { this.container.appendChild(c.onAdd(this)) };
+    removeControl(c) { c.onRemove(this) };
+    getZoom() { return this.zoom };
     on(type: string, cb: (e: any) => void) { this.cbMap[type] = cb; };
     off(type: string, _cb: (e: any) => void) { delete this.cbMap[type]; }
-    flyTo(_opts: FlyToOptions) {};
-    fitBounds(_bounds: LngLatBoundsLike, _options?: FitBoundsOptions) {};
-    getCenter() {return this.center};
+    flyTo(_opts: FlyToOptions) { };
+    fitBounds(_bounds: LngLatBoundsLike, _options?: FitBoundsOptions) { };
+    getCenter() { return this.center };
     jumpTo(options: { zoom: number; center: number[]; }) {
         this.center = new LngLatMock(options.center[0], options.center[1]);
     }
-    setZoom(zoom: number) { 
+    setZoom(zoom: number) {
         this.zoom = zoom;
         this.cbMap['moveend']();
     };
-    setCenter(center: number[]) { 
+    setCenter(center: number[]) {
         this.center = new LngLatMock(center[0], center[1]);
         this.cbMap['moveend']();
     }
@@ -44,7 +44,7 @@ export function createMarkerMock() {
         const obj = {
             setLngLat: () => { return obj; },
             addTo: () => { return obj; },
-            remove: () => {},
+            remove: () => { },
             setPopup: () => { return obj; },
         }
         return obj;
@@ -64,20 +64,25 @@ export function createPopupMock() {
 }
 
 export class LngLatBoundsMock {
-    constructor(private opts: any) {}
-    extend() {};
+    constructor(private opts: any) { }
+    extend() { };
 }
 
-export function init(opts?: any) {
+export function init(opts?: MaplibreGeocoderOptions & {
+    geocoderApi?: MaplibreGeocoderApi,
+    features?: CarmenGeojsonFeature[],
+    errorMessage?: string,
+    typeaheadFactory?: TypeaheadFactory
+}) {
     opts = opts || {};
     opts.enableEventLogging = false;
-    opts.maplibregl = opts.maplibregl || { Marker: createMarkerMock(), LngLatBounds: LngLatBoundsMock };
+    opts.maplibregl = opts.maplibregl || { Marker: createMarkerMock(), LngLatBounds: LngLatBoundsMock } as any;
     const container = document.createElement("div");
     const map = new MapMock({ container: container });
     const geocoderApi =
-      opts.geocoderApi ||
-      mockGeocoderApi(opts.features, opts.errorMessage);
-    const geocoder = new MaplibreGeocoder(geocoderApi, opts);
+        opts.geocoderApi ||
+        mockGeocoderApi(opts.features, opts.errorMessage);
+    const geocoder = new MaplibreGeocoder(geocoderApi, opts, opts.typeaheadFactory);
     map.addControl(geocoder);
     return { map, geocoder, container };
 }
@@ -91,7 +96,7 @@ export function initNoMap(opts) {
     const geocoderApi = mockGeocoderApi(opts.features, opts.errorMessage);
     const geocoder = new MaplibreGeocoder(geocoderApi, opts);
     geocoder.addTo(".notAMap");
-    return {geocoder, container}
+    return { geocoder, container }
 }
 
 export function initHtmlElement(opts?: any) {
@@ -103,28 +108,28 @@ export function initHtmlElement(opts?: any) {
     const geocoderApi = mockGeocoderApi(opts.features, opts.errorMessage);
     const geocoder = new MaplibreGeocoder(geocoderApi, opts);
     geocoder.addTo(container);
-    return {geocoder, container}
+    return { geocoder, container }
 }
 
 
-export function mockGeocoderApi(features, errorMessage?: string): MaplibreGeocoderApi {
+export function mockGeocoderApi(features: CarmenGeojsonFeature[], errorMessage?: string): MaplibreGeocoderApi {
     return {
         forwardGeocode: async () => {
-        return new Promise((resolve, reject) => {
-            if (errorMessage) reject(errorMessage);
-            resolve({ features: features || [] } as any);
-        });
+            return new Promise((resolve, reject) => {
+                if (errorMessage) reject(errorMessage);
+                resolve({ features: features || [] } as any);
+            });
         },
         reverseGeocode: async () => {
-        return new Promise((resolve, reject) => {
-            if (errorMessage) reject(errorMessage);
-            resolve({ features: features || [] } as any);
-        });
+            return new Promise((resolve, reject) => {
+                if (errorMessage) reject(errorMessage);
+                resolve({ features: features || [] } as any);
+            });
         },
     };
 };
 
-export function createMockGeocoderApiWithSuggestions(features, suggestions, errorMessage?: string): MaplibreGeocoderApi {
+export function createMockGeocoderApiWithSuggestions(features: CarmenGeojsonFeature[], suggestions: MaplibreGeocoderSuggestion[], errorMessage?: string): MaplibreGeocoderApi {
     return {
         forwardGeocode: () => {
             return new Promise((resolve, reject) => {
@@ -147,7 +152,7 @@ export function createMockGeocoderApiWithSuggestions(features, suggestions, erro
         searchByPlaceId: () => {
             return new Promise((resolve, reject) => {
                 if (errorMessage) reject(errorMessage);
-                resolve({ features: features[0] || [] });
+                resolve({ place: features[0] || [] });
             });
         },
     } as any;
