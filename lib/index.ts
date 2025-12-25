@@ -955,18 +955,18 @@ export default class MaplibreGeocoder {
       res.features = res.features.filter(this.options.filter);
     }
 
-    let typeaheadResults: CarmenGeojsonFeature[] | MaplibreGeocoderSuggestion[] = [];
+    let typeaheadData: CarmenGeojsonFeature[] | MaplibreGeocoderSuggestion[] = [];
     if ('suggestions' in res) {
-      typeaheadResults = res.suggestions;
+      typeaheadData = res.suggestions;
     } else if ('place' in res) {
-      typeaheadResults = Array.isArray(res.place) ? res.place : [res.place];
+      typeaheadData = Array.isArray(res.place) ? res.place : [res.place];
     } else {
-      typeaheadResults = res.features;
+      typeaheadData = res.features;
     }
 
-    if (typeaheadResults.length) {
+    if (typeaheadData.length) {
       this._clearEl.style.display = "block";
-      this._typeahead.update(typeaheadResults);
+      this._typeahead.update(typeaheadData);
       if (
         (!this.options.showResultsWhileTyping || isSuggestion) &&
         this.options.showResultMarkers &&
