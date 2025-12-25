@@ -616,7 +616,7 @@ describe("geocoder", () => {
     expect(popupConstructorSpy).not.toHaveBeenCalled();
   });
 
-  test.only("geocode#onRemove", async () => {
+  test("geocode#onRemove", async () => {
     const removedSpy = vi.fn();
     setup({
       features: [Features.GOLDEN_GATE_BRIDGE],
