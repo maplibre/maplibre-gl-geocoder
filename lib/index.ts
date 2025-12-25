@@ -661,7 +661,6 @@ export default class MaplibreGeocoder {
       return;
     }
 
-    // TAB, ESC, LEFT, RIGHT, UP, DOWN
     if (
       e.metaKey ||
       e.key === 'Tab' ||
