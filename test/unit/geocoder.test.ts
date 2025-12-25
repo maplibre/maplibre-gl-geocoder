@@ -1,5 +1,5 @@
 import { describe, test, expect, vi } from 'vitest';
-import MaplibreGeocoder, { CarmenGeojsonFeature, MaplibreGeocoderApi, MaplibreGeocoderOptions, MaplibreGeocoderSuggestion, MaplibreGeocoderSuggestionResults } from "../../lib/index";
+import MaplibreGeocoder, { CarmenGeojsonFeature, MaplibreGeocoderSuggestionResults } from "../../lib/index";
 import Features from "./mockFeatures";
 import { createMarkerMock, createPopupMock, LngLatBoundsMock, MapMock, init, createMockGeocoderApiWithSuggestions } from "./utils";
 
@@ -53,10 +53,10 @@ describe("geocoder", () => {
 
     geocoder.query("Paris");
 
-    let results = await geocoder.once("results");
+    const results = await geocoder.once("results");
     expect(results.features.length).toBe(1);
 
-    let result = await geocoder.once("result")
+    const result = await geocoder.once("result")
     const center = map.getCenter();
     expect(center.lng).toBe(0);
     expect(center.lat).toBe(0);
