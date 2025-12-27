@@ -5,20 +5,23 @@
 ### 🐞 Bug fixes
 - _...Add new stuff here..._
 
-- Add more typings, especially to the tests. ([#518](https://github.com/maplibre/maplibre-gl-geocoder/pull/518)) (by [HarelM](https://github.com/HarelM))
+
 ## 1.9.4
+
 ### ✨ Features and improvements
 
-### 🐞 Bug fixes
+- Add more typings, especially to the tests. Fix an issue with place array usage. ([#518](https://github.com/maplibre/maplibre-gl-geocoder/pull/518)) (by [HarelM](https://github.com/HarelM))
 
 ## 1.9.3
 
 ### 🐞 Bug fixes
+
 - Fix broken package (1.9.2) due to CI changes
 
 ## 1.9.2
 
 ### Bug fixes 🐛
+
 - Fix broken link ([#471](https://github.com/maplibre/maplibre-gl-geocoder/pull/471)) (by [teobouvard](https://github.com/teobouvard))
 
 ### Features / Improvements 🚀
