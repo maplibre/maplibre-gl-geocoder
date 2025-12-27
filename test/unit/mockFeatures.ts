@@ -1,4 +1,6 @@
-const GOLDEN_GATE_BRIDGE = {
+import { CarmenGeojsonFeature } from "../../lib/index";
+
+const GOLDEN_GATE_BRIDGE: CarmenGeojsonFeature = {
   geometry: {
     type: "Point",
     coordinates: [-122.47846999999996, 37.81914000000006],
@@ -20,7 +22,7 @@ const GOLDEN_GATE_BRIDGE = {
   center: [-122.47846999999996, 37.81914000000006],
 };
 
-const CANADA = {
+const CANADA: CarmenGeojsonFeature = {
   geometry: {
     type: "Point",
     coordinates: [-113.64257999999995, 60.108670000000075],
@@ -37,7 +39,7 @@ const CANADA = {
   bbox: [-140.99778, 41.6751050889, -52.6480987209, 83.23324],
 };
 
-const QUEEN_STREET = {
+const QUEEN_STREET: CarmenGeojsonFeature = {
   geometry: {
     type: "Point",
     coordinates: [0.41218404200003533, 51.18466021800003],
@@ -57,7 +59,7 @@ const QUEEN_STREET = {
   center: [0.41218404200003533, 51.18466021800003],
 };
 
-const PARIS = {
+const PARIS: CarmenGeojsonFeature = {
   geometry: {
     type: "Point",
     coordinates: [2.3414000000000215, 48.85717000000005],
@@ -76,7 +78,7 @@ const PARIS = {
   center: [2.3414000000000215, 48.85717000000005],
 };
 
-const LONDON = {
+const LONDON: CarmenGeojsonFeature = {
   geometry: {
     type: "Point",
     coordinates: [-0.12769869299995662, 51.507408360000056],
@@ -95,7 +97,7 @@ const LONDON = {
   center: [-0.12769869299995662, 51.507408360000056],
 };
 
-const TANZANIA = {
+const TANZANIA: CarmenGeojsonFeature = {
   geometry: {
     type: "Point",
     coordinates: [34.517755, -6.193388],
@@ -114,7 +116,7 @@ const TANZANIA = {
   center: [34.517755, -6.193388],
 };
 
-const BELLINGHAM = {
+const BELLINGHAM: CarmenGeojsonFeature = {
   geometry: {
     type: "Point",
     coordinates: [-122.49998672488617, 48.717186690468154],

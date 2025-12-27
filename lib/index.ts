@@ -1,13 +1,12 @@
-import Typeahead from "suggestions-list";
+import Typeahead, { type TypeaheadOptions } from "suggestions-list";
 import subtag from "subtag";
 import debounce from "lodash.debounce";
 import extend from "xtend";
-import {EventEmitter} from "events";
-import type {Marker, Popup, Map, FlyToOptions, MarkerOptions, default as MaplibreGl} from "maplibre-gl";
+import { EventEmitter } from "events";
+import type { Marker, Popup, Map, FlyToOptions, MarkerOptions, default as MaplibreGl } from "maplibre-gl";
 
-import {exceptions} from "./exceptions";
+import { exceptions } from "./exceptions";
 import localization from "./localization";
-
 /**
  * A regular expression to match coordinates.
  */
@@ -18,7 +17,6 @@ const COORDINATES_REGEXP = /(-?\d+\.?\d*)[, ]+(-?\d+\.?\d*)[ ]*$/;
  * @see https://web.archive.org/web/20210224184722/https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
  */
 export type CarmenGeojsonFeature = GeoJSON.Feature & {
-  id: string;
   /**
    * Text representing the feature (e.g. "Austin").
    */
@@ -39,6 +37,10 @@ export type CarmenGeojsonFeature = GeoJSON.Feature & {
    * Optional. Array bounding box of the form [minx,miny,maxx,maxy].
    */
   bbox?: [number, number, number, number];
+  /**
+   * Optional. Array center of the feature [lng, lat].
+   */
+  center?: [number, number];
 };
 
 export type MaplibreGeocoderOptions = {
@@ -165,23 +167,16 @@ export type MaplibreGeocoderOptions = {
    */
   proximityMinZoom?: number;
   /**
-   * A function that specifies how the selected result should be rendered in the search bar. HTML tags in the output string will not be rendered. Defaults to `(item) => item.place_name`.
-   * @example
-   *
-   * const GeoApi = {
-   *   forwardGeocode: (config) => { return { features: [] } },
-   *   reverseGeocode: (config) => { return { features: [] } }
-   *   getSuggestions: (config) => { return { suggestions: {text: string, placeId?: string}[] }}
-   *   searchByPlaceId: (config) => { return { place: {type: string, geometry: {type: string, coordinates: [number]} place_name: string, text: string, center: [number] }[] }}
-   * }
-   * const geocoder = new MaplibreGeocoder(GeoApi, {});
-   * map.addControl(geocoder);
+   * A function that specifies how the selected result should be rendered in the search bar. 
+   * HTML tags in the output string will not be rendered.
+   * The default function returns the items's `text` property if it exists, otherwise the items's `place_name` property
    */
-  getItemValue?: (item: CarmenGeojsonFeature) => string;
+  getItemValue?: (item: CarmenGeojsonFeature | MaplibreGeocoderSuggestion) => string;
   /**
-   * A function that specifies how the results should be rendered in the dropdown menu. Any HTML in the returned string will be rendered.
+   * A function that specifies how the results should be rendered in the dropdown menu. 
+   * Any HTML in the returned string will be rendered.
    */
-  render?: (item: CarmenGeojsonFeature) => string;
+  render?: (item: CarmenGeojsonFeature | MaplibreGeocoderSuggestion) => string;
   /**
    * A function that specifies how the results should be rendered in the popup menu. Any HTML in the returned string will be rendered.
    */
@@ -193,7 +188,7 @@ export type MaplibreGeocoderOptions = {
   /**
    * A function accepting the query string, current features list, and geocoder options which performs geocoding to supplement results from the Maplibre Geocoding API. Expected to return a Promise which resolves to an Array of {@link CarmenGeojsonFeature}.
    */
-  externalGeocoder?: (query: string, features: CarmenGeojsonFeature[], confic: MaplibreGeocoderApiConfig) => Promise<CarmenGeojsonFeature[]>;
+  externalGeocoder?: (query: string, features: CarmenGeojsonFeature[], config: MaplibreGeocoderApiConfig) => Promise<CarmenGeojsonFeature[]>;
   /**
    * A function which accepts a {@link CarmenGeojsonFeature} to filter out results from the Geocoding API response before they are included in the suggestions list. Return `true` to keep the item, `false` otherwise.
    */
@@ -216,7 +211,7 @@ export type MaplibreGeocoderApiConfig = {
   /**
    * A bounding box given as an array in the format `[minX, minY, maxX, maxY]`. Search results will be limited to the bounding box.
    */
-  bbox?: number[]; 
+  bbox?: number[];
   /**
    * Number of results to limit by
    */
@@ -235,13 +230,32 @@ export type MaplibreGeocoderApiConfig = {
   query?: string | number[];
 }
 
-export type MaplibreGeocoderFeatureResults = { type: "FeatureCollection", features: CarmenGeojsonFeature[]};
-export type MaplibreGeocoderSuggestionResults = { suggestions: { text: string, placeId?: string }[] };
+export type MaplibreGeocoderSuggestion = { text: string, placeId?: string };
+
+export type MaplibreGeocoderFeatureResults = { type: "FeatureCollection", features: CarmenGeojsonFeature[] };
+export type MaplibreGeocoderSuggestionResults = { suggestions: MaplibreGeocoderSuggestion[] };
 export type MaplibreGeocoderPlaceResults = { place: CarmenGeojsonFeature[] };
 export type MaplibreGeocoderResults = MaplibreGeocoderFeatureResults | MaplibreGeocoderSuggestionResults | MaplibreGeocoderPlaceResults;
 
+export type MaplibreGeocoderResultsEvent = MaplibreGeocoderResults & { config?: MaplibreGeocoderApiConfig, features?: CarmenGeojsonFeature[] };
+
+export type TypeaheadFactory = (input: HTMLInputElement, data: (CarmenGeojsonFeature | MaplibreGeocoderSuggestion)[], options: TypeaheadOptions) => Typeahead<CarmenGeojsonFeature | MaplibreGeocoderSuggestion>;
+// Re-export
+export type { TypeaheadOptions, default as Typeahead } from "suggestions-list";
+
 /**
  * An API which contains reverseGeocode and forwardGeocode functions to be used by this plugin
+ * 
+ * @example
+ *
+ * const GeoApi = {
+ *   forwardGeocode: (config) => { return { features: [] } },
+ *   reverseGeocode: (config) => { return { features: [] } }
+ *   getSuggestions: (config) => { return { suggestions: [{text: "string", placeId?: "placeId"}] }}
+ *   searchByPlaceId: (config) => { return { place: [{type: "Feature", geometry: {type: "Point", properties: {otherOptinalFields: "someValue"}, coordinates: [1, 2]}}] }}
+ * }
+ * const geocoder = new MaplibreGeocoder(GeoApi, {});
+ * map.addControl(geocoder);
  */
 export type MaplibreGeocoderApi = {
   /**
@@ -257,11 +271,36 @@ export type MaplibreGeocoderApi = {
   searchByPlaceId?: (config: MaplibreGeocoderApiConfig) => Promise<MaplibreGeocoderPlaceResults>;
 };
 
+
+export type MaplibreGeocoderEventTypeMap = {
+  /**
+   * Fired when the input is cleared
+   */
+  clear: void;
+  /**
+   * Fired with when the geocoder is looking up a query
+   */
+  loading: { query: string };
+  /**
+   * Fired with the results data when the geocoder returns a response
+   */
+  results: MaplibreGeocoderResultsEvent;
+  /**
+   * Fired with the result data when input is set
+   */
+  result: { result: CarmenGeojsonFeature };
+  /**
+   * Fired with the error data when an error occurs
+   */
+  error: { error: Error };
+};
+
 /**
  * A geocoder component that works with maplibre
  */
 export default class MaplibreGeocoder {
-  
+
+  // Fill with default values
   private options: MaplibreGeocoderOptions = {
     zoom: 16,
     flyTo: true,
@@ -280,16 +319,16 @@ export default class MaplibreGeocoder {
     proximityMinZoom: 9,
 
     getItemValue: (item) => {
-      return item.text !== undefined ? item.text : item.place_name;
+      return item.text != undefined ? item.text : (item as CarmenGeojsonFeature).place_name;
     },
-    render: function (item: CarmenGeojsonFeature) {
+    render: (item: CarmenGeojsonFeature | MaplibreGeocoderSuggestion) => {
       // Render as a suggestion
-      if (!item.geometry) {
+      if (!('geometry' in item)) {
         const suggestionString = item.text;
         const indexOfMatch = suggestionString
           .toLowerCase()
-          .indexOf(this.query.toLowerCase());
-        const lengthOfMatch = this.query.length;
+          .indexOf(this._typeahead.query.toLowerCase());
+        const lengthOfMatch = this._typeahead.query.length;
         const beforeMatch = suggestionString.substring(0, indexOfMatch);
         const match = suggestionString.substring(
           indexOfMatch,
@@ -344,29 +383,30 @@ export default class MaplibreGeocoder {
     showResultMarkers: true,
     debounceSearch: 200,
   };
-  
+
   private _eventEmitter: EventEmitter;
   private _map: Map | null;
   private _maplibregl: typeof MaplibreGl | undefined;
   private _inputEl: HTMLInputElement;
   private _clearEl: HTMLButtonElement;
   private _loadingEl: SVGElement;
-  private _typeahead: Typeahead;
+  private _typeahead: Typeahead<CarmenGeojsonFeature | MaplibreGeocoderSuggestion>;
   private container: HTMLElement;
   private mapMarker: Marker | null;
   private resultMarkers: Marker[];
-  private placeholder: string;
   private fresh: boolean;
   private lastSelected: string | null;
   private geocoderApi: MaplibreGeocoderApi;
+  private typeaheadFactory: TypeaheadFactory;
 
-  constructor(geocoderApi: MaplibreGeocoderApi, options: MaplibreGeocoderOptions) {
+  constructor(geocoderApi: MaplibreGeocoderApi, options: MaplibreGeocoderOptions, typeaheadFactory: TypeaheadFactory = (input, data, options) => new Typeahead(input, data, options)) {
     this._eventEmitter = new EventEmitter();
     this.options = extend({}, this.options, options);
     this.fresh = true;
     this.lastSelected = null;
     this.geocoderApi = geocoderApi;
-  }    
+    this.typeaheadFactory = typeaheadFactory;
+  }
 
   /**
    * Add the geocoder to a container. The container can be either a `Map`, an `HTMLElement` or a CSS selector string.
@@ -417,7 +457,7 @@ export default class MaplibreGeocoder {
       }
 
       addToExistingContainer(this, parent[0]);
-    } 
+    }
     // if the container is a map, add the control like normal
     else if ('addControl' in container) {
       //  it's a maplibre-gl map, add like normal
@@ -521,7 +561,7 @@ export default class MaplibreGeocoder {
     el.appendChild(this._inputEl);
     el.appendChild(actions);
 
-    this._typeahead = new Typeahead(this._inputEl, [], {
+    this._typeahead = this.typeaheadFactory(this._inputEl, [], {
       filter: false,
       minLength: this.options.minLength,
       limit: this.options.limit,
@@ -546,7 +586,7 @@ export default class MaplibreGeocoder {
       }
       this._maplibregl = this.options.maplibregl;
       if (!this._maplibregl && this.options.marker) {
-         
+
         console.error(
           "No maplibregl detected in options. Map markers are disabled. Please set options.maplibregl."
         );
@@ -594,7 +634,7 @@ export default class MaplibreGeocoder {
     return this;
   }
 
-  _onPaste(e) {
+  _onPaste(e: ClipboardEvent): void {
     const value = (e.clipboardData || (window as any).clipboardData).getData("text");
     if (
       value.length >= this.options.minLength &&
@@ -604,14 +644,11 @@ export default class MaplibreGeocoder {
     }
   }
 
-  _onKeyDown(e) {
-    const ESC_KEY_CODE = 27;
-    const TAB_KEY_CODE = 9;
-    const ENTER_KEY_CODE = 13;
-
-    if (e.keyCode === ESC_KEY_CODE && this.options.clearAndBlurOnEsc) {
+  _onKeyDown(e: KeyboardEvent): void {
+    if (e.key === 'Escape' && this.options.clearAndBlurOnEsc) {
       this._clear(e);
-      return this._inputEl.blur();
+      this._inputEl.blur();
+      return;
     }
 
     const value = this._inputEl.value;
@@ -619,19 +656,23 @@ export default class MaplibreGeocoder {
     if (!value) {
       this.fresh = true;
       // the user has removed all the text
-      if (e.keyCode !== TAB_KEY_CODE) this.clear(e);
-      return (this._clearEl.style.display = "none");
+      if (e.key !== 'Tab') this.clear(e);
+      this._clearEl.style.display = "none";
+      return;
     }
 
-    // TAB, ESC, LEFT, RIGHT, UP, DOWN
     if (
       e.metaKey ||
-      [TAB_KEY_CODE, ESC_KEY_CODE, 37, 39, 38, 40].indexOf(e.keyCode) !== -1
+      e.key === 'Tab' ||
+      e.key === 'Escape' ||
+      e.key === 'ArrowLeft' ||
+      e.key === 'ArrowRight' ||
+      e.key === 'ArrowUp' ||
+      e.key === 'ArrowDown'
     )
       return;
 
-    // ENTER
-    if (e.keyCode === ENTER_KEY_CODE) {
+    if (e.key === 'Enter') {
       if (!this.options.showResultsWhileTyping) {
         if (!this._typeahead.selected) {
           this._geocode(value);
@@ -671,7 +712,7 @@ export default class MaplibreGeocoder {
     if (this._typeahead.selected) this._clearEl.style.display = "none";
   }
 
-  _onBlur(e) {
+  _onBlur(e: FocusEvent): void {
     if (this.options.clearOnBlur) {
       this._clearOnBlur(e);
     }
@@ -687,75 +728,77 @@ export default class MaplibreGeocoder {
     const selected = this._typeahead.selected;
 
     // If a suggestion was selected
-    if (selected && !selected.geometry) {
+    if (!selected) return;
+    if (!('geometry' in selected)) {
       if (selected.placeId) this._geocode(selected.placeId, true, true);
       else this._geocode(selected.text, true);
-    } else if (selected && JSON.stringify(selected) !== this.lastSelected) {
-      this._clearEl.style.display = "none";
-      if (this.options.flyTo) {
-        let flyOptions;
-        this._removeResultMarkers();
-        if (selected.properties && exceptions[selected.properties.short_code]) {
-          // Certain geocoder search results return (and therefore zoom to fit)
-          // an unexpectedly large bounding box: for example, both Russia and the
-          // USA span both sides of -180/180, or France includes the island of
-          // Reunion in the Indian Ocean. An incomplete list of these exceptions
-          // at ./exceptions.json provides "reasonable" bounding boxes as a
-          // short-term solution; this may be amended as necessary.
-          flyOptions = extend({}, this.options.flyTo as any);
-          if (this._map) {
-            this._map.fitBounds(
-              exceptions[selected.properties.short_code].bbox,
-              flyOptions
-            );
-          }
-        } else if (selected.bbox) {
-          const bbox = selected.bbox;
-          flyOptions = extend({}, this.options.flyTo as any);
-          if (this._map) {
-            this._map.fitBounds(
-              [
-                [bbox[0], bbox[1]],
-                [bbox[2], bbox[3]],
-              ],
-              flyOptions
-            );
-          }
-        } else {
-          const defaultFlyOptions = {
-            zoom: this.options.zoom,
-          };
-          flyOptions = extend({}, defaultFlyOptions, this.options.flyTo as any);
-          //  ensure that center is not overriden by custom options
-          if (selected.center) {
-            flyOptions.center = selected.center;
-          } else if (
-            selected.geometry &&
-            selected.geometry.type &&
-            selected.geometry.type === "Point" &&
-            selected.geometry.coordinates
-          ) {
-            flyOptions.center = selected.geometry.coordinates;
-          }
+      return;
+    }
+    if (JSON.stringify(selected) === this.lastSelected) {
+      return;
+    }
+    this._clearEl.style.display = "none";
+    if (this.options.flyTo) {
+      let flyOptions: FlyToOptions;
+      this._removeResultMarkers();
+      if (selected.properties && exceptions[selected.properties.short_code]) {
+        // Certain geocoder search results return (and therefore zoom to fit)
+        // an unexpectedly large bounding box: for example, both Russia and the
+        // USA span both sides of -180/180, or France includes the island of
+        // Reunion in the Indian Ocean. An incomplete list of these exceptions
+        // at ./exceptions.json provides "reasonable" bounding boxes as a
+        // short-term solution; this may be amended as necessary.
+        flyOptions = extend({}, this.options.flyTo as any);
+        if (this._map) {
+          this._map.fitBounds(
+            exceptions[selected.properties.short_code].bbox,
+            flyOptions
+          );
+        }
+      } else if (selected.bbox) {
+        const bbox = selected.bbox;
+        flyOptions = extend({}, this.options.flyTo as any);
+        if (this._map) {
+          this._map.fitBounds(
+            [
+              [bbox[0], bbox[1]],
+              [bbox[2], bbox[3]],
+            ],
+            flyOptions
+          );
+        }
+      } else {
+        const defaultFlyOptions = {
+          zoom: this.options.zoom,
+        };
+        flyOptions = extend({}, defaultFlyOptions, this.options.flyTo as any);
+        //  ensure that center is not overriden by custom options
+        if (selected.center) {
+          flyOptions.center = selected.center;
+        } else if (
+          selected.geometry?.type === "Point" &&
+          selected.geometry.coordinates
+        ) {
+          flyOptions.center = selected.geometry.coordinates as [number, number];
+        }
 
-          if (this._map) {
-            this._map.flyTo(flyOptions);
-          }
+        if (this._map) {
+          this._map.flyTo(flyOptions);
         }
       }
-      if (this.options.marker && this._maplibregl) {
-        this._handleMarker(selected);
-      }
-
-      // After selecting a feature, re-focus the textarea and set
-      // cursor at start, and reset the selected feature.
-      this._inputEl.focus();
-      this._inputEl.scrollLeft = 0;
-      this._inputEl.setSelectionRange(0, 0);
-      this.lastSelected = JSON.stringify(selected);
-      this._typeahead.selected = null; // reset selection current selection value and set it to last selected
-      this._eventEmitter.emit("result", { result: selected });
     }
+    if (this.options.marker && this._maplibregl) {
+      this._handleMarker(selected);
+    }
+
+    // After selecting a feature, re-focus the textarea and set
+    // cursor at start, and reset the selected feature.
+    this._inputEl.focus();
+    this._inputEl.scrollLeft = 0;
+    this._inputEl.setSelectionRange(0, 0);
+    this.lastSelected = JSON.stringify(selected);
+    this._typeahead.selected = null; // reset selection current selection value and set it to last selected
+    this._eventEmitter.emit("result", { result: selected });
   }
 
   _getConfigForRequest(): MaplibreGeocoderApiConfig {
@@ -809,7 +852,7 @@ export default class MaplibreGeocoder {
     try {
       const response = await request;
       await this._handleGeocodeResponse(
-        response, 
+        response,
         config,
         searchInput,
         isSuggestion,
@@ -827,7 +870,7 @@ export default class MaplibreGeocoder {
     if (this.options.reverseGeocode && COORDINATES_REGEXP.test(searchInput)) {
       // searchInput resembles coordinates, make the request a reverseGeocode
       return this._createReverseGeocodeRequest(searchInput, config);
-    } 
+    }
     config.query = searchInput;
     if (!this.geocoderApi.getSuggestions) {
       return this.geocoderApi.forwardGeocode(config);
@@ -840,7 +883,7 @@ export default class MaplibreGeocoder {
     if (this.geocoderApi.searchByPlaceId && isPlaceId) {
       // suggestion has place Id
       return this.geocoderApi.searchByPlaceId(config);
-    } 
+    }
     return this.geocoderApi.forwardGeocode(config);
   }
 
@@ -873,7 +916,7 @@ export default class MaplibreGeocoder {
   ) {
     this._loadingEl.style.display = "none";
 
-    let res = {} as MaplibreGeocoderResults & { config?: MaplibreGeocoderApiConfig, features?: CarmenGeojsonFeature[] };
+    let res = {} as MaplibreGeocoderResultsEvent;
 
     if (!response) {
       res = {
@@ -894,15 +937,15 @@ export default class MaplibreGeocoder {
       ? localGeocoderResults.concat(res.features)
       : localGeocoderResults;
 
-    const externalGeocoderResultsPromise = this.options.externalGeocoder 
+    const externalGeocoderResultsPromise = this.options.externalGeocoder
       ? (this.options.externalGeocoder(searchInput, res.features, config) || Promise.resolve([]))
       : Promise.resolve([]);
-      // supplement Geocoding API results with features returned by a promise
+    // supplement Geocoding API results with features returned by a promise
     try {
       const features = await externalGeocoderResultsPromise;
       res.features = res.features
-          ? features.concat(res.features)
-          : features;
+        ? features.concat(res.features)
+        : features;
     } catch {
       // on error, display the original result
     }
@@ -911,18 +954,18 @@ export default class MaplibreGeocoder {
       res.features = res.features.filter(this.options.filter);
     }
 
-    let results = [];
+    let typeaheadData: CarmenGeojsonFeature[] | MaplibreGeocoderSuggestion[] = [];
     if ('suggestions' in res) {
-      results = res.suggestions;
+      typeaheadData = res.suggestions;
     } else if ('place' in res) {
-      results = [res.place];
+      typeaheadData = Array.isArray(res.place) ? res.place : [res.place];
     } else {
-      results = res.features;
+      typeaheadData = res.features;
     }
 
-    if (results.length) {
+    if (typeaheadData.length) {
       this._clearEl.style.display = "block";
-      this._typeahead.update(results);
+      this._typeahead.update(typeaheadData);
       if (
         (!this.options.showResultsWhileTyping || isSuggestion) &&
         this.options.showResultMarkers &&
@@ -930,13 +973,13 @@ export default class MaplibreGeocoder {
       ) {
         this._fitBoundsForMarkers();
       }
-      
+
       this._eventEmitter.emit("results", res);
     } else {
       this._clearEl.style.display = "none";
       this._typeahead.selected = null;
       this._renderNoResults();
-      
+
       this._eventEmitter.emit("results", res);
     }
   }
@@ -944,18 +987,18 @@ export default class MaplibreGeocoder {
   private _handleGeocodeErrorResponse(error: Error, localGeocoderResults: CarmenGeojsonFeature[]) {
     this._loadingEl.style.display = "none";
 
-      // in the event of an error in the Geocoding API still display results from the localGeocoder
-      if (localGeocoderResults.length && this.options.localGeocoder) {
-        this._clearEl.style.display = "block";
-        this._typeahead.update(localGeocoderResults);
-      } else {
-        this._clearEl.style.display = "none";
-        this._typeahead.selected = null;
-        this._renderError();
-      }
+    // in the event of an error in the Geocoding API still display results from the localGeocoder
+    if (localGeocoderResults.length && this.options.localGeocoder) {
+      this._clearEl.style.display = "block";
+      this._typeahead.update(localGeocoderResults);
+    } else {
+      this._clearEl.style.display = "none";
+      this._typeahead.selected = null;
+      this._renderError();
+    }
 
-      this._eventEmitter.emit("results", { features: localGeocoderResults });
-      this._eventEmitter.emit("error", { error });
+    this._eventEmitter.emit("results", { features: localGeocoderResults });
+    this._eventEmitter.emit("error", { error });
   }
 
   /**
@@ -991,7 +1034,7 @@ export default class MaplibreGeocoder {
    * constructor option.
    * @param ev - the blur event
    */
-  private _clearOnBlur(ev?: Event & { relatedTarget: Element }) {
+  private _clearOnBlur(ev: FocusEvent): void {
     /*
      * If relatedTarget is not found, assume user targeted the suggestions list.
      * In that case, do not clear on blur. There are other edge cases where
@@ -1067,7 +1110,7 @@ export default class MaplibreGeocoder {
     this._renderMessage(errorMessage);
   }
 
-  _renderMessage(msg) {
+  _renderMessage(msg: string) {
     this._typeahead.update([]);
     this._typeahead.selected = null;
     this._typeahead.clear();
@@ -1107,7 +1150,9 @@ export default class MaplibreGeocoder {
         const flyOptions = extend({}, defaultFlyOptions, this.options.flyTo as any);
         const bounds = new this._maplibregl.LngLatBounds();
         for (const feature of results) {
-          bounds.extend(feature.geometry.coordinates);
+          if (('geometry' in feature) && (feature.geometry?.type === "Point")) {
+            bounds.extend(feature.geometry.coordinates as [number, number]);
+          }
         }
         this._map.fitBounds(bounds, flyOptions);
       }
@@ -1159,7 +1204,7 @@ export default class MaplibreGeocoder {
    * Set the render function used in the results dropdown
    * @param fn - The function to use as a render function. This function accepts a single {@link CarmenGeojsonFeature} object as input and returns a string.
    */
-  setRenderFunction(fn: (feature: CarmenGeojsonFeature) => string): this {
+  setRenderFunction(fn?: (feature: CarmenGeojsonFeature) => string): this {
     if (fn && typeof fn == "function") {
       this._typeahead.render = fn;
     }
@@ -1242,9 +1287,9 @@ export default class MaplibreGeocoder {
    * @param placeholder - the text to use as the input element's placeholder
    */
   setPlaceholder(placeholder?: string): this {
-    this.placeholder = placeholder ? placeholder : this.options.placeholder || this._localize("placeholder");
-    this._inputEl.placeholder = this.placeholder;
-    this._inputEl.setAttribute("aria-label", this.placeholder);
+    this.options.placeholder = placeholder ? placeholder : this.options.placeholder || this._localize("placeholder");
+    this._inputEl.placeholder = this.options.placeholder;
+    this._inputEl.setAttribute("aria-label", this.options.placeholder);
     return this;
   }
 
@@ -1277,7 +1322,7 @@ export default class MaplibreGeocoder {
    * Set the countries to limit search results to
    * @param countries - a comma separated list of countries to limit to
    */
-  setCountries(countries: string):this {
+  setCountries(countries: string): this {
     this.options.countries = countries;
     return this;
   }
@@ -1346,7 +1391,7 @@ export default class MaplibreGeocoder {
   /**
    * Set the filter function used by the plugin.
    * @param filter - A function which accepts a {@link CarmenGeojsonFeature} to filter out results from the Geocoding API response before they are included in the suggestions list. Return `true` to keep the item, `false` otherwise.
-   */ 
+   */
   setFilter(filter: (feature: CarmenGeojsonFeature) => boolean): this {
     this.options.filter = filter;
     return this;
@@ -1384,7 +1429,7 @@ export default class MaplibreGeocoder {
     const markerOptions = extend({}, defaultMarkerOptions, this.options.marker as any);
     this.mapMarker = new this._maplibregl.Marker(markerOptions);
 
-    let popup;
+    let popup: Popup | null = null;
     if (this.options.popup) {
       const defaultPopupOptions = {};
       const popupOptions = extend({}, defaultPopupOptions, this.options.popup as any);
@@ -1398,9 +1443,7 @@ export default class MaplibreGeocoder {
 
       if (this.options.popup) this.mapMarker.setPopup(popup);
     } else if (
-      selected.geometry &&
-      selected.geometry.type &&
-      selected.geometry.type === "Point" &&
+      selected.geometry?.type === "Point" &&
       selected.geometry.coordinates
     ) {
       this.mapMarker.setLngLat(selected.geometry.coordinates).addTo(this._map);
@@ -1498,33 +1541,20 @@ export default class MaplibreGeocoder {
 
   /**
    * Subscribe to events that happen within the plugin.
-   * @param type - name of event. Available events and the data passed into their respective event objects are:
-   *
-   * - __clear__ `Emitted when the input is cleared`
-   * - __loading__ `{ query } Emitted when the geocoder is looking up a query`
-   * - __results__ `{ results } Fired when the geocoder returns a response`
-   * - __result__ `{ result } Fired when input is set`
-   * - __error__ `{ error } Error as string`
+   * @param type - name of event. Check out the {@link MaplibreGeocoderEventTypeMap} for a list of available events.
    * @param fn - function that's called when the event is emitted.
    */
-  on(type: string, fn: (e: any) => void): this {
+  on<T extends keyof MaplibreGeocoderEventTypeMap>(type: T, fn: (e: MaplibreGeocoderEventTypeMap[T]) => void): this {
     this._eventEmitter.on(type, fn);
     return this;
   }
 
   /**
    * Subscribe to events that happen within the plugin only once.
-   * @param type - Event name.
-   * Available events and the data passed into their respective event objects are:
-   *
-   * - __clear__ `Emitted when the input is cleared`
-   * - __loading__ `{ query } Emitted when the geocoder is looking up a query`
-   * - __results__ `{ results } Fired when the geocoder returns a response`
-   * - __result__ `{ result } Fired when input is set`
-   * - __error__ `{ error } Error as string`
+   * @param type - Event name. Check out the {@link MaplibreGeocoderEventTypeMap} for a list of available events.
    * @returns a Promise that resolves when the event is emitted.
    */
-  once(type: string): Promise<any> {
+  once<T extends keyof MaplibreGeocoderEventTypeMap>(type: T): Promise<MaplibreGeocoderEventTypeMap[T]> {
     return new Promise((resolve) => {
       this._eventEmitter.once(type, resolve);
     });
