@@ -5,6 +5,12 @@
 ### 🐞 Bug fixes
 - _...Add new stuff here..._
 
+- Add more typings, especially to the tests. ([#518](https://github.com/maplibre/maplibre-gl-geocoder/pull/518)) (by [HarelM](https://github.com/HarelM))
+## 1.9.4
+### ✨ Features and improvements
+
+### 🐞 Bug fixes
+
 ## 1.9.3
 
 ### 🐞 Bug fixes
