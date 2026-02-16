@@ -53,7 +53,7 @@
     "eslint": "^9.39.2",
     "maplibre-gl": "^5.16.0",
     "puppeteer": "^24.37.3",
-    "rollup": "^4.56.0",
+    "rollup": "^4.57.1",
     "rollup-plugin-dts": "^6.3.0",
     "st": "^3.0.3",
     "ts-node": "^10.9.2",
