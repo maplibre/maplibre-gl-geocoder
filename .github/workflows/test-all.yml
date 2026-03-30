@@ -27,7 +27,7 @@ jobs:
           npm run test-unit-ci
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           files: ${{ github.workspace }}/coverage/vitest/unit/coverage-final.json
           verbose: true
@@ -55,7 +55,7 @@ jobs:
           npm run test-integration-ci
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           files: ${{ github.workspace }}/coverage/vitest/integration/coverage-final.json
           verbose: true
