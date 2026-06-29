@@ -49,7 +49,7 @@
     "@types/eslint__js": "^8.42.3",
     "@types/lodash.debounce": "^4.0.9",
     "@types/xtend": "^4.0.6",
-    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/coverage-v8": "^4.1.9",
     "eslint": "^10.6.0",
     "maplibre-gl": "^5.24.0",
     "puppeteer": "^24.43.1",
@@ -60,7 +60,7 @@
     "typedoc": "^0.28.19",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.62.0",
-    "vitest": "^3.0.3"
+    "vitest": "^4.1.9"
   },
   "peerDependencies": {
     "maplibre-gl": ">=4.0.0"
