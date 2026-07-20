@@ -1,6 +1,6 @@
 ## main
 ### ✨ Features and improvements
-- _...Add new stuff here..._
+- Extend readme section on using the plugin without a maplibre map
 
 ### 🐞 Bug fixes
 - _...Add new stuff here..._
