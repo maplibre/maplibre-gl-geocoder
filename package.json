@@ -55,7 +55,7 @@
     "puppeteer": "^24.43.1",
     "rollup": "^4.62.2",
     "rollup-plugin-dts": "^6.4.1",
-    "st": "^4.0.3",
+    "st": "^4.0.4",
     "ts-node": "^10.9.2",
     "typedoc": "^0.28.20",
     "typescript": "^5.9.3",
