@@ -763,7 +763,7 @@ describe("geocoder", () => {
 
     geocoder.query("Golden Gate Bridge");
     await geocoder.once("results");
-    geocoder._renderError();
+    geocoder["_renderError"]();
     expect(renderMessageSpy).toHaveBeenCalledTimes(1);
     const calledWithArgs = renderMessageSpy.mock.calls[0][0] as any;
     expect(calledWithArgs.indexOf("maplibre-gl-geocoder--error") > -1).toBeTruthy();
@@ -775,7 +775,7 @@ describe("geocoder", () => {
 
     geocoder.query("Golden Gate Bridge");
     await geocoder.once("results");
-    geocoder._renderNoResults();
+    geocoder["_renderNoResults"]();
     expect(renderMessageSpy).toHaveBeenCalledTimes(1);
     const calledWithArgs = renderMessageSpy.mock.calls[0][0] as any;
     expect(calledWithArgs.indexOf("maplibre-gl-geocoder--error") > -1).toBeTruthy();
@@ -842,7 +842,7 @@ describe("geocoder", () => {
     setup();
     const spy = vi.fn();
     geocoder.on('clear', spy);
-    geocoder._onKeyDown(new KeyboardEvent("KeyDown"));
+    geocoder["_onKeyDown"](new KeyboardEvent("KeyDown"));
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
@@ -856,7 +856,7 @@ describe("geocoder", () => {
         getData: () => "Golden Gate Bridge",
       },
     } as any;
-    geocoder._onPaste(event);
+    geocoder["_onPaste"](event);
     expect(searchMock).toHaveBeenCalledTimes(1);
     const queryArg = searchMock.mock.calls[0][0];
     expect(queryArg).toBe("Golden Gate Bridge");
@@ -872,7 +872,7 @@ describe("geocoder", () => {
         getData: () => "abc",
       },
     } as any;
-    geocoder._onPaste(event);
+    geocoder["_onPaste"](event);
     expect(searchMock).not.toHaveBeenCalled();
   });
 
@@ -884,7 +884,7 @@ describe("geocoder", () => {
         getData: () => "",
       },
     } as any;
-    geocoder._onPaste(event);
+    geocoder["_onPaste"](event);
     expect(searchMock).not.toHaveBeenCalled();
   });
 

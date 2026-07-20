@@ -104,8 +104,8 @@ export type MaplibreGeocoderOptions = {
    * @default false
    */
   collapsed?: boolean;
-  /** 
-   * If `true`, the geocoder control will clear it's contents and blur when user presses the escape key. 
+  /**
+   * If `true`, the geocoder control will clear it's contents and blur when user presses the escape key.
    * @default false
    */
   clearAndBlurOnEsc?: boolean;
@@ -124,7 +124,7 @@ export type MaplibreGeocoderOptions = {
    * @default 200
    */
   debounceSearch?: number;
-  /** 
+  /**
    * If `true`, [Markers](https://maplibre.org/maplibre-gl-js/docs/API/classes/Marker/) will be added to the map at the location the top results for the query. If the value is an object, the marker will be constructed using these options. If `false`, no marker will be added to the map. Requires that `options.maplibregl` also be set.
    * @default true
    */
@@ -139,7 +139,7 @@ export type MaplibreGeocoderOptions = {
    */
   placeholder?: string;
   /**
-   * a proximity argument: this is a geographical point given as an object with `latitude` and `longitude` properties. 
+   * a proximity argument: this is a geographical point given as an object with `latitude` and `longitude` properties.
    * Search results closer to this point will be given higher priority.
    */
   proximity?: { longitude: number; latitude: number };
@@ -167,13 +167,13 @@ export type MaplibreGeocoderOptions = {
    */
   proximityMinZoom?: number;
   /**
-   * A function that specifies how the selected result should be rendered in the search bar. 
+   * A function that specifies how the selected result should be rendered in the search bar.
    * HTML tags in the output string will not be rendered.
    * The default function returns the items's `text` property if it exists, otherwise the items's `place_name` property
    */
   getItemValue?: (item: CarmenGeojsonFeature | MaplibreGeocoderSuggestion) => string;
   /**
-   * A function that specifies how the results should be rendered in the dropdown menu. 
+   * A function that specifies how the results should be rendered in the dropdown menu.
    * Any HTML in the returned string will be rendered.
    */
   render?: (item: CarmenGeojsonFeature | MaplibreGeocoderSuggestion) => string;
@@ -245,7 +245,7 @@ export type { TypeaheadOptions, default as Typeahead } from "suggestions-list";
 
 /**
  * An API which contains reverseGeocode and forwardGeocode functions to be used by this plugin
- * 
+ *
  * @example
  *
  * const GeoApi = {
@@ -634,7 +634,7 @@ export default class MaplibreGeocoder {
     return this;
   }
 
-  _onPaste(e: ClipboardEvent): void {
+  private _onPaste(e: ClipboardEvent): void {
     const value = (e.clipboardData || (window as any).clipboardData).getData("text");
     if (
       value.length >= this.options.minLength &&
@@ -644,7 +644,8 @@ export default class MaplibreGeocoder {
     }
   }
 
-  _onKeyDown(e: KeyboardEvent): void {
+
+  private _onKeyDown(e: KeyboardEvent): void {
     if (e.key === 'Escape' && this.options.clearAndBlurOnEsc) {
       this._clear(e);
       this._inputEl.blur();
@@ -704,15 +705,15 @@ export default class MaplibreGeocoder {
     }
   }
 
-  _showButton() {
+  private _showButton() {
     if (this._inputEl.value.length > 0) this._clearEl.style.display = "block";
   }
 
-  _hideButton() {
+  private _hideButton() {
     if (this._typeahead.selected) this._clearEl.style.display = "none";
   }
 
-  _onBlur(e: FocusEvent): void {
+  private _onBlur(e: FocusEvent): void {
     if (this.options.clearOnBlur) {
       this._clearOnBlur(e);
     }
@@ -722,9 +723,9 @@ export default class MaplibreGeocoder {
   }
   // Change events are fire by suggestions library whenever the enter key is pressed or input is blurred
   // This can sometimes cause strange behavior as this function is called before our own onKeyDown handler and thus
-  //  we cannot depend on some internal values of the suggestion state like `selected` as those will change or before
-  //  our onKeyDown handler.
-  _onChange() {
+  // we cannot depend on some internal values of the suggestion state like `selected` as those will change or before
+  // our onKeyDown handler.
+  private _onChange() {
     const selected = this._typeahead.selected;
 
     // If a suggestion was selected
@@ -801,7 +802,7 @@ export default class MaplibreGeocoder {
     this._eventEmitter.emit("result", { result: selected });
   }
 
-  _getConfigForRequest(): MaplibreGeocoderApiConfig {
+  private _getConfigForRequest(): MaplibreGeocoderApiConfig {
     // Possible config proprerties to pass to client
     const keys = [
       "bbox",
@@ -839,7 +840,7 @@ export default class MaplibreGeocoder {
     return config;
   }
 
-  async _geocode(searchInput: string, isSuggestion = false, isPlaceId = false): Promise<MaplibreGeocoderResults> {
+  private async _geocode(searchInput: string, isSuggestion = false, isPlaceId = false): Promise<MaplibreGeocoderResults> {
     this._loadingEl.style.display = "block";
     this._eventEmitter.emit("loading", { query: searchInput });
 
@@ -1049,7 +1050,7 @@ export default class MaplibreGeocoder {
     }
   }
 
-  _onQueryResult(results: MaplibreGeocoderResults) {
+  private _onQueryResult(results: MaplibreGeocoderResults) {
     if (!('features' in results)) {
       return;
     }
@@ -1060,7 +1061,7 @@ export default class MaplibreGeocoder {
     this._onChange();
   }
 
-  _updateProximity() {
+  private _updateProximity() {
     // proximity is designed for local scale, if the user is looking at the whole world,
     // it doesn't make sense to factor in the arbitrary centre of the map
     if (!this._map) {
@@ -1074,7 +1075,7 @@ export default class MaplibreGeocoder {
     }
   }
 
-  _collapse() {
+  private _collapse() {
     // do not collapse if input is in focus
     if (!this._inputEl.value && this._inputEl !== document.activeElement)
       this.container.classList.add(
@@ -1082,7 +1083,7 @@ export default class MaplibreGeocoder {
       );
   }
 
-  _unCollapse() {
+  private _unCollapse() {
     this.container.classList.remove(
       "maplibregl-ctrl-geocoder--collapsed"
     );
@@ -1097,20 +1098,20 @@ export default class MaplibreGeocoder {
     this._onQueryResult(results);
   }
 
-  _renderError() {
+  private _renderError() {
     const errorMessage =
       `<div class='maplibre-gl-geocoder--error'>${this._localize("errorConnectionFailed")}</div>`;
     this._renderMessage(errorMessage);
   }
 
-  _renderNoResults() {
+  private _renderNoResults() {
     const errorMessage =
       `<div class='maplibre-gl-geocoder--error maplibre-gl-geocoder--no-results'>
         ${this._localize("errorNoResults")}</div>`;
     this._renderMessage(errorMessage);
   }
 
-  _renderMessage(msg: string) {
+  private _renderMessage(msg: string) {
     this._typeahead.update([]);
     this._typeahead.selected = null;
     this._typeahead.clear();
