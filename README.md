@@ -1,8 +1,8 @@
-## MapLibre GL Geocoder
+# MapLibre GL Geocoder
 
 A geocoder control for [maplibre-gl-js](https://github.com/maplibre/maplibre-gl-js).
 
-### Usage
+## Usage
 
 A full working example can be found here, which uses Nominatim:
 https://maplibre.org/maplibre-gl-js/docs/examples/geocode-with-nominatim/
@@ -35,23 +35,38 @@ map.addControl(geocoder);
 
 ```
 
-### Using without a Map
+### Usage without a Map
 
-It is possible to use the plugin without it being placed as a control on a maplibre-gl map.
+To use the plugin without placing it as a control on a maplibre-gl map, pass a HTML element or a CSS selector to the `addTo()`  function:
 
-### Deeper dive
+```html
+<div id="geocoder-container"></div>
+```
 
-#### API Documentation
+```js
+const GeoApi = {
+  forwardGeocode: (config) => { return { features: [] } },
+  reverseGeocode: (config) => { return { features: [] } }
+}
+const geocoder = new MaplibreGeocoder(GeoAPI, {});
+geocoder.addTo('#geocoder-container');
+```
+
+Note the target element must be present in the DOM when the plugin is initalised.
+
+## Deeper dive
+
+### API Documentation
 
 See [here](https://www.maplibre.org/maplibre-gl-geocoder/) for complete reference.
 
 Also check out the example in MapLibre docs:
 https://maplibre.org/maplibre-gl-js/docs/examples/geocode-with-nominatim/
 
-### Contributing
+## Contributing
 
 See [CONTRIBUTING.md](https://github.com/maplibre/maplibre-gl-geocoder/blob/main/CONTRIBUTING.md).
 
-### Licence
+## Licence
 
 ISC © [MapLibre](https://github.com/maplibre) © [Mapbox](https://github.com/mapbox)
