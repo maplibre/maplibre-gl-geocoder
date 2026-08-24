@@ -52,7 +52,7 @@
     "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^10.9.0",
     "maplibre-gl": "^5.24.0",
-    "puppeteer": "^24.43.1",
+    "puppeteer": "^25.8.0",
     "rollup": "^4.62.5",
     "rollup-plugin-dts": "^6.5.1",
     "st": "^4.0.4",
