@@ -34,6 +34,14 @@
   overflow: hidden;
 }
 
+input[type="search"].maplibregl-ctrl-geocoder--input::-webkit-search-decoration,
+input[type="search"].maplibregl-ctrl-geocoder--input::-webkit-search-cancel-button,
+input[type="search"].maplibregl-ctrl-geocoder--input::-webkit-search-results-button,
+input[type="search"].maplibregl-ctrl-geocoder--input::-webkit-search-results-decoration {
+  display: none;
+  -webkit-appearance: none;
+}
+
 .maplibregl-ctrl-geocoder--input::-ms-clear {
   display: none; /* hide input clear button in IE */
 }

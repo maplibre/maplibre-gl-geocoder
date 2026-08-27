@@ -5,6 +5,11 @@
 ### 🐞 Bug fixes
 - _...Add new stuff here..._
 
+## 1.9.5
+
+### 🐞 Bug fixes
+
+- Refactored search input styles to prevent duplication of the native clear pseudo-element.
 
 ## 1.9.4
 
