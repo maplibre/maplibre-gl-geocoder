@@ -523,10 +523,16 @@ export default class MaplibreGeocoder {
       this._inputEl.addEventListener("blur", this._onBlur);
     }
 
-    this._inputEl.addEventListener(
-      "keydown",
-      debounce(this._onKeyDown, this.options.debounceSearch)
-    );
+    const debouncedKeyDown = debounce(this._onKeyDown, this.options.debounceSearch);
+    this._inputEl.addEventListener("keydown", (e: KeyboardEvent) => {
+      // Enter on a highlighted suggestion is handled by the typeahead, which
+      // selects it on keyup and fires the change event (see _onChange). By the
+      // time the debounced handler runs, the selection has been reset, so it
+      // would search again or show markers for all the results.
+      const list = this._typeahead.list;
+      if (e.key === "Enter" && list?.items[list.active]) return;
+      debouncedKeyDown(e);
+    });
     this._inputEl.addEventListener("paste", this._onPaste);
     this._inputEl.addEventListener("change", this._onChange);
     this.container.addEventListener("mouseenter", this._showButton);

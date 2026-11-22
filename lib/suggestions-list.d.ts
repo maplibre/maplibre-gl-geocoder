@@ -11,6 +11,7 @@ declare module "suggestions-list" {
         selected: TItem;
         options: TypeaheadOptions;
         query: string;
+        list?: { active: number; items: { original: TItem }[] };
         constructor(input: HTMLInputElement, data: TItem[], options?: TypeaheadOptions);
         update(data: TItem[]): void;
         select(): void;
