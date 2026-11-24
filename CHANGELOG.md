@@ -1,5 +1,6 @@
 ## main
 ### ✨ Features and improvements
+- Add `inputId` option to allow associating a label with the search input ([#751](https://github.com/maplibre/maplibre-gl-geocoder/pull/751)) (by [@KhadeerBasha1232](https://github.com/KhadeerBasha1232))
 - _...Add new stuff here..._
 
 ### 🐞 Bug fixes
