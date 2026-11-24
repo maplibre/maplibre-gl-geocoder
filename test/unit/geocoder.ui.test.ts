@@ -52,9 +52,25 @@ describe("Geocoder#inputControl", () => {
 
   test("placeholder", () => {
     setup({ placeholder: "foo to the bar" });
-    expect(
-      container.querySelector(".maplibregl-ctrl-geocoder input").placeholder
-    ).toBe("foo to the bar");
+    const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+    expect(inputEl.placeholder).toBe("foo to the bar");
+    expect(inputEl.getAttribute("aria-label")).toBe("foo to the bar");
+  });
+
+  test("inputId lets a native label name the search input", () => {
+    setup({ inputId: "place-search" });
+    const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+    const label = document.createElement("label");
+    label.htmlFor = "place-search";
+    label.textContent = "Find a place";
+    container.prepend(label);
+
+    expect(inputEl.id).toBe("place-search");
+    expect(label.control).toBe(inputEl);
+
+    geocoder.setPlaceholder("Enter a city or address");
+    expect(inputEl.placeholder).toBe("Enter a city or address");
+    expect(inputEl.hasAttribute("aria-label")).toBe(false);
   });
 
 

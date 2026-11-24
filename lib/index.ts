@@ -139,6 +139,11 @@ export type MaplibreGeocoderOptions = {
    */
   placeholder?: string;
   /**
+   * ID for the search input. Use the same value in an HTML label's `for` attribute.
+   * When set, the geocoder leaves the accessible name to the associated label.
+   */
+  inputId?: string;
+  /**
    * a proximity argument: this is a geographical point given as an object with `latitude` and `longitude` properties. 
    * Search results closer to this point will be given higher priority.
    */
@@ -510,6 +515,9 @@ export default class MaplibreGeocoder {
     this._inputEl.className =
       "maplibregl-ctrl-geocoder--input";
 
+    if (this.options.inputId) {
+      this._inputEl.id = this.options.inputId;
+    }
     this.setPlaceholder();
 
     if (this.options.collapsed) {
@@ -1295,7 +1303,9 @@ export default class MaplibreGeocoder {
   setPlaceholder(placeholder?: string): this {
     this.options.placeholder = placeholder ? placeholder : this.options.placeholder || this._localize("placeholder");
     this._inputEl.placeholder = this.options.placeholder;
-    this._inputEl.setAttribute("aria-label", this.options.placeholder);
+    if (!this.options.inputId) {
+      this._inputEl.setAttribute("aria-label", this.options.placeholder);
+    }
     return this;
   }
 
