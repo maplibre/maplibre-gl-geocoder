@@ -5,15 +5,15 @@
 ### 🐞 Bug fixes
 - _...Add new stuff here..._
 
-- Fix Enter on a highlighted result selecting all the results ([#740](https://github.com/maplibre/maplibre-gl-geocoder/pull/740)) (by [@gasparoff](https://github.com/gasparoff))
-- chore(docs): Extend docs on usage outside a maplibre map ([#637](https://github.com/maplibre/maplibre-gl-geocoder/pull/637)) (by [@awesomephant](https://github.com/awesomephant))
 ## 1.9.5
+
 ### ✨ Features and improvements
-- Extend readme section on using the plugin without a maplibre map
+
+- Docs: Extend docs on usage outside a maplibre map ([#637](https://github.com/maplibre/maplibre-gl-geocoder/pull/637)) (by [@awesomephant](https://github.com/awesomephant))
 
 ### 🐞 Bug fixes
-- Fix pressing Enter on a highlighted result also searching again or showing markers for all the results, unlike clicking it ([#287](https://github.com/maplibre/maplibre-gl-geocoder/issues/287)) (by [gasparoff](https://github.com/gasparoff))
 
+- Fix pressing Enter on a highlighted result also searching again or showing markers for all the results, unlike clicking it ([#287](https://github.com/maplibre/maplibre-gl-geocoder/issues/287)) (by [gasparoff](https://github.com/gasparoff))
 
 ## 1.9.4
 
