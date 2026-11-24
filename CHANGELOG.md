@@ -3,7 +3,7 @@
 - Extend readme section on using the plugin without a maplibre map
 
 ### 🐞 Bug fixes
-- _...Add new stuff here..._
+- Fix pressing Enter on a highlighted result also searching again or showing markers for all the results, unlike clicking it ([#287](https://github.com/maplibre/maplibre-gl-geocoder/issues/287)) (by [gasparoff](https://github.com/gasparoff))
 
 
 ## 1.9.4

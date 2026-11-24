@@ -298,6 +298,68 @@ describe("Geocoder#inputControl", () => {
   }
   );
 
+  test("options.showResultsWhileTyping=true, enter on a highlighted result selects only that result", async () => {
+    setup({
+      features: [Features.PARIS, Features.LONDON],
+      showResultsWhileTyping: true,
+      debounceSearch: 0,
+    });
+
+    const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+    const resultsPromise = geocoder.once("results");
+    geocoder.setInput("Pa");
+    await resultsPromise;
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    const searchMock = vi.spyOn(geocoder, "_geocode");
+    const fitBoundsForMarkersMock = vi.spyOn(geocoder, "_fitBoundsForMarkers");
+    const resultMock = vi.fn();
+    geocoder.on("result", resultMock);
+
+    inputEl.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", keyCode: 40 }));
+    inputEl.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown", keyCode: 40 }));
+    inputEl.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", keyCode: 13 }));
+    inputEl.dispatchEvent(new KeyboardEvent("keyup", { key: "Enter", keyCode: 13 }));
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    expect(resultMock).toHaveBeenCalledTimes(1);
+    expect(searchMock).not.toHaveBeenCalled();
+    expect(fitBoundsForMarkersMock).not.toHaveBeenCalled();
+    expect(geocoder.resultMarkers).toHaveLength(0);
+  });
+
+  test("options.showResultsWhileTyping=false, enter on a highlighted result selects only that result", async () => {
+    setup({
+      features: [Features.PARIS, Features.LONDON],
+      showResultsWhileTyping: false,
+      debounceSearch: 0,
+    });
+
+    const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+    const resultsPromise = geocoder.once("results");
+    geocoder.setInput("Pa");
+    inputEl.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", keyCode: 13 }));
+    inputEl.dispatchEvent(new KeyboardEvent("keyup", { key: "Enter", keyCode: 13 }));
+    await resultsPromise;
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    const searchMock = vi.spyOn(geocoder, "_geocode");
+    const fitBoundsForMarkersMock = vi.spyOn(geocoder, "_fitBoundsForMarkers");
+    const resultMock = vi.fn();
+    geocoder.on("result", resultMock);
+
+    inputEl.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", keyCode: 40 }));
+    inputEl.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown", keyCode: 40 }));
+    inputEl.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", keyCode: 13 }));
+    inputEl.dispatchEvent(new KeyboardEvent("keyup", { key: "Enter", keyCode: 13 }));
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    expect(resultMock).toHaveBeenCalledTimes(1);
+    expect(searchMock).not.toHaveBeenCalled();
+    expect(fitBoundsForMarkersMock).not.toHaveBeenCalled();
+    expect(geocoder.resultMarkers).toHaveLength(0);
+  });
+
   test("options.showResultsWhileTyping=true, geocodes when setting input", () => {
     setup({
       collapsed: true,
