@@ -3,6 +3,7 @@
 - _...Add new stuff here..._
 
 ### 🐞 Bug fixes
+- Fix pressing Enter zooming to the map's maximum zoom when the results are a single point, by capping the zoom at the `zoom` option ([#286](https://github.com/maplibre/maplibre-gl-geocoder/issues/286)) (by [@KhadeerBasha1232](https://github.com/KhadeerBasha1232))
 - _...Add new stuff here..._
 
 ## 1.9.5
