@@ -1152,7 +1152,10 @@ export default class MaplibreGeocoder {
 
     if (this.options.flyTo && this._maplibregl) {
       if (this._map) {
-        const defaultFlyOptions = { padding: 100 };
+        // Without maxZoom, fitting a single point (or several at the same place)
+        // zooms to the map's maximum zoom, so cap it at the zoom used when
+        // flying to a single point result.
+        const defaultFlyOptions = { padding: 100, maxZoom: this.options.zoom };
         const flyOptions = extend({}, defaultFlyOptions, this.options.flyTo as any);
         const bounds = new this._maplibregl.LngLatBounds();
         for (const feature of results) {

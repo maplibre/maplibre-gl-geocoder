@@ -298,6 +298,29 @@ describe("Geocoder#inputControl", () => {
   }
   );
 
+  test.each([
+    { options: {}, maxZoom: 16 },
+    { options: { zoom: 12 }, maxZoom: 12 },
+    { options: { flyTo: { maxZoom: 10 } }, maxZoom: 10 },
+  ])("enter key press with a single point result caps the zoom at $maxZoom ($options)", async ({ options, maxZoom }) => {
+    setup({
+      features: [Features.QUEEN_STREET],
+      showResultsWhileTyping: false,
+      ...options,
+    });
+
+    const inputEl = container.querySelector(".maplibregl-ctrl-geocoder input");
+    const mapFitBoundsMock = vi.spyOn(map, "fitBounds");
+
+    geocoder.setInput("Queen Street");
+    const resultPromise = geocoder.once("results");
+    inputEl.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+    await resultPromise;
+
+    expect(mapFitBoundsMock).toHaveBeenCalledTimes(1);
+    expect(mapFitBoundsMock.mock.calls[0][1]).toMatchObject({ padding: 100, maxZoom });
+  });
+
   test("options.showResultsWhileTyping=true, enter on a highlighted result selects only that result", async () => {
     setup({
       features: [Features.PARIS, Features.LONDON],
